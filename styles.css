@@ -1,0 +1,53 @@
+/*
+Portal Page Styling Plan
+
+Purpose:
+- This file should contain all styling for the centralized portal page.
+- For now, leave it as planning comments only.
+
+Suggested ownership:
+- Primary owner: Person 2
+- QA/accessibility review: Person 5
+
+What needs to be designed later:
+1. Global design system
+- Color palette
+- Typography choices
+- Spacing scale
+- Border radius / shadows / card treatment
+- Button styles
+
+2. Portal-specific layout styling
+- Header layout
+- Hero section layout
+- Interface card grid layout
+- Footer layout
+- Desktop-first behavior, with responsive adjustments for smaller screens
+
+3. Visual distinction goals
+- Portal should feel centralized and neutral, not like any one interface
+- Do not make the portal resemble the cashier UI or customer kiosk UI too closely
+- Interface cards can preview each role with distinct visual cues
+
+4. Accessibility expectations
+- WCAG-conscious contrast ratios
+- Clear focus states
+- Readable font sizes
+- Adequate spacing for click/tap targets
+
+Suggested style sections to add later:
+- CSS reset / base rules
+- Root variables
+- Page shell
+- Header / nav
+- Hero
+- Interface cards
+- Overview section
+- Accessibility notes section
+- Footer
+- Responsive breakpoints
+
+Team coordination note:
+- Agree on colors, font choices, button style, and card style before implementation.
+- One person should review for consistency before merge.
+*/
