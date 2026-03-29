@@ -1,19 +1,17 @@
 /*
-  Base page styling for the portal page.
-  These variables make it easier to keep the page consistent as the design grows.
+  Shared color values for the portal page.
+  Keeping these at the top makes small design changes easier later.
 */
 :root {
   --page-bg: #f4efe6;
   --panel-bg: #fffaf4;
   --text-main: #2f241d;
-  --text-muted: #6f5b4d;
   --accent: #b64d1f;
-  --accent-dark: #8e3915;
   --border: #dcc9b8;
   --shadow: 0 16px 32px rgba(84, 52, 34, 0.12);
 }
 
-/* Remove default browser spacing so the layout starts cleanly. */
+/* Remove browser defaults so the layout starts from a consistent base. */
 body {
   margin: 0;
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
@@ -21,12 +19,12 @@ body {
   color: var(--text-main);
 }
 
-/* This class scopes the main portal page layout rules. */
+/* This page wrapper keeps the portal stretched to the full screen height. */
 .portal-page {
   min-height: 100vh;
 }
 
-/* Header spacing keeps the title area readable and centered. */
+/* Header styling centers the main page title. */
 .portal-header {
   max-width: 960px;
   margin: 0 auto;
@@ -34,36 +32,19 @@ body {
   text-align: center;
 }
 
-.portal-eyebrow {
-  margin: 0 0 0.75rem;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
 .portal-header h1 {
   margin: 0;
   font-size: clamp(2.2rem, 4vw, 3.5rem);
 }
 
-.portal-intro {
-  max-width: 700px;
-  margin: 1rem auto 0;
-  font-size: 1.05rem;
-  line-height: 1.6;
-  color: var(--text-muted);
-}
-
-/* Main content width is capped to avoid stretched card layouts. */
+/* Main content width is capped so the interface section stays readable. */
 .portal-main {
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 1.5rem 3rem;
 }
 
-/* The section panel visually groups the interface buttons together. */
+/* The options area is grouped into a single panel. */
 .interface-section {
   padding: 2rem;
   border: 1px solid var(--border);
@@ -72,30 +53,21 @@ body {
   box-shadow: var(--shadow);
 }
 
-.interface-section h2 {
-  margin-top: 0;
-  margin-bottom: 0.75rem;
+/* This heading is centered to align cleanly over the interface buttons. */
+.section-heading {
+  margin: 0 0 1.5rem;
+  text-align: center;
   font-size: 1.8rem;
 }
 
-.section-copy {
-  margin-top: 0;
-  margin-bottom: 2rem;
-  line-height: 1.6;
-  color: var(--text-muted);
-}
-
-/* Grid layout keeps the interface buttons organized across screen sizes. */
+/* Grid layout keeps the interface buttons evenly spaced. */
 .interface-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
 }
 
-/*
-  Each interface link is styled like a button card so users can immediately
-  identify the available entry points.
-*/
+/* Each link is styled like a button card for a clearer launch area. */
 .interface-card {
   display: block;
   padding: 1.25rem;
@@ -103,6 +75,7 @@ body {
   border-radius: 18px;
   background-color: #ffffff;
   color: inherit;
+  text-align: center;
   text-decoration: none;
   box-shadow: 0 10px 22px rgba(84, 52, 34, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -115,28 +88,14 @@ body {
   box-shadow: 0 14px 28px rgba(84, 52, 34, 0.14);
 }
 
-/* Label and description are separated to make the button hierarchy clear. */
+/* The card label is the only visible text inside each interface button. */
 .interface-label {
   display: block;
-  margin-bottom: 0.55rem;
   font-size: 1.15rem;
   font-weight: 700;
 }
 
-.interface-description {
-  display: block;
-  line-height: 1.5;
-  color: var(--text-muted);
-}
-
-/* Footer styling stays minimal because it is supporting content only. */
-.portal-footer {
-  padding: 1.5rem;
-  text-align: center;
-  color: var(--text-muted);
-}
-
-/* Smaller screens get tighter spacing to preserve room for the buttons. */
+/* Smaller screens get slightly tighter spacing to preserve space. */
 @media (max-width: 640px) {
   .portal-header {
     padding-top: 3rem;
