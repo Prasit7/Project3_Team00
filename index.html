@@ -1,95 +1,69 @@
-<!--
-Portal Page Scaffold for Project 3
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurant Portal</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="portal-page">
+    <!-- Portal header introduces the page and gives users quick context. -->
+    <header class="portal-header">
+      <p class="portal-eyebrow">Project 3 Team 00</p>
+      <h1>Restaurant System Portal</h1>
+      <p class="portal-intro">
+        Use this page to launch the correct interface for each role in the
+        restaurant.
+      </p>
+    </header>
 
-Purpose:
-- This file is the singular, centralized portal page required by the project brief.
-- It should link one-way to every required interface.
-- Required interfaces for a 5-person team:
-  1. Manager interface
-  2. Cashier interface
-  3. Customer kiosk interface
-  4. Menu board interface
-- The portal page must NOT be linked back to from any of the above interfaces.
-- The interfaces must NOT provide access to each other.
+    <main class="portal-main">
+      <!-- This section holds the direct links to every required interface. -->
+      <section class="interface-section" aria-labelledby="interface-heading">
+        <h2 id="interface-heading">Choose an Interface</h2>
+        <p class="section-copy">
+          Each button below opens a separate interface designed for a specific
+          user and workflow.
+        </p>
 
-Team split recommendation:
-- Person 1: Page structure, section ordering, final integration
-- Person 2: Header, branding, navigation styling
-- Person 3: Hero section, project description, CTA language
-- Person 4: Interface access cards/buttons for manager/cashier/customer/menu board
-- Person 5: Footer, accessibility review, responsive review, content cleanup
+        <div class="interface-grid">
+          <!-- Manager portal button for desktop management tasks. -->
+          <a class="interface-card" href="manager.html">
+            <span class="interface-label">Manager</span>
+            <span class="interface-description">
+              Open the management dashboard for reports, inventory, and admin
+              tools.
+            </span>
+          </a>
 
-What needs to be implemented here later:
-- Standard HTML document structure
-- <head> metadata and page title for the portal
-- Links to styles.css and script.js
-- Semantic landmarks for accessibility:
-  - header
-  - nav
-  - main
-  - section
-  - footer
+          <!-- Cashier portal button for register-facing checkout tasks. -->
+          <a class="interface-card" href="cashier.html">
+            <span class="interface-label">Cashier</span>
+            <span class="interface-description">
+              Open the cashier interface for order entry and customer checkout.
+            </span>
+          </a>
 
-Required portal sections:
-1. Header / Branding
-- Project name
-- Short subtitle or tagline
-- Optional logo area
-- Navigation for portal sections only
+          <!-- Customer kiosk button for guest ordering on a shared device. -->
+          <a class="interface-card" href="customer.html">
+            <span class="interface-label">Customer Kiosk</span>
+            <span class="interface-description">
+              Open the customer ordering experience for self-service use.
+            </span>
+          </a>
 
-2. Hero Section
-- One-sentence summary of the restaurant system
-- Short explanation that this page is the centralized launcher
-- Primary CTA area guiding users to the correct interface
+          <!-- Menu board button for the public-facing display page. -->
+          <a class="interface-card" href="menu-board.html">
+            <span class="interface-label">Menu Board</span>
+            <span class="interface-description">
+              Open the display-only menu board for in-store viewing.
+            </span>
+          </a>
+        </div>
+      </section>
+    </main>
 
-3. Interface Access Section
-- One card/button/link for Manager
-- One card/button/link for Cashier
-- One card/button/link for Customer Kiosk
-- One card/button/link for Menu Board
-- Each item should explain the intended user and context briefly
-- Links must be direct from portal to target interface pages
 
-4. Project / System Overview Section
-- Brief explanation of how the system serves different in-store roles
-- Mention that each interface is adapted to its user/input/place setting
-- This is useful for clarity and for presenting the project professionally
-
-5. Accessibility / Usage Notes Section
-- Brief note that customer-facing design must satisfy accessibility expectations
-- Brief note that interfaces are intentionally distinct and isolated
-- Could also mention supported browser if desired
-
-6. Footer
-- Team name
-- Course/project identification
-- Sprint or deployment note if useful
-
-Routing / linking requirements to preserve when coding later:
-- Portal should directly link to every required interface page
-- Manager page must not link to cashier/customer/menu board
-- Cashier page must not link to manager/customer/menu board
-- Customer page must not link to manager/cashier/menu board
-- Menu board page should remain isolated and non-interactive except for display needs
-- No interface should include a “Back to Portal” link
-
-Suggested future file targets for links:
-- manager.html
-- cashier.html
-- customer.html
-- menu-board.html
-
-Accessibility expectations to keep in mind during implementation:
-- Use semantic HTML
-- Maintain heading order
-- Ensure keyboard accessibility for manager portal navigation
-- Ensure large, touch-friendly targets for cashier/customer-related entry cards if desired
-- Maintain sufficient color contrast
-- Keep text readable on large public displays
-
-Notes for the team:
-- Do not implement cross-interface navigation
-- Keep this file focused on portal-only content
-- Match the visual tone of the restaurant concept once branding is decided
-- Build with Chrome compatibility in mind
--->
+    <script src="script.js"></script>
+  </body>
+</html>
