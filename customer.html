@@ -65,6 +65,15 @@ Ownership suggestion:
     .menu-card { border: 1px solid #000; padding: 12px; text-align: center; }
     .menu-card button { width: 100%; padding: 10px; margin-top: 8px; }
 
+    /* Cart summary - simple, below the menu */
+    #cart-summary { margin-top: 24px; border-top: 1px solid #000; padding-top: 16px; }
+    #cart-summary h2 { margin-bottom: 10px; }
+    #cart-items { margin-bottom: 10px; }
+    .cart-item { padding: 6px 0; border-bottom: 1px solid #ccc; font-size: 0.9rem; display: flex; justify-content: space-between; }
+    #cart-total { font-weight: bold; margin-bottom: 10px; }
+
+    /* TODO: Checkout button will go here in a future sprint */
+
     /* Modal */
     #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
     #modal-overlay.open { display: flex; }
@@ -98,8 +107,25 @@ Ownership suggestion:
     <h1>Customer Kiosk</h1>
   </header>
   <main>
-    <div id="category-tabs" role="tablist" aria-label="Menu categories"></div>
-    <div id="menu-items" role="list" aria-label="Menu items"></div>
+
+    <!-- Menu -->
+    <section aria-label="Menu">
+      <div id="category-tabs" role="tablist" aria-label="Menu categories"></div>
+      <div id="menu-items" role="list" aria-label="Menu items"></div>
+    </section>
+
+    <!-- Cart Summary -->
+    <!-- TODO: Move cart into a proper sidebar or dedicated cart page in a future sprint -->
+    <!-- TODO: Add checkout flow (payment, order confirmation) in a future sprint -->
+    <section id="cart-summary" aria-label="Your cart">
+      <h2>Your Order</h2>
+      <div id="cart-items" aria-live="polite">
+        <p id="cart-empty">No items yet.</p>
+      </div>
+      <p id="cart-total">Total: $0.00</p>
+      <!-- TODO: Add checkout button here in a future sprint -->
+    </section>
+
   </main>
 </div>
 
@@ -137,7 +163,7 @@ Ownership suggestion:
 </div>
 
 <script>
-  // ===================== DATA =====================
+  //data
 
   const MENU = {
     "Milk Tea": [
@@ -193,19 +219,20 @@ Ownership suggestion:
 
   const SIZE_UPCHARGE = { "Regular": 0, "Large": 0.75 };
 
-  // ===================== STATE =====================
+  //state
 
+  let cart = [];
   let currentItem = null;
   let selectedOptions = {};
 
-  // ===================== WELCOME =====================
+  // welcome
 
   document.getElementById("btn-start-order").addEventListener("click", () => {
     document.getElementById("welcome-screen").classList.add("hidden");
     document.getElementById("app").classList.remove("hidden");
   });
 
-  // ===================== MENU =====================
+  // menu
 
   buildCategoryTabs();
   showCategory(Object.keys(MENU)[0]);
@@ -243,17 +270,16 @@ Ownership suggestion:
     });
   }
 
-  // ===================== MODAL =====================
-
+  // customizations
   function openModal(item) {
     currentItem = item;
     selectedOptions = { size: "Regular", ice: "Regular Ice", sugar: "100% Sugar", toppings: [] };
 
     document.getElementById("modal-title").textContent = item.name;
     updateModalPrice();
-    renderOptionButtons("size-options",     SIZES,                                    "size",     false);
-    renderOptionButtons("ice-options",      ICE,                                      "ice",      false);
-    renderOptionButtons("sugar-options",    SUGAR,                                    "sugar",    false);
+    renderOptionButtons("size-options",     SIZES,                                                     "size",     false);
+    renderOptionButtons("ice-options",      ICE,                                                       "ice",      false);
+    renderOptionButtons("sugar-options",    SUGAR,                                                     "sugar",    false);
     renderOptionButtons("toppings-options", TOPPINGS.map(t => `${t.name} (+$${t.price.toFixed(2)})`), "toppings", true);
 
     document.getElementById("modal-overlay").classList.add("open");
@@ -309,15 +335,54 @@ Ownership suggestion:
     currentItem = null;
   }
 
-  // ===================== ADD TO CART =====================
-
+  //cart
   document.getElementById("btn-add-to-cart").addEventListener("click", () => {
-    // TODO: add to cart on next commit
-    alert("Cart coming soon!");
+    if (!currentItem) return;
+    const toppingTotal = selectedOptions.toppings.reduce((sum, t) => sum + getToppingPrice(t), 0);
+    const price = currentItem.price + (SIZE_UPCHARGE[selectedOptions.size] || 0) + toppingTotal;
+    cart.push({
+      id: Date.now(),
+      name: currentItem.name,
+      size: selectedOptions.size,
+      ice: selectedOptions.ice,
+      sugar: selectedOptions.sugar,
+      toppings: [...selectedOptions.toppings],
+      price
+    });
     closeModal();
+    renderCart();
   });
+
+  function renderCart() {
+    const container = document.getElementById("cart-items");
+    container.innerHTML = "";
+
+    if (cart.length === 0) {
+      container.innerHTML = "<p id='cart-empty'>No items yet.</p>";
+      document.getElementById("cart-total").textContent = "Total: $0.00";
+      return;
+    }
+
+    let total = 0;
+    cart.forEach(cartItem => {
+      total += cartItem.price;
+      const div = document.createElement("div");
+      div.className = "cart-item";
+      div.innerHTML = `
+        <span>${cartItem.name} (${cartItem.size})</span>
+        <span>$${cartItem.price.toFixed(2)}</span>
+      `;
+      // TODO: Add remove button in a future sprint
+      container.appendChild(div);
+    });
+
+    document.getElementById("cart-total").textContent = `Total: $${total.toFixed(2)}`;
+
+    // TODO: Add checkout flow here in a future sprint
+  }
 </script>
 </body>
 </html>
+
 
 
