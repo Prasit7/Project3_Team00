@@ -8,6 +8,12 @@
   --accent-dark: #8f3c18;
   --danger: #a73737;
   --shadow: 0 14px 30px rgba(73, 45, 28, 0.12);
+
+   --pay-main: #d0b08b;
+  --pay-main-dark: #c39e74;
+  --pay-cancel: #b08b66;
+  --pay-cancel-dark: #9a7653;
+
 }
 
 * {
@@ -31,7 +37,7 @@ body {
   justify-content: space-between;
   align-items: flex-end;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.65rem;
 }
 
 .eyebrow {
@@ -59,6 +65,15 @@ body {
   border-radius: 999px;
   padding: 0.45rem 0.9rem;
   font-size: 0.9rem;
+}
+
+.status-banner {
+  margin: 0 0 0.9rem;
+  background: #efe5d8;
+  border: 1px solid #dec9b2;
+  border-radius: 10px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.92rem;
 }
 
 .pos-layout {
@@ -283,14 +298,41 @@ body {
   border: 0;
   border-radius: 12px;
   min-height: 50px;
-  background: var(--accent);
   color: #fff;
   font-weight: 700;
   cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.12s ease, filter 0.15s ease;
 }
 
 .payment-grid button:hover {
-  background: var(--accent-dark);
+  filter: saturate(1.05);
+  transform: translateY(-1px);
+}
+
+.payment-grid button:active {
+  transform: translateY(0);
+}
+
+#pay-cash,
+#pay-card,
+#pay-mobile {
+  background: linear-gradient(180deg, #d8bb99 0%, var(--pay-main) 100%);
+  color: #2d241b;
+}
+
+#pay-cash:hover,
+#pay-card:hover,
+#pay-mobile:hover {
+  background: linear-gradient(180deg, #cfad86 0%, var(--pay-main-dark) 100%);
+}
+
+#clear-ticket {
+  background: linear-gradient(180deg, #bd9873 0%, var(--pay-cancel) 100%);
+  color: #fffaf3;
+}
+
+#clear-ticket:hover {
+  background: linear-gradient(180deg, #aa835f 0%, var(--pay-cancel-dark) 100%);
 }
 
 .modal-overlay {
