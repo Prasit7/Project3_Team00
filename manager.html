@@ -191,5 +191,133 @@
       </main>
     </div>
 
+    <script>
+      const inventoryData = [
+        { name: "Assam Black Tea", category: "Tea", onHand: 10, par: 14 },
+        { name: "Jasmine Green Tea", category: "Tea", onHand: 16, par: 14 },
+        { name: "Whole Milk", category: "Dairy", onHand: 6, par: 10 },
+        { name: "Oat Milk", category: "Dairy", onHand: 11, par: 10 },
+        { name: "Tapioca Pearls", category: "Toppings", onHand: 5, par: 12 },
+        { name: "Popping Boba", category: "Toppings", onHand: 9, par: 8 },
+        { name: "Large Cups", category: "Packaging", onHand: 2, par: 8 },
+      ];
+
+      const staffData = [
+        { name: "Mia", role: "Shift Lead", status: "Clocked In" },
+        { name: "Jordan", role: "Barista", status: "Clocked In" },
+        { name: "Riley", role: "Prep", status: "On Break" },
+        { name: "Noah", role: "Cashier", status: "Clocked Out" },
+      ];
+
+      const inventoryTable = document.getElementById("inventory-table");
+      const categoryFilter = document.getElementById("inventory-category");
+      const lowStockOnly = document.getElementById("low-stock-only");
+      const sessionTime = document.getElementById("session-time");
+
+      function renderInventory() {
+        const selectedCategory = categoryFilter.value;
+        const showLowOnly = lowStockOnly.checked;
+
+        const rows = inventoryData.filter((item) => {
+          const categoryMatch = selectedCategory === "all" || item.category === selectedCategory;
+          const lowMatch = !showLowOnly || item.onHand < item.par;
+          return categoryMatch && lowMatch;
+        });
+
+        inventoryTable.innerHTML = "";
+
+        rows.forEach((item) => {
+          const status = item.onHand < item.par ? "Low" : "Healthy";
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${item.name}</td>
+            <td>${item.category}</td>
+            <td>${item.onHand}</td>
+            <td>${item.par}</td>
+            <td><span class="status ${status === "Low" ? "status-low" : "status-ok"}">${status}</span></td>
+            <td><button class="mini-btn" type="button">Reorder</button></td>
+          `;
+          inventoryTable.appendChild(row);
+        });
+      }
+
+      function renderStaff() {
+        const list = document.getElementById("staff-list");
+        list.innerHTML = "";
+
+        staffData.forEach((staff, index) => {
+          const item = document.createElement("li");
+          item.className = "staff-row";
+          item.innerHTML = `
+            <span>
+              <strong>${staff.name}</strong>
+              <small>${staff.role}</small>
+            </span>
+            <span class="status-pill">${staff.status}</span>
+            <button class="mini-btn" type="button" data-staff="${index}">
+              Toggle Status
+            </button>
+          `;
+          list.appendChild(item);
+        });
+      }
+
+      function refreshTime() {
+        const now = new Date();
+        sessionTime.textContent = `Session: ${now.toLocaleString()}`;
+      }
+
+      categoryFilter.addEventListener("change", renderInventory);
+      lowStockOnly.addEventListener("change", renderInventory);
+
+      document.getElementById("staff-list").addEventListener("click", (event) => {
+        const button = event.target.closest("button[data-staff]");
+        if (!button) return;
+
+        const index = Number(button.dataset.staff);
+        const current = staffData[index].status;
+        staffData[index].status = current === "Clocked In" ? "Clocked Out" : "Clocked In";
+        renderStaff();
+      });
+
+      document.querySelectorAll("[role='tab']").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document.querySelectorAll("[role='tab']").forEach((button) =>
+            button.setAttribute("aria-selected", "false")
+          );
+          tab.setAttribute("aria-selected", "true");
+
+          document.querySelectorAll(".tab-content").forEach((panel) => panel.classList.add("hidden"));
+          document.getElementById(tab.getAttribute("aria-controls")).classList.remove("hidden");
+        });
+      });
+
+      document.getElementById("report-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const type = document.getElementById("report-type").value;
+        const window = document.getElementById("report-window").value;
+        const output = document.getElementById("report-output");
+        output.textContent = `Preview generated: ${type} report for ${window}. Final export will use backend data once connected.`;
+      });
+
+      document.getElementById("menu-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const nameInput = document.getElementById("menu-item-name");
+        const priceInput = document.getElementById("menu-item-price");
+        const queue = document.getElementById("menu-queue");
+
+        const queueItem = document.createElement("li");
+        queueItem.textContent = `${nameInput.value} - $${Number(priceInput.value).toFixed(2)} (queued)`;
+        queue.appendChild(queueItem);
+
+        nameInput.value = "";
+        priceInput.value = "";
+      });
+
+      refreshTime();
+      setInterval(refreshTime, 60000);
+      renderInventory();
+      renderStaff();
+    </script>
   </body>
 </html>
