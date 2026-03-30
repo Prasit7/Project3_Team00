@@ -1,24 +1,195 @@
-<!--
-Manager Interface Placeholder
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manager Console</title>
+    <link rel="stylesheet" href="managerstyle.css" />
+  </head>
+  <body>
+    <div class="manager-page">
+      <header class="top-bar" aria-label="Manager tools header">
+        <div>
+          <p class="eyebrow">Operations Workspace</p>
+          <h1>Kungfu Boba Manager Console</h1>
+        </div>
+        <div class="top-actions">
+          <p id="session-time" class="session-time" aria-live="polite"></p>
+          <button type="button" class="btn btn-neutral">Export Daily Snapshot</button>
+          <button type="button" class="btn btn-danger">Lock Session</button>
+        </div>
+      </header>
 
-Purpose:
-- This page will later serve managers using a conventional desktop interface.
-- User focus: familiar end user
-- Input modality: keyboard and mouse
-- Place setting: privately viewable regular screen in an office room setting
+      <main class="layout">
+        <section class="panel auth-panel" aria-labelledby="auth-heading">
+          <div>
+            <h2 id="auth-heading">Role Confirmation</h2>
+            <p class="muted">Signed in as an authorized manager account.</p>
+          </div>
+          <div class="auth-grid">
+            <div class="auth-item">
+              <p class="label">Account</p>
+              <p class="value">Avery Chen</p>
+            </div>
+            <div class="auth-item">
+              <p class="label">Role</p>
+              <p class="value"><span class="badge">Manager</span></p>
+            </div>
+            <div class="auth-item">
+              <p class="label">Location</p>
+              <p class="value">College Station - Northgate</p>
+            </div>
+            <div class="auth-item">
+              <p class="label">Session State</p>
+              <p class="value"><span class="badge badge-ok">Verified</span></p>
+            </div>
+          </div>
+        </section>
 
-Requirements reminders:
-- This page should NOT link back to portal.html/index.html once implemented.
-- This page should NOT link to cashier, customer, or menu board interfaces.
-- This page should be visually and interactively adapted for manager workflows.
-- This page will eventually connect to backend/database features relevant to management tasks.
+        <section class="panel metrics-panel" aria-labelledby="metrics-heading">
+          <h2 id="metrics-heading">Today at a Glance</h2>
+          <div class="metric-grid">
+            <article class="metric">
+              <h3>Gross Sales</h3>
+              <p class="metric-value">$4,821.70</p>
+              <p class="metric-note">+9.4% vs yesterday</p>
+            </article>
+            <article class="metric">
+              <h3>Orders</h3>
+              <p class="metric-value">318</p>
+              <p class="metric-note">Peak 1:00 PM - 2:00 PM</p>
+            </article>
+            <article class="metric">
+              <h3>Labor Cost</h3>
+              <p class="metric-value">27.2%</p>
+              <p class="metric-note">Target: under 29%</p>
+            </article>
+            <article class="metric">
+              <h3>Top Seller</h3>
+              <p class="metric-value">Brown Sugar Milk Tea</p>
+              <p class="metric-note">72 cups sold</p>
+            </article>
+          </div>
+        </section>
 
-Suggested future sections:
-- Header with manager-facing tools only
-- Inventory / analytics / management controls
-- Staff / reports / menu maintenance areas
-- Auth state or role confirmation area
+        <section class="panel inventory-panel" aria-labelledby="inventory-heading">
+          <div class="section-head">
+            <h2 id="inventory-heading">Inventory Controls</h2>
+            <div class="inventory-filters">
+              <label>
+                Category
+                <select id="inventory-category">
+                  <option value="all">All</option>
+                  <option value="Tea">Tea</option>
+                  <option value="Dairy">Dairy</option>
+                  <option value="Toppings">Toppings</option>
+                  <option value="Packaging">Packaging</option>
+                </select>
+              </label>
+              <label class="inline-toggle">
+                <input type="checkbox" id="low-stock-only" />
+                Low stock only
+              </label>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Category</th>
+                  <th>On Hand</th>
+                  <th>Par</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-table"></tbody>
+            </table>
+          </div>
+        </section>
 
-Ownership suggestion:
-- Assign to teammate responsible for manager workflow planning and desktop UX
--->
+        <section class="panel controls-panel" aria-labelledby="controls-heading">
+          <h2 id="controls-heading">Management Controls</h2>
+          <div class="toggle-list">
+            <label class="control-item">
+              <span>
+                <strong>Online Ordering</strong>
+                <small>Allow app and web orders</small>
+              </span>
+              <input type="checkbox" checked />
+            </label>
+            <label class="control-item">
+              <span>
+                <strong>Rush Hour Prep Mode</strong>
+                <small>Send prep alerts every 15 minutes</small>
+              </span>
+              <input type="checkbox" checked />
+            </label>
+            <label class="control-item">
+              <span>
+                <strong>Auto 86 Sync</strong>
+                <small>Push sold-out menu updates automatically</small>
+              </span>
+              <input type="checkbox" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel tab-panel" aria-labelledby="ops-heading">
+          <h2 id="ops-heading">Staff, Reports, and Menu Maintenance</h2>
+          <div class="tabs" role="tablist" aria-label="Manager maintenance areas">
+            <button role="tab" aria-selected="true" aria-controls="staff-tab" id="tab-staff">Staff</button>
+            <button role="tab" aria-selected="false" aria-controls="reports-tab" id="tab-reports">Reports</button>
+            <button role="tab" aria-selected="false" aria-controls="menu-tab" id="tab-menu">Menu Maintenance</button>
+          </div>
+
+          <section id="staff-tab" class="tab-content" role="tabpanel" aria-labelledby="tab-staff">
+            <ul class="staff-list" id="staff-list"></ul>
+          </section>
+
+          <section id="reports-tab" class="tab-content hidden" role="tabpanel" aria-labelledby="tab-reports">
+            <form id="report-form" class="report-form">
+              <label>
+                Report Type
+                <select id="report-type">
+                  <option value="sales">Sales Summary</option>
+                  <option value="labor">Labor Summary</option>
+                  <option value="waste">Waste Log</option>
+                </select>
+              </label>
+              <label>
+                Time Window
+                <select id="report-window">
+                  <option value="today">Today</option>
+                  <option value="last7">Last 7 Days</option>
+                  <option value="last30">Last 30 Days</option>
+                </select>
+              </label>
+              <button type="submit" class="btn btn-neutral">Generate</button>
+            </form>
+            <p id="report-output" class="report-output" aria-live="polite">
+              Choose a report and generate a preview.
+            </p>
+          </section>
+
+          <section id="menu-tab" class="tab-content hidden" role="tabpanel" aria-labelledby="tab-menu">
+            <form id="menu-form" class="menu-form">
+              <label>
+                Item Name
+                <input type="text" id="menu-item-name" placeholder="Example: Mango Pomelo Tea" required />
+              </label>
+              <label>
+                Price
+                <input type="number" id="menu-item-price" min="0" step="0.01" placeholder="0.00" required />
+              </label>
+              <button type="submit" class="btn btn-neutral">Queue Update</button>
+            </form>
+            <ul id="menu-queue" class="queue-list"></ul>
+          </section>
+        </section>
+      </main>
+    </div>
+
+  </body>
+</html>
