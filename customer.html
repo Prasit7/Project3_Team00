@@ -65,6 +65,20 @@ Ownership suggestion:
     .menu-card { border: 1px solid #000; padding: 12px; text-align: center; }
     .menu-card button { width: 100%; padding: 10px; margin-top: 8px; }
 
+    /* Modal */
+    #modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; }
+    #modal-overlay.open { display: flex; }
+    #modal { background: #fff; padding: 24px; width: 90%; max-width: 460px; max-height: 90vh; overflow-y: auto; }
+    #modal h2 { margin-bottom: 6px; }
+    #modal-price { margin-bottom: 18px; }
+    .option-group { margin-bottom: 14px; }
+    .option-group label { display: block; font-weight: bold; margin-bottom: 6px; }
+    .option-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+    .option-btn { padding: 10px 14px; border: 1px solid #000; background: #fff; }
+    .option-btn.selected { background: #000; color: #fff; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .modal-actions button { flex: 1; padding: 12px; }
+
     /* Touch-friendly */
     button { font-size: 1rem; cursor: pointer; min-height: 44px; min-width: 44px; }
   </style>
@@ -87,6 +101,39 @@ Ownership suggestion:
     <div id="category-tabs" role="tablist" aria-label="Menu categories"></div>
     <div id="menu-items" role="list" aria-label="Menu items"></div>
   </main>
+</div>
+
+<!-- CUSTOMIZATION MODAL -->
+<div id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div id="modal">
+    <h2 id="modal-title"></h2>
+    <p id="modal-price"></p>
+
+    <div class="option-group">
+      <label id="size-label">Size</label>
+      <div class="option-buttons" id="size-options" role="group" aria-labelledby="size-label"></div>
+    </div>
+
+    <div class="option-group">
+      <label id="ice-label">Ice Level</label>
+      <div class="option-buttons" id="ice-options" role="group" aria-labelledby="ice-label"></div>
+    </div>
+
+    <div class="option-group">
+      <label id="sugar-label">Sugar Level</label>
+      <div class="option-buttons" id="sugar-options" role="group" aria-labelledby="sugar-label"></div>
+    </div>
+
+    <div class="option-group">
+      <label id="toppings-label">Toppings (optional)</label>
+      <div class="option-buttons" id="toppings-options" role="group" aria-labelledby="toppings-label"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button id="btn-cancel">Cancel</button>
+      <button id="btn-add-to-cart">Add to Cart</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -132,6 +179,25 @@ Ownership suggestion:
     ]
   };
 
+  const SIZES    = ["Regular", "Large"];
+  const ICE      = ["No Ice", "Less Ice", "Regular Ice", "Extra Ice"];
+  const SUGAR    = ["0% Sugar", "25% Sugar", "50% Sugar", "75% Sugar", "100% Sugar"];
+  const TOPPINGS = [
+    { name: "Tapioca Pearls", price: 0.50 },
+    { name: "Mini Pearls",    price: 0.50 },
+    { name: "Popping Boba",   price: 0.75 },
+    { name: "Grass Jelly",    price: 0.50 },
+    { name: "Aloe Vera",      price: 0.50 },
+    { name: "Pudding",        price: 0.75 },
+  ];
+
+  const SIZE_UPCHARGE = { "Regular": 0, "Large": 0.75 };
+
+  // ===================== STATE =====================
+
+  let currentItem = null;
+  let selectedOptions = {};
+
   // ===================== WELCOME =====================
 
   document.getElementById("btn-start-order").addEventListener("click", () => {
@@ -170,16 +236,88 @@ Ownership suggestion:
       card.innerHTML = `
         <h3>${item.name}</h3>
         <p>$${item.price.toFixed(2)}</p>
-        <button aria-label="Select ${item.name}">Add</button>
+        <button aria-label="Customize and add ${item.name} to cart">Add</button>
       `;
-      // TODO: open customization modal on next commit
-      card.querySelector("button").addEventListener("click", () => {
-        alert("Customization coming soon!");
-      });
+      card.querySelector("button").addEventListener("click", () => openModal(item));
       container.appendChild(card);
     });
   }
+
+  // ===================== MODAL =====================
+
+  function openModal(item) {
+    currentItem = item;
+    selectedOptions = { size: "Regular", ice: "Regular Ice", sugar: "100% Sugar", toppings: [] };
+
+    document.getElementById("modal-title").textContent = item.name;
+    updateModalPrice();
+    renderOptionButtons("size-options",     SIZES,                                    "size",     false);
+    renderOptionButtons("ice-options",      ICE,                                      "ice",      false);
+    renderOptionButtons("sugar-options",    SUGAR,                                    "sugar",    false);
+    renderOptionButtons("toppings-options", TOPPINGS.map(t => `${t.name} (+$${t.price.toFixed(2)})`), "toppings", true);
+
+    document.getElementById("modal-overlay").classList.add("open");
+    document.getElementById("btn-cancel").focus();
+  }
+
+  function renderOptionButtons(containerId, options, type, multi) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+    options.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.textContent = opt;
+      const isSelected = multi
+        ? selectedOptions.toppings.includes(opt)
+        : selectedOptions[type] === opt;
+      btn.classList.toggle("selected", isSelected);
+      btn.setAttribute("aria-pressed", isSelected ? "true" : "false");
+      btn.addEventListener("click", () => {
+        if (multi) {
+          const idx = selectedOptions.toppings.indexOf(opt);
+          if (idx === -1) selectedOptions.toppings.push(opt);
+          else selectedOptions.toppings.splice(idx, 1);
+        } else {
+          selectedOptions[type] = opt;
+        }
+        renderOptionButtons(containerId, options, type, multi);
+        updateModalPrice();
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  function getToppingPrice(label) {
+    const match = TOPPINGS.find(t => label.startsWith(t.name));
+    return match ? match.price : 0;
+  }
+
+  function updateModalPrice() {
+    const toppingTotal = selectedOptions.toppings.reduce((sum, t) => sum + getToppingPrice(t), 0);
+    const total = currentItem.price + (SIZE_UPCHARGE[selectedOptions.size] || 0) + toppingTotal;
+    document.getElementById("modal-price").textContent = `$${total.toFixed(2)} — ${selectedOptions.size}`;
+  }
+
+  document.getElementById("btn-cancel").addEventListener("click", closeModal);
+  document.getElementById("modal-overlay").addEventListener("click", (e) => {
+    if (e.target === document.getElementById("modal-overlay")) closeModal();
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+  function closeModal() {
+    document.getElementById("modal-overlay").classList.remove("open");
+    currentItem = null;
+  }
+
+  // ===================== ADD TO CART =====================
+
+  document.getElementById("btn-add-to-cart").addEventListener("click", () => {
+    // TODO: add to cart on next commit
+    alert("Cart coming soon!");
+    closeModal();
+  });
 </script>
 </body>
 </html>
+
 
