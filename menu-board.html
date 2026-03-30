@@ -22,3 +22,457 @@ Suggested future sections:
 Ownership suggestion:
 - Assign to teammate responsible for public-display readability and layout
 -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kungfu Boba | Menu Board</title>
+  <style>
+    /* === Global Styles === */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fdf6ec; /* light beige */
+      color: #333;
+    }
+    h1, h2 {
+      margin: 0;
+    }
+
+    /* === Banner / Header === */
+    .board-header {
+      background-color: #fff8f0;
+      border-bottom: 2px solid #e2d8c3;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+    }
+    .header-brand .eyebrow {
+      font-size: 0.9rem;
+      color: #a08c72;
+    }
+    .header-brand h1 {
+      font-size: 2.5rem;
+      color: #b86b48;
+    }
+    .header-meta {
+      text-align: right;
+    }
+    .meta-pill {
+      display: inline-block;
+      background-color: #f7e9d7;
+      color: #b86b48;
+      padding: 0.3rem 0.7rem;
+      border-radius: 12px;
+      margin-left: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    /* === Scrolling ticker === */
+    .ticker-wrap {
+      overflow: hidden;
+      background-color: #f7f0e6;
+      border-bottom: 2px solid #e2d8c3;
+    }
+    .ticker-track {
+      display: flex;
+      animation: scroll 20s linear infinite;
+    }
+    .ticker-track span {
+      padding: 0.5rem 2rem;
+      white-space: nowrap;
+      font-weight: 600;
+      color: #b86b48;
+    }
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* === Main Menu === */
+    .board-main {
+      display: flex;
+      justify-content: space-around;
+      padding: 2rem;
+      gap: 1.5rem;
+    }
+    .menu-column {
+      flex: 1;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      padding: 1rem;
+    }
+    .column-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .cat-icon {
+      font-size: 1.8rem;
+      margin-right: 0.5rem;
+    }
+    h2 {
+      font-size: 1.5rem;
+      color: #b86b48;
+    }
+    .item-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      border-bottom: 1px dashed #eee;
+      padding-bottom: 0.5rem;
+    }
+    .item-info {
+      max-width: 70%;
+    }
+    .item-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #6a3b2d;
+    }
+    .item-desc {
+      font-size: 0.9rem;
+      color: #8c7a6b;
+    }
+    .item-tag {
+      background-color: #ffe6c7;
+      color: #b86b48;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      margin-top: 0.3rem;
+      display: inline-block;
+    }
+    .tag-pop { background-color: #ffd1a6; }
+    .tag-new { background-color: #cde3d7; color: #3b5d4b; }
+
+    .item-price {
+      font-weight: 600;
+      color: #b86b48;
+      font-size: 1rem;
+      text-align: right;
+    }
+
+    /* === Footer / Customization Options === */
+    .board-footer {
+      background-color: #fff8f0;
+      border-top: 2px solid #e2d8c3;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .opt-group {
+      text-align: center;
+    }
+    .opt-label {
+      font-weight: 600;
+      color: #6a3b2d;
+      margin-bottom: 0.3rem;
+    }
+    .opt-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .opt-pill {
+      background-color: #f7e9d7;
+      color: #b86b48;
+      padding: 0.3rem 0.7rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+    }
+    .opt-pill.active {
+      background-color: #b86b48;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Banner -->
+  <header class="board-header">
+    <div class="header-brand">
+      <p class="eyebrow">Artisan Bubble Tea</p>
+      <h1>Kungfu Boba</h1>
+    </div>
+    <div class="header-meta">
+      <span class="meta-pill" id="clock">--:--</span>
+      <span class="meta-pill now-serving">Now Serving</span>
+    </div>
+  </header>
+
+  <!-- Scrolling ticker -->
+  <div class="ticker-wrap" aria-hidden="true">
+    <div class="ticker-track">
+      <span>Brown Sugar Milk Tea</span>
+      <span>Taro Milk Tea</span>
+      <span>Mango Green Tea</span>
+      <span>Matcha Milk Tea</span>
+      <span>Thai Tea</span>
+      <span>Honeydew Milk Tea</span>
+      <span>Lychee Black Tea</span>
+      <span>Cheese Foam Tea</span>
+      <!-- loop duplicates -->
+      <span>Brown Sugar Milk Tea</span>
+      <span>Taro Milk Tea</span>
+      <span>Mango Green Tea</span>
+      <span>Matcha Milk Tea</span>
+      <span>Thai Tea</span>
+      <span>Honeydew Milk Tea</span>
+      <span>Lychee Black Tea</span>
+      <span>Cheese Foam Tea</span>
+    </div>
+  </div>
+
+  <!-- Main menu columns -->
+  <main class="board-main" aria-label="Menu">
+
+    <!-- Milk Teas -->
+    <section class="menu-column" aria-labelledby="cat-milktea">
+      <div class="column-header">
+        <span class="cat-icon">🧋</span>
+        <h2 id="cat-milktea">Milk Teas</h2>
+      </div>
+      <ul class="item-list">
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Brown Sugar Milk Tea</span>
+            <span class="item-desc">Tiger-stripe brown sugar syrup, fresh tapioca pearls</span>
+            <span class="item-tag tag-pop">Popular</span>
+          </div>
+          <span class="item-price">$6.00</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Taro Milk Tea</span>
+            <span class="item-desc">Creamy taro blended with whole milk</span>
+            <span class="item-tag tag-pop">Popular</span>
+          </div>
+          <span class="item-price">$5.75</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Matcha Milk Tea</span>
+            <span class="item-desc">Ceremonial-grade matcha with creamy milk</span>
+          </div>
+          <span class="item-price">$5.75</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Thai Tea</span>
+            <span class="item-desc">Spiced Ceylon tea, evaporated milk, vibrant orange</span>
+          </div>
+          <span class="item-price">$5.75</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Honeydew Milk Tea</span>
+            <span class="item-desc">Sweet honeydew melon blended with fresh milk</span>
+            <span class="item-tag tag-new">New</span>
+          </div>
+          <span class="item-price">$5.75</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Coconut Milk Tea</span>
+            <span class="item-desc">Tropical coconut milk, smooth and refreshing</span>
+          </div>
+          <span class="item-price">$5.75</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Classic Milk Tea</span>
+            <span class="item-desc">Black tea with creamy milk, smooth and timeless</span>
+          </div>
+          <span class="item-price">$5.50</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Fruit Teas -->
+    <section class="menu-column" aria-labelledby="cat-fruittea">
+      <div class="column-header">
+        <span class="cat-icon">🍓</span>
+        <h2 id="cat-fruittea">Fruit Teas</h2>
+      </div>
+      <ul class="item-list">
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Mango Green Tea</span>
+            <span class="item-desc">Fresh mango over light jasmine green tea</span>
+            <span class="item-tag tag-pop">Popular</span>
+          </div>
+          <span class="item-price">$5.50</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Passion Fruit Tea</span>
+            <span class="item-desc">Tangy passion fruit, lightly sweetened green tea</span>
+            <span class="item-tag tag-pop">Popular</span>
+          </div>
+          <span class="item-price">$5.50</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Lychee Black Tea</span>
+            <span class="item-desc">Fragrant lychee over bold Assam black tea</span>
+          </div>
+          <span class="item-price">$5.50</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Peach Oolong Tea</span>
+            <span class="item-desc">Sun-ripe peach meets floral oolong</span>
+          </div>
+          <span class="item-price">$5.50</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Wintermelon Tea</span>
+            <span class="item-desc">Classic delicate wintermelon, lightly sweet</span>
+          </div>
+          <span class="item-price">$5.50</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Fruit Tea Combo</span>
+            <span class="item-desc">Seasonal mixed fruit blend over green tea</span>
+            <span class="item-tag tag-new">New</span>
+          </div>
+          <span class="item-price">$5.75</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Peppermint Tea</span>
+            <span class="item-desc">Cool and refreshing peppermint, served iced</span>
+          </div>
+          <span class="item-price">$5.50</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Tea & Specialty -->
+    <section class="menu-column" aria-labelledby="cat-specialty">
+      <div class="column-header">
+        <span class="cat-icon">🍵</span>
+        <h2 id="cat-specialty">Tea & Specialty</h2>
+      </div>
+      <ul class="item-list">
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Cheese Foam Tea</span>
+            <span class="item-desc">Salted cream cheese crown on any tea base</span>
+            <span class="item-tag tag-pop">Popular</span>
+          </div>
+          <span class="item-price">$6.75</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Jasmine Green Tea</span>
+            <span class="item-desc">Delicate jasmine-scented green tea, served iced</span>
+          </div>
+          <span class="item-price">$5.00</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Oreo Milk Tea</span>
+            <span class="item-desc">Crushed Oreo blended into a creamy milk tea</span>
+          </div>
+          <span class="item-price">$5.75</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Rose Milk Tea</span>
+            <span class="item-desc">Floral rose syrup in a smooth milk tea base</span>
+            <span class="item-tag tag-new">New</span>
+          </div>
+          <span class="item-price">$5.75</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Lavender Milk Tea</span>
+            <span class="item-desc">Calming lavender with creamy whole milk</span>
+            <span class="item-tag tag-new">New</span>
+          </div>
+          <span class="item-price">$5.75</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Almond Milk Tea</span>
+            <span class="item-desc">Nutty almond with lightly sweetened black tea</span>
+          </div>
+          <span class="item-price">$5.75</span>
+        </li>
+        <li class="menu-item">
+          <div class="item-info">
+            <span class="item-name">Coffee Milk Tea</span>
+            <span class="item-desc">Espresso meets classic milk tea — best of both</span>
+          </div>
+          <span class="item-price">$5.75</span>
+        </li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- Footer / Customization Options -->
+  <footer class="board-footer" aria-label="Customization options">
+    <div class="opt-group">
+      <p class="opt-label">Sugar Level</p>
+      <div class="opt-pills">
+        <span class="opt-pill">0%</span>
+        <span class="opt-pill">25%</span>
+        <span class="opt-pill">50%</span>
+        <span class="opt-pill">75%</span>
+        <span class="opt-pill active">100%</span>
+      </div>
+    </div>
+    <div class="opt-group">
+      <p class="opt-label">Ice Level</p>
+      <div class="opt-pills">
+        <span class="opt-pill">No Ice</span>
+        <span class="opt-pill">Less Ice</span>
+        <span class="opt-pill active">Regular</span>
+        <span class="opt-pill">Extra Ice</span>
+      </div>
+    </div>
+    <div class="opt-group">
+      <p class="opt-label">Size</p>
+      <div class="opt-pills">
+        <span class="opt-pill active">Regular</span>
+        <span class="opt-pill">Large +$0.75</span>
+      </div>
+    </div>
+    <div class="opt-group">
+      <p class="opt-label">Toppings +$0.50–$0.75</p>
+      <div class="opt-pills">
+        <span class="opt-pill">Tapioca Pearls</span>
+        <span class="opt-pill">Mini Pearls</span>
+        <span class="opt-pill">Popping Boba</span>
+        <span class="opt-pill">Grass Jelly</span>
+        <span class="opt-pill">Aloe Vera</span>
+        <span class="opt-pill">Pudding</span>
+      </div>
+    </div>
+  </footer>
+
+
+ <!-- add clock time here -->
+
+
+</body>
+</html>
