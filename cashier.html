@@ -23,7 +23,6 @@ Ownership suggestion:
 - Assign to teammate responsible for POS flow and touch-first layout
 -->
 
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -61,8 +60,6 @@ Ownership suggestion:
 
           <div class="shortcut-row" aria-label="Frequent actions">
             <button data-action="hold" type="button">Hold Order</button>
-            <button data-action="void" type="button">Void Last Item</button>
-            <button data-action="discount" type="button">Apply 10% Discount</button>
           </div>
         </section>
 
@@ -75,10 +72,27 @@ Ownership suggestion:
             <li class="empty-state">No items yet. Tap a drink to begin.</li>
           </ul>
 
+          <div class="discount-controls">
+            <label for="discount-input">Discount %</label>
+            <div class="discount-row">
+              <input
+                id="discount-input"
+                type="number"
+                min="0"
+                max="100"
+                step="0.01"
+                placeholder="0"
+              />
+              <button id="apply-discount" type="button">Apply</button>
+              <button id="clear-discount" type="button">Clear</button>
+            </div>
+          </div>
+
           <div class="totals">
             <p><span>Subtotal</span><span id="subtotal">$0.00</span></p>
+            <p><span>Discount</span><span id="discount-amount">-$0.00</span></p>
             <p><span>Tax (8.25%)</span><span id="tax">$0.00</span></p>
-            <p><span>Total</span><span id="total">$0.00</span></p>
+            <p class="grand-total"><span>Total</span><span id="total">$0.00</span></p>
           </div>
 
           <div class="payment-grid">

@@ -28,9 +28,14 @@ const TAX_RATE = 0.0825;
 const menuGrid = document.getElementById("menu-grid");
 const cartList = document.getElementById("cart-list");
 const subtotalEl = document.getElementById("subtotal");
+const discountAmountEl = document.getElementById("discount-amount");
 const taxEl = document.getElementById("tax");
 const totalEl = document.getElementById("total");
 const clearTicketBtn = document.getElementById("clear-ticket");
+const discountInput = document.getElementById("discount-input");
+const applyDiscountBtn = document.getElementById("apply-discount");
+const clearDiscountBtn = document.getElementById("clear-discount");
+const itemSearch = document.getElementById("item-search");
 
 const modal = document.getElementById("customize-modal");
 const modalDrinkName = document.getElementById("modal-drink-name");
@@ -42,18 +47,28 @@ const toppingsList = document.getElementById("toppings-list");
 const previewItemTotal = document.getElementById("preview-item-total");
 const addCustomItemBtn = document.getElementById("add-custom-item");
 const cancelCustomItemBtn = document.getElementById("cancel-custom-item");
+const clockEl = document.getElementById("clock");
 
 let cart = [];
 let currentMenuItem = null;
+let currentEditIndex = null;
+let discountPercent = 0;
 
 function formatMoney(value) {
   return `$${value.toFixed(2)}`;
 }
 
-function renderMenu() {
-  menuGrid.innerHTML = "";
+function updateClock() {
+  const now = new Date();
+  clockEl.textContent = now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
 
-  menuItems.forEach((item) => {
+function renderMenu(filterText = "") {
+  menuGrid.innerHTML = "";
+  const normalized = filterText.trim().toLowerCase();
+  const filtered = menuItems.filter((item) => item.name.toLowerCase().includes(normalized));
+
+  filtered.forEach((item) => {
     const button = document.createElement("button");
     button.className = "menu-item-btn";
     button.type = "button";
@@ -66,7 +81,7 @@ function renderMenu() {
   });
 }
 
-function renderToppings() {
+function renderToppings(selectedNames = []) {
   toppingsList.innerHTML = "";
 
   toppingOptions.forEach((topping, index) => {
@@ -77,23 +92,33 @@ function renderToppings() {
       <span>${topping.name} (+${formatMoney(topping.price)})</span>
     `;
     const checkbox = wrapper.querySelector("input");
+    if (selectedNames.includes(topping.name)) checkbox.checked = true;
     checkbox.addEventListener("change", updatePreviewPrice);
     toppingsList.appendChild(wrapper);
   });
 }
 
-function openCustomizeModal(item) {
+function openCustomizeModal(item, existing = null, editIndex = null) {
   currentMenuItem = item;
+  currentEditIndex = editIndex;
   modalDrinkName.textContent = item.name;
   modalBasePrice.textContent = formatMoney(item.price);
 
-  sizeSelect.value = "Regular";
-  iceSelect.value = "Regular Ice";
-  sugarSelect.value = "100%";
+  if (existing) {
+    sizeSelect.value = existing.customization.size;
+    iceSelect.value = existing.customization.ice;
+    sugarSelect.value = existing.customization.sugar;
+    renderToppings(existing.customization.toppings);
+    addCustomItemBtn.textContent = "Update Item";
+  } else {
+    sizeSelect.value = "Regular";
+    iceSelect.value = "Regular Ice";
+    sugarSelect.value = "100%";
+    renderToppings();
+    addCustomItemBtn.textContent = "Add to Ticket";
+  }
 
-  renderToppings();
   updatePreviewPrice();
-
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
 }
@@ -102,27 +127,24 @@ function closeCustomizeModal() {
   modal.classList.remove("open");
   modal.setAttribute("aria-hidden", "true");
   currentMenuItem = null;
+  currentEditIndex = null;
 }
 
 function getSelectedToppings() {
   const selected = [];
   const checkedBoxes = toppingsList.querySelectorAll("input[type='checkbox']:checked");
-
   checkedBoxes.forEach((box) => {
     const topping = toppingOptions[Number(box.value)];
     if (topping) selected.push(topping);
   });
-
   return selected;
 }
 
 function calculateItemPrice(basePrice) {
   const selectedSize = sizeSelect.value;
   const selectedToppings = getSelectedToppings();
-
   const toppingTotal = selectedToppings.reduce((sum, t) => sum + t.price, 0);
   const sizePrice = sizeUpcharge[selectedSize] || 0;
-
   return basePrice + sizePrice + toppingTotal;
 }
 
@@ -137,7 +159,7 @@ function buildCustomizationText(size, ice, sugar, toppings) {
   return `Size: ${size} | Ice: ${ice} | Sugar: ${sugar} | Toppings: ${toppingText}`;
 }
 
-function addCustomizedItemToCart() {
+function addOrUpdateCustomizedItem() {
   if (!currentMenuItem) return;
 
   const size = sizeSelect.value;
@@ -146,11 +168,23 @@ function addCustomizedItemToCart() {
   const toppings = getSelectedToppings();
   const finalPrice = calculateItemPrice(currentMenuItem.price);
 
-  cart.push({
+  const cartItem = {
     name: currentMenuItem.name,
     detail: buildCustomizationText(size, ice, sugar, toppings),
+    customization: {
+      size,
+      ice,
+      sugar,
+      toppings: toppings.map((t) => t.name)
+    },
     price: finalPrice
-  });
+  };
+
+  if (currentEditIndex === null) {
+    cart.push(cartItem);
+  } else {
+    cart[currentEditIndex] = cartItem;
+  }
 
   renderCart();
   closeCustomizeModal();
@@ -158,10 +192,13 @@ function addCustomizedItemToCart() {
 
 function updateTotals() {
   const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + tax;
+  const discountAmount = subtotal * (discountPercent / 100);
+  const discountedSubtotal = Math.max(0, subtotal - discountAmount);
+  const tax = discountedSubtotal * TAX_RATE;
+  const total = discountedSubtotal + tax;
 
   subtotalEl.textContent = formatMoney(subtotal);
+  discountAmountEl.textContent = `-${formatMoney(discountAmount)}`;
   taxEl.textContent = formatMoney(tax);
   totalEl.textContent = formatMoney(total);
 }
@@ -175,15 +212,19 @@ function renderCart() {
     empty.textContent = "No items yet. Tap a drink to begin.";
     cartList.appendChild(empty);
   } else {
-    cart.forEach((item) => {
+    cart.forEach((item, index) => {
       const row = document.createElement("li");
       row.className = "cart-row";
       row.innerHTML = `
-        <div>
+        <div class="cart-row-main">
           <p class="cart-item-name">${item.name}</p>
           <p class="cart-item-detail">${item.detail}</p>
+          <div class="cart-row-actions">
+            <button class="edit-item" type="button" data-index="${index}">Edit</button>
+            <button class="delete-item" type="button" data-index="${index}">Delete</button>
+          </div>
         </div>
-        <span>${formatMoney(item.price)}</span>
+        <span class="cart-row-price">${formatMoney(item.price)}</span>
       `;
       cartList.appendChild(row);
     });
@@ -192,15 +233,54 @@ function renderCart() {
   updateTotals();
 }
 
+function applyDiscount() {
+  const raw = Number(discountInput.value);
+  if (Number.isNaN(raw)) return;
+  const clamped = Math.max(0, Math.min(100, raw));
+  discountPercent = clamped;
+  discountInput.value = clamped.toFixed(2).replace(/\.00$/, "");
+  updateTotals();
+}
+
+function clearDiscount() {
+  discountPercent = 0;
+  discountInput.value = "";
+  updateTotals();
+}
+
+cartList.addEventListener("click", (event) => {
+  const target = event.target;
+
+  if (target.classList.contains("delete-item")) {
+    const index = Number(target.dataset.index);
+    cart.splice(index, 1);
+    renderCart();
+    return;
+  }
+
+  if (target.classList.contains("edit-item")) {
+    const index = Number(target.dataset.index);
+    const item = cart[index];
+    const menuItem = menuItems.find((m) => m.name === item.name);
+    if (menuItem) openCustomizeModal(menuItem, item, index);
+  }
+});
+
 sizeSelect.addEventListener("change", updatePreviewPrice);
 iceSelect.addEventListener("change", updatePreviewPrice);
 sugarSelect.addEventListener("change", updatePreviewPrice);
-addCustomItemBtn.addEventListener("click", addCustomizedItemToCart);
+addCustomItemBtn.addEventListener("click", addOrUpdateCustomizedItem);
 cancelCustomItemBtn.addEventListener("click", closeCustomizeModal);
 clearTicketBtn.addEventListener("click", () => {
   cart = [];
+  clearDiscount();
   renderCart();
 });
+applyDiscountBtn.addEventListener("click", applyDiscount);
+clearDiscountBtn.addEventListener("click", clearDiscount);
+itemSearch.addEventListener("input", (event) => renderMenu(event.target.value));
 
 renderMenu();
 renderCart();
+updateClock();
+setInterval(updateClock, 60000);
