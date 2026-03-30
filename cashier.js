@@ -36,6 +36,13 @@ const discountInput = document.getElementById("discount-input");
 const applyDiscountBtn = document.getElementById("apply-discount");
 const clearDiscountBtn = document.getElementById("clear-discount");
 const itemSearch = document.getElementById("item-search");
+const clockEl = document.getElementById("clock");
+const ticketIdEl = document.getElementById("ticket-id");
+const statusBannerEl = document.getElementById("status-banner");
+const holdOrderBtn = document.getElementById("hold-order");
+const payCashBtn = document.getElementById("pay-cash");
+const payCardBtn = document.getElementById("pay-card");
+const payMobileBtn = document.getElementById("pay-mobile");
 
 const modal = document.getElementById("customize-modal");
 const modalDrinkName = document.getElementById("modal-drink-name");
@@ -47,20 +54,29 @@ const toppingsList = document.getElementById("toppings-list");
 const previewItemTotal = document.getElementById("preview-item-total");
 const addCustomItemBtn = document.getElementById("add-custom-item");
 const cancelCustomItemBtn = document.getElementById("cancel-custom-item");
-const clockEl = document.getElementById("clock");
 
 let cart = [];
 let currentMenuItem = null;
 let currentEditIndex = null;
 let discountPercent = 0;
+let ticketNumber = 1001;
+let heldOrderCount = 0;
 
 function formatMoney(value) {
   return `$${value.toFixed(2)}`;
 }
 
+function showStatus(message) {
+  statusBannerEl.textContent = message;
+}
+
 function updateClock() {
   const now = new Date();
   clockEl.textContent = now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
+function updateTicketDisplay() {
+  ticketIdEl.textContent = `Ticket #${ticketNumber}`;
 }
 
 function renderMenu(filterText = "") {
@@ -182,21 +198,28 @@ function addOrUpdateCustomizedItem() {
 
   if (currentEditIndex === null) {
     cart.push(cartItem);
+    showStatus(`${cartItem.name} added to ticket.`);
   } else {
     cart[currentEditIndex] = cartItem;
+    showStatus(`${cartItem.name} updated.`);
   }
 
   renderCart();
   closeCustomizeModal();
 }
 
-function updateTotals() {
+function calculateTotals() {
   const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
   const discountAmount = subtotal * (discountPercent / 100);
   const discountedSubtotal = Math.max(0, subtotal - discountAmount);
   const tax = discountedSubtotal * TAX_RATE;
   const total = discountedSubtotal + tax;
 
+  return { subtotal, discountAmount, tax, total };
+}
+
+function updateTotals() {
+  const { subtotal, discountAmount, tax, total } = calculateTotals();
   subtotalEl.textContent = formatMoney(subtotal);
   discountAmountEl.textContent = `-${formatMoney(discountAmount)}`;
   taxEl.textContent = formatMoney(tax);
@@ -240,6 +263,7 @@ function applyDiscount() {
   discountPercent = clamped;
   discountInput.value = clamped.toFixed(2).replace(/\.00$/, "");
   updateTotals();
+  showStatus(`Applied ${discountPercent}% discount.`);
 }
 
 function clearDiscount() {
@@ -248,13 +272,51 @@ function clearDiscount() {
   updateTotals();
 }
 
+function clearCurrentTicket() {
+  cart = [];
+  clearDiscount();
+  renderCart();
+}
+
+function advanceTicket() {
+  ticketNumber += 1;
+  updateTicketDisplay();
+}
+
+function holdCurrentOrder() {
+  if (cart.length === 0) {
+    showStatus("Cannot hold an empty ticket.");
+    return;
+  }
+
+  heldOrderCount += 1;
+  const heldTotal = calculateTotals().total;
+  clearCurrentTicket();
+  showStatus(`Held order #${heldOrderCount} (${formatMoney(heldTotal)}).`);
+  advanceTicket();
+}
+
+function processPayment(methodName) {
+  if (cart.length === 0) {
+    showStatus("Cannot process payment. Ticket is empty.");
+    return;
+  }
+
+  const finalTotal = calculateTotals().total;
+  showStatus(`${methodName} payment accepted for ${formatMoney(finalTotal)}.`);
+  clearCurrentTicket();
+  advanceTicket();
+}
+
 cartList.addEventListener("click", (event) => {
   const target = event.target;
 
   if (target.classList.contains("delete-item")) {
     const index = Number(target.dataset.index);
+    const removedName = cart[index]?.name || "Item";
     cart.splice(index, 1);
     renderCart();
+    showStatus(`${removedName} removed from ticket.`);
     return;
   }
 
@@ -271,16 +333,31 @@ iceSelect.addEventListener("change", updatePreviewPrice);
 sugarSelect.addEventListener("change", updatePreviewPrice);
 addCustomItemBtn.addEventListener("click", addOrUpdateCustomizedItem);
 cancelCustomItemBtn.addEventListener("click", closeCustomizeModal);
-clearTicketBtn.addEventListener("click", () => {
-  cart = [];
-  clearDiscount();
-  renderCart();
+
+modal.addEventListener("click", (event) => {
+  if (event.target === modal) closeCustomizeModal();
 });
+
+clearTicketBtn.addEventListener("click", () => {
+  clearCurrentTicket();
+  showStatus("Current ticket cleared.");
+});
+
+holdOrderBtn.addEventListener("click", holdCurrentOrder);
+payCashBtn.addEventListener("click", () => processPayment("Cash"));
+payCardBtn.addEventListener("click", () => processPayment("Card"));
+payMobileBtn.addEventListener("click", () => processPayment("Mobile"));
+
 applyDiscountBtn.addEventListener("click", applyDiscount);
-clearDiscountBtn.addEventListener("click", clearDiscount);
+clearDiscountBtn.addEventListener("click", () => {
+  clearDiscount();
+  showStatus("Discount cleared.");
+});
+
 itemSearch.addEventListener("input", (event) => renderMenu(event.target.value));
 
 renderMenu();
 renderCart();
+updateTicketDisplay();
 updateClock();
 setInterval(updateClock, 60000);

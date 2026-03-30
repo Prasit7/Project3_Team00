@@ -23,6 +23,7 @@ Ownership suggestion:
 - Assign to teammate responsible for POS flow and touch-first layout
 -->
 
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -44,6 +45,10 @@ Ownership suggestion:
         </div>
       </header>
 
+      <p class="status-banner" id="status-banner" aria-live="polite">
+        Ready for next order.
+      </p>
+
       <main class="pos-layout">
         <section class="order-panel" aria-labelledby="menu-heading">
           <div class="panel-heading">
@@ -59,7 +64,7 @@ Ownership suggestion:
           <div class="menu-grid" id="menu-grid"></div>
 
           <div class="shortcut-row" aria-label="Frequent actions">
-            <button data-action="hold" type="button">Hold Order</button>
+            <button id="hold-order" data-action="hold" type="button">Hold Order</button>
           </div>
         </section>
 
@@ -96,9 +101,9 @@ Ownership suggestion:
           </div>
 
           <div class="payment-grid">
-            <button type="button">Cash</button>
-            <button type="button">Card</button>
-            <button type="button">Mobile Pay</button>
+            <button id="pay-cash" type="button">Cash</button>
+            <button id="pay-card" type="button">Card</button>
+            <button id="pay-mobile" type="button">Mobile Pay</button>
             <button id="clear-ticket" type="button">Clear Ticket</button>
           </div>
         </aside>
