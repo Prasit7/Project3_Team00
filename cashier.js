@@ -1,4 +1,4 @@
-const menuItems = [
+const fallbackMenuItems = [
   { name: "Classic Milk Tea", price: 5.5 },
   { name: "Taro Milk Tea", price: 5.75 },
   { name: "Thai Tea", price: 5.75 },
@@ -10,6 +10,8 @@ const menuItems = [
   { name: "Jasmine Green Tea", price: 5.0 },
   { name: "Honey Oolong Tea", price: 5.25 }
 ];
+
+let menuItems = [...fallbackMenuItems];
 
 const toppingOptions = [
   { name: "Tapioca Pearls", price: 0.5 },
@@ -70,6 +72,25 @@ function showStatus(message) {
   statusBannerEl.textContent = message;
 }
 
+async function fetchJson(url) {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    let errorMessage = `Request failed with status ${response.status}`;
+
+    try {
+      const body = await response.json();
+      if (body?.error) errorMessage = body.error;
+    } catch (_error) {
+      // Ignore invalid JSON error bodies and keep the default message.
+    }
+
+    throw new Error(errorMessage);
+  }
+
+  return response.json();
+}
+
 function updateClock() {
   const now = new Date();
   clockEl.textContent = now.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
@@ -95,6 +116,33 @@ function renderMenu(filterText = "") {
     button.addEventListener("click", () => openCustomizeModal(item));
     menuGrid.appendChild(button);
   });
+}
+
+async function loadDatabaseStatus() {
+  try {
+    await fetchJson("/api/health");
+    showStatus("Database connected. Ready for next order.");
+  } catch (error) {
+    showStatus(`Database unavailable. Using fallback menu. ${error.message}`);
+  }
+}
+
+async function loadMenuItems() {
+  try {
+    const items = await fetchJson("/api/menu-items");
+
+    if (Array.isArray(items) && items.length > 0) {
+      menuItems = items.map((item) => ({
+        id: item.id,
+        name: item.name,
+        price: Number(item.price)
+      }));
+      renderMenu(itemSearch.value);
+    }
+  } catch (_error) {
+    menuItems = [...fallbackMenuItems];
+    renderMenu(itemSearch.value);
+  }
 }
 
 function renderToppings(selectedNames = []) {
@@ -356,8 +404,10 @@ clearDiscountBtn.addEventListener("click", () => {
 
 itemSearch.addEventListener("input", (event) => renderMenu(event.target.value));
 
-renderMenu();
 renderCart();
 updateTicketDisplay();
 updateClock();
 setInterval(updateClock, 60000);
+
+loadDatabaseStatus();
+loadMenuItems();

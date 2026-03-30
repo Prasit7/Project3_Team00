@@ -1,0 +1,21 @@
+menu_item_id,name,category,base_price,is_available
+1,Classic Milk Tea,Milk Tea,5.5,True
+2,Brown Sugar Milk Tea,Milk Tea,6.0,True
+3,Taro Milk Tea,Milk Tea,5.75,True
+4,Matcha Milk Tea,Milk Tea,6.25,True
+5,Thai Tea,Milk Tea,5.5,True
+6,Honeydew Milk Tea,Milk Tea,5.75,True
+7,Mango Green Tea,Fruit Tea,5.5,True
+8,Passion Fruit Tea,Fruit Tea,5.25,True
+9,Lychee Black Tea,Fruit Tea,5.25,True
+10,Peach Oolong Tea,Fruit Tea,5.5,True
+11,Wintermelon Tea,Fruit Tea,5.0,True
+12,Jasmine Green Tea,Tea,4.75,True
+13,Strawberry Milk Tea,Milk Tea,6.0,True
+14,Coconut Milk Tea,Milk Tea,5.75,True
+15,Coffee Milk Tea,Milk Tea,6.25,True
+16,Almond Milk Tea,Milk Tea,6.0,True
+17,Rose Milk Tea,Milk Tea,6.5,True
+18,Lavender Milk Tea,Milk Tea,6.5,True
+19,Cheese Foam Tea,Specialty,7.0,True
+20,Fruit Tea Combo,Fruit Tea,7.5,True

@@ -1,0 +1,41 @@
+inventory_item_id,name,quantity_on_hand,unit
+1,Black Tea Leaves,1000,oz
+2,Green Tea Leaves,1000,oz
+3,Oolong Tea Leaves,800,oz
+4,Jasmine Tea Leaves,800,oz
+5,Whole Milk,5000,oz
+6,Non-Dairy Creamer,3000,oz
+7,Almond Milk,2000,oz
+8,Coconut Milk,2000,oz
+9,Brown Sugar Syrup,2000,oz
+10,Taro Powder,1500,oz
+11,Matcha Powder,1000,oz
+12,Thai Tea Mix,1500,oz
+13,Honeydew Syrup,1200,oz
+14,Mango Syrup,1200,oz
+15,Passion Fruit Syrup,1200,oz
+16,Lychee Syrup,1200,oz
+17,Peach Syrup,1200,oz
+18,Wintermelon Syrup,1200,oz
+19,Strawberry Syrup,1200,oz
+20,Rose Syrup,1000,oz
+21,Lavender Syrup,1000,oz
+22,Coffee Extract,1000,oz
+23,Cheese Foam Powder,800,oz
+24,Tapioca Pearls,3000,oz
+25,Mini Tapioca Pearls,2000,oz
+26,Popping Boba - Strawberry,1500,oz
+27,Popping Boba - Mango,1500,oz
+28,Grass Jelly,1500,oz
+29,Aloe Vera,1500,oz
+30,Simple Syrup,3000,oz
+31,Ice Cubes,10000,oz
+32,16oz Cup,5000,unit
+33,20oz Cup,5000,unit
+34,24oz Cup,5000,unit
+35,Plastic Lid - 16oz,5000,unit
+36,Plastic Lid - 20oz,5000,unit
+37,Plastic Lid - 24oz,5000,unit
+38,Wide Straw,10000,unit
+39,Regular Straw,10000,unit
+40,Napkins,15000,unit

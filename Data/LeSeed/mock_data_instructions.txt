@@ -1,0 +1,7 @@
+How the data was created
+
+The scripts were created based on our database design document.
+Peer-programming was utilized on all parts of script making and data creation
+ChatGPT was the generaltive AI that assisted us in creation of the script
+We based our mock data requirements based on the project requirements for 5 members
+Our script for data generation is available in project2-team00/LeSeed/

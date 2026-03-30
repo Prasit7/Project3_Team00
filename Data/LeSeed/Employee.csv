@@ -1,0 +1,8 @@
+employee_id,first_name,last_name,role,is_active
+1,Sarah,Johnson,Manager,True
+2,Michael,Chen,Cashier,True
+3,Emily,Rodriguez,Cashier,True
+4,David,Kim,Cashier,True
+5,Jessica,Patel,Cashier,True
+6,James,Wilson,Manager,True
+7,Maria,Garcia,Cashier,False

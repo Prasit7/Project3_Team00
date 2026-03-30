@@ -1,0 +1,16 @@
+modifier_id,name,price_delta,modifier_type,is_available
+1,Tapioca Pearls,0.5,Topping,True
+2,Mini Pearls,0.5,Topping,True
+3,Popping Boba,0.75,Topping,True
+4,Grass Jelly,0.5,Topping,True
+5,Aloe Vera,0.5,Topping,True
+6,Pudding,0.75,Topping,True
+7,0% Sugar,0.0,Sugar Level,True
+8,25% Sugar,0.0,Sugar Level,True
+9,50% Sugar,0.0,Sugar Level,True
+10,75% Sugar,0.0,Sugar Level,True
+11,100% Sugar,0.0,Sugar Level,True
+12,No Ice,0.0,Ice Level,True
+13,Less Ice,0.0,Ice Level,True
+14,Regular Ice,0.0,Ice Level,True
+15,Extra Ice,0.0,Ice Level,True
