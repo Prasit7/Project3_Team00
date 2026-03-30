@@ -24,3 +24,47 @@ Suggested future sections:
 Ownership suggestion:
 - Assign to teammate responsible for kiosk UX, accessibility, and customer journey
 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Kiosk</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; font-size: 18px; }
+
+    #welcome-screen {
+      display: flex;
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px;
+    }
+    #welcome-screen h1 { margin-bottom: 16px; }
+    #welcome-screen p { margin-bottom: 24px; }
+    button { font-size: 1rem; cursor: pointer; min-height: 44px; min-width: 44px; padding: 16px 32px; }
+  </style>
+</head>
+<body>
+
+<div id="welcome-screen" role="main" aria-label="Welcome screen">
+  <h1>Welcome</h1>
+  <p>Tap below to start your order</p>
+  <button id="btn-start-order">Tap to Order</button>
+</div>
+
+<script>
+  document.getElementById("btn-start-order").addEventListener("click", () => {
+    // TODO: navigate to menu on next commit
+    alert("Menu coming soon!");
+  });
+</script>
+</body>
+</html>
+
