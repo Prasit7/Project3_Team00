@@ -57,14 +57,12 @@ Ownership suggestion:
             />
           </div>
 
-          <div class="menu-grid" id="menu-grid">
-            <!-- menu buttons rendered by cashier.js -->
-          </div>
+          <div class="menu-grid" id="menu-grid"></div>
 
           <div class="shortcut-row" aria-label="Frequent actions">
-            <button data-action="hold">Hold Order</button>
-            <button data-action="void">Void Last Item</button>
-            <button data-action="discount">Apply 10% Discount</button>
+            <button data-action="hold" type="button">Hold Order</button>
+            <button data-action="void" type="button">Void Last Item</button>
+            <button data-action="discount" type="button">Apply 10% Discount</button>
           </div>
         </section>
 
@@ -84,13 +82,53 @@ Ownership suggestion:
           </div>
 
           <div class="payment-grid">
-            <button>Cash</button>
-            <button>Card</button>
-            <button>Mobile Pay</button>
-            <button id="clear-ticket">Clear Ticket</button>
+            <button type="button">Cash</button>
+            <button type="button">Card</button>
+            <button type="button">Mobile Pay</button>
+            <button id="clear-ticket" type="button">Clear Ticket</button>
           </div>
         </aside>
       </main>
+    </div>
+
+    <div id="customize-modal" class="modal-overlay" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-drink-name">
+        <h3 id="modal-drink-name">Customize Drink</h3>
+        <p class="modal-base">Base: <span id="modal-base-price">$0.00</span></p>
+
+        <label class="field-label" for="size-select">Size</label>
+        <select id="size-select">
+          <option value="Regular">Regular</option>
+          <option value="Large">Large (+$0.75)</option>
+        </select>
+
+        <label class="field-label" for="ice-select">Ice Level</label>
+        <select id="ice-select">
+          <option value="No Ice">No Ice</option>
+          <option value="Less Ice">Less Ice</option>
+          <option value="Regular Ice" selected>Regular Ice</option>
+          <option value="Extra Ice">Extra Ice</option>
+        </select>
+
+        <label class="field-label" for="sugar-select">Sugar Level</label>
+        <select id="sugar-select">
+          <option value="0%">0%</option>
+          <option value="25%">25%</option>
+          <option value="50%">50%</option>
+          <option value="75%">75%</option>
+          <option value="100%" selected>100%</option>
+        </select>
+
+        <p class="field-label">Toppings</p>
+        <div id="toppings-list" class="toppings-list"></div>
+
+        <p class="preview-total">Item Total: <strong id="preview-item-total">$0.00</strong></p>
+
+        <div class="modal-actions">
+          <button id="cancel-custom-item" type="button">Cancel</button>
+          <button id="add-custom-item" type="button">Add to Ticket</button>
+        </div>
+      </div>
     </div>
 
     <script src="cashier.js"></script>
