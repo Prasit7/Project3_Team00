@@ -22,3 +22,73 @@ Suggested future sections:
 Ownership suggestion:
 - Assign to teammate responsible for POS flow and touch-first layout
 -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kungfu Boba | Cashier POS</title>
+  </head>
+  <body>
+    <div class="cashier-app">
+      <header class="pos-header">
+        <div>
+          <p class="eyebrow">Kungfu Boba Register</p>
+          <h1>Cashier Interface</h1>
+        </div>
+        <div class="shift-meta">
+          <span class="meta-pill" id="ticket-id">Ticket #1001</span>
+          <span class="meta-pill" id="clock">--:-- --</span>
+        </div>
+      </header>
+
+      <main class="pos-layout">
+        <section class="order-panel" aria-labelledby="menu-heading">
+          <div class="panel-heading">
+            <h2 id="menu-heading">Quick Add Menu</h2>
+            <input
+              id="item-search"
+              type="search"
+              placeholder="Search drink..."
+              aria-label="Search menu items"
+            />
+          </div>
+
+          <div class="menu-grid" id="menu-grid">
+            <!-- menu buttons will go here -->
+          </div>
+
+          <div class="shortcut-row" aria-label="Frequent actions">
+            <button data-action="hold">Hold Order</button>
+            <button data-action="void">Void Last Item</button>
+            <button data-action="discount">Apply 10% Discount</button>
+          </div>
+        </section>
+
+        <aside class="cart-panel" aria-labelledby="cart-heading">
+          <div class="panel-heading">
+            <h2 id="cart-heading">Current Ticket</h2>
+          </div>
+
+          <ul class="cart-list" id="cart-list" aria-live="polite">
+            <li class="empty-state">No items yet. Tap a drink to begin.</li>
+          </ul>
+
+          <div class="totals">
+            <p><span>Subtotal</span><span id="subtotal">$0.00</span></p>
+            <p><span>Tax (8.25%)</span><span id="tax">$0.00</span></p>
+            <p><span>Total</span><span id="total">$0.00</span></p>
+          </div>
+
+          <div class="payment-grid">
+            <button>Cash</button>
+            <button>Card</button>
+            <button>Mobile Pay</button>
+            <button id="clear-ticket">Clear Ticket</button>
+          </div>
+        </aside>
+      </main>
+    </div>
+  </body>
+</html>
