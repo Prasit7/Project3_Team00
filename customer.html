@@ -34,7 +34,9 @@ Ownership suggestion:
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: sans-serif; font-size: 18px; }
+    .hidden { display: none; }
 
+    /* Welcome */
     #welcome-screen {
       display: flex;
       position: fixed;
@@ -46,24 +48,137 @@ Ownership suggestion:
       text-align: center;
       padding: 40px;
     }
+    #welcome-screen.hidden { display: none; }
     #welcome-screen h1 { margin-bottom: 16px; }
     #welcome-screen p { margin-bottom: 24px; }
-    button { font-size: 1rem; cursor: pointer; min-height: 44px; min-width: 44px; padding: 16px 32px; }
+
+    /* App */
+    #app { display: flex; flex-direction: column; min-height: 100vh; }
+    header { padding: 16px; border-bottom: 1px solid #000; }
+    main { padding: 16px; }
+
+    /* Category tabs */
+    #category-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+
+    /* Menu grid */
+    #menu-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .menu-card { border: 1px solid #000; padding: 12px; text-align: center; }
+    .menu-card button { width: 100%; padding: 10px; margin-top: 8px; }
+
+    /* Touch-friendly */
+    button { font-size: 1rem; cursor: pointer; min-height: 44px; min-width: 44px; }
   </style>
 </head>
 <body>
 
+<!-- WELCOME SCREEN -->
 <div id="welcome-screen" role="main" aria-label="Welcome screen">
   <h1>Welcome</h1>
   <p>Tap below to start your order</p>
   <button id="btn-start-order">Tap to Order</button>
 </div>
 
+<!-- MAIN APP -->
+<div id="app" class="hidden">
+  <header>
+    <h1>Customer Kiosk</h1>
+  </header>
+  <main>
+    <div id="category-tabs" role="tablist" aria-label="Menu categories"></div>
+    <div id="menu-items" role="list" aria-label="Menu items"></div>
+  </main>
+</div>
+
 <script>
+  // ===================== DATA =====================
+
+  const MENU = {
+    "Milk Tea": [
+      { id: 8,  name: "Brown Sugar Milk Tea",         price: 6.00 },
+      { id: 9,  name: "Taro Milk Tea",                price: 5.75 },
+      { id: 10, name: "Matcha Milk Tea",              price: 5.75 },
+      { id: 11, name: "Thai Tea",                     price: 5.75 },
+      { id: 12, name: "Honeydew Milk Tea",            price: 5.75 },
+      { id: 13, name: "Strawberry Milk Tea",          price: 5.75 },
+      { id: 14, name: "Coconut Milk Tea",             price: 5.75 },
+      { id: 15, name: "Coffee Milk Tea",              price: 5.75 },
+      { id: 16, name: "Almond Milk Tea",              price: 5.75 },
+      { id: 17, name: "Rose Milk Tea",                price: 5.75 },
+      { id: 18, name: "Lavender Milk Tea",            price: 5.75 },
+      { id: 19, name: "Java Milk Tea",                price: 5.75 },
+      { id: 20, name: "Classic Milk Tea",             price: 5.50 },
+      { id: 21, name: "Bunny Carrot Cake Milk Tea",   price: 6.25 },
+      { id: 22, name: "Easter Special Fruit Tea",     price: 6.25 },
+      { id: 23, name: "Christmas Cookie Tea",         price: 6.25 },
+      { id: 24, name: "Turkey Milk Tea",              price: 6.25 },
+      { id: 25, name: "Christmas Cookie Milk Tea",    price: 6.25 },
+    ],
+    "Fruit Tea": [
+      { id: 1,  name: "Mango Green Tea",              price: 5.50 },
+      { id: 2,  name: "Passion Fruit Tea",            price: 5.50 },
+      { id: 3,  name: "Lychee Black Tea",             price: 5.50 },
+      { id: 4,  name: "Peach Oolong Tea",             price: 5.50 },
+      { id: 5,  name: "Wintermelon Tea",              price: 5.50 },
+      { id: 6,  name: "Fruit Tea Combo",              price: 5.75 },
+      { id: 7,  name: "Peppermint",                   price: 5.50 },
+    ],
+    "Tea": [
+      { id: 26, name: "Jasmine Green Tea",            price: 5.00 },
+      { id: 27, name: "Oreo Milk Tea",                price: 5.75 },
+      { id: 28, name: "Backend Milk Tea",             price: 5.75 },
+    ],
+    "Specialty": [
+      { id: 29, name: "Cheese Foam Tea",              price: 6.75 },
+    ]
+  };
+
+  // ===================== WELCOME =====================
+
   document.getElementById("btn-start-order").addEventListener("click", () => {
-    // TODO: navigate to menu on next commit
-    alert("Menu coming soon!");
+    document.getElementById("welcome-screen").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
   });
+
+  // ===================== MENU =====================
+
+  buildCategoryTabs();
+  showCategory(Object.keys(MENU)[0]);
+
+  function buildCategoryTabs() {
+    const tabs = document.getElementById("category-tabs");
+    Object.keys(MENU).forEach((cat, i) => {
+      const btn = document.createElement("button");
+      btn.textContent = cat;
+      btn.setAttribute("role", "tab");
+      btn.setAttribute("aria-selected", i === 0 ? "true" : "false");
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#category-tabs button").forEach(b => b.setAttribute("aria-selected", "false"));
+        btn.setAttribute("aria-selected", "true");
+        showCategory(cat);
+      });
+      tabs.appendChild(btn);
+    });
+  }
+
+  function showCategory(category) {
+    const container = document.getElementById("menu-items");
+    container.innerHTML = "";
+    MENU[category].forEach(item => {
+      const card = document.createElement("div");
+      card.className = "menu-card";
+      card.setAttribute("role", "listitem");
+      card.innerHTML = `
+        <h3>${item.name}</h3>
+        <p>$${item.price.toFixed(2)}</p>
+        <button aria-label="Select ${item.name}">Add</button>
+      `;
+      // TODO: open customization modal on next commit
+      card.querySelector("button").addEventListener("click", () => {
+        alert("Customization coming soon!");
+      });
+      container.appendChild(card);
+    });
+  }
 </script>
 </body>
 </html>
