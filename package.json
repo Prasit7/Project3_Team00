@@ -1,15 +1,30 @@
 {
-  "name": "project3-team00",
+  "name": "project3_team00",
   "version": "1.0.0",
-  "private": true,
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Prasit7/Project3_Team00.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Prasit7/Project3_Team00/issues"
+  },
+  "homepage": "https://github.com/Prasit7/Project3_Team00#readme",
+  "description": "",
+  "private": true,
   "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "pg": "^8.13.3"
+    "next": "^16.2.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   }
 }
