@@ -228,6 +228,12 @@
   background: #f8fbff;
 }
 
+.orderItemCardActive {
+  border-color: #0b7d51;
+  box-shadow: inset 0 0 0 1px #0b7d51;
+  background: #eef9f2;
+}
+
 .orderItemTop {
   display: flex;
   justify-content: space-between;
@@ -255,6 +261,23 @@
   color: #8c1d18;
   font-weight: 700;
   padding: 0 10px;
+}
+
+.selectForModsButton {
+  margin-top: 8px;
+  min-height: 38px;
+  border-radius: 10px;
+  border: 1px solid #b8cde8;
+  background: #ffffff;
+  color: #1f3254;
+  font-weight: 700;
+  padding: 0 10px;
+}
+
+.modifierSummary {
+  margin: 8px 0 0;
+  font-size: 0.84rem;
+  color: #365074;
 }
 
 .orderItemBottom {
@@ -292,6 +315,68 @@
   margin: 0;
   font-weight: 800;
   color: #14213d;
+}
+
+.modifierPanel {
+  border: 1px solid #c5d7ec;
+  background: #f7fbff;
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.modifierTitle {
+  margin: 0;
+  font-weight: 800;
+  color: #14213d;
+}
+
+.modifierHelp {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #4f6381;
+}
+
+.modifierChipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.modifierChip {
+  min-height: 36px;
+  border-radius: 999px;
+  border: 1px solid #bfd5ee;
+  background: #ffffff;
+  color: #1f3254;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0 12px;
+}
+
+.modifierChip:disabled {
+  opacity: 0.5;
+}
+
+.modifierChipActive {
+  border-color: #0b7d51;
+  background: #dff5eb;
+  color: #0b5c3c;
+}
+
+.customModifierRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.customModifierInput {
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid #b9cadf;
+  padding: 0 12px;
+  background: #ffffff;
 }
 
 .actionButton,

@@ -3,14 +3,25 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "../../app/cashier/cashier.module.css";
 
+const MODIFIER_PRESETS = [
+  "No Ice",
+  "Light Ice",
+  "Extra Shot",
+  "No Sugar",
+  "Extra Sweet",
+  "Large Size",
+];
+
 export default function CashierShell() {
   const [menuItems, setMenuItems] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedItemId, setSelectedItemId] = useState(null);
+  const [activeOrderItemId, setActiveOrderItemId] = useState(null);
   const [isLoadingMenu, setIsLoadingMenu] = useState(true);
   const [menuError, setMenuError] = useState("");
+  const [customModifierInput, setCustomModifierInput] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -68,6 +79,10 @@ export default function CashierShell() {
     () => menuItems.find((item) => item.id === selectedItemId) || null,
     [menuItems, selectedItemId]
   );
+  const activeOrderItem = useMemo(
+    () => orderItems.find((item) => item.id === activeOrderItemId) || null,
+    [orderItems, activeOrderItemId]
+  );
 
   const orderTotal = useMemo(() => {
     return orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -88,6 +103,7 @@ export default function CashierShell() {
             category: selectedItem.category,
             price: Number(selectedItem.price || 0),
             quantity: 1,
+            modifiers: [],
           },
         ];
       }
@@ -96,6 +112,7 @@ export default function CashierShell() {
         index === existingIndex ? { ...item, quantity: item.quantity + 1 } : item
       );
     });
+    setActiveOrderItemId(selectedItem.id);
   }
 
   function updateOrderItemQuantity(itemId, nextQuantity) {
@@ -108,6 +125,44 @@ export default function CashierShell() {
 
   function removeOrderItem(itemId) {
     setOrderItems((previousItems) => previousItems.filter((item) => item.id !== itemId));
+    if (activeOrderItemId === itemId) {
+      setActiveOrderItemId(null);
+      setCustomModifierInput("");
+    }
+  }
+
+  function toggleModifier(modifierLabel) {
+    if (!activeOrderItem) return;
+
+    setOrderItems((previousItems) =>
+      previousItems.map((item) => {
+        if (item.id !== activeOrderItem.id) return item;
+        const hasModifier = item.modifiers.includes(modifierLabel);
+        return {
+          ...item,
+          modifiers: hasModifier
+            ? item.modifiers.filter((modifier) => modifier !== modifierLabel)
+            : [...item.modifiers, modifierLabel],
+        };
+      })
+    );
+  }
+
+  function addCustomModifier() {
+    if (!activeOrderItem) return;
+    const trimmedValue = customModifierInput.trim();
+    if (!trimmedValue) return;
+    if (activeOrderItem.modifiers.includes(trimmedValue)) {
+      setCustomModifierInput("");
+      return;
+    }
+
+    setOrderItems((previousItems) =>
+      previousItems.map((item) =>
+        item.id === activeOrderItem.id ? { ...item, modifiers: [...item.modifiers, trimmedValue] } : item
+      )
+    );
+    setCustomModifierInput("");
   }
 
   return (
@@ -186,7 +241,10 @@ export default function CashierShell() {
             {orderItems.length > 0 ? (
               <div className={styles.orderItemsList}>
                 {orderItems.map((item) => (
-                  <article key={item.id} className={styles.orderItemCard}>
+                  <article
+                    key={item.id}
+                    className={`${styles.orderItemCard} ${activeOrderItemId === item.id ? styles.orderItemCardActive : ""}`}
+                  >
                     <div className={styles.orderItemTop}>
                       <div>
                         <p className={styles.orderItemName}>{item.name}</p>
@@ -201,6 +259,16 @@ export default function CashierShell() {
                         Remove
                       </button>
                     </div>
+                    <button
+                      type="button"
+                      className={styles.selectForModsButton}
+                      onClick={() => setActiveOrderItemId(item.id)}
+                    >
+                      {activeOrderItemId === item.id ? "Selected for Modifications" : "Select for Modifications"}
+                    </button>
+                    {item.modifiers.length > 0 && (
+                      <p className={styles.modifierSummary}>Mods: {item.modifiers.join(", ")}</p>
+                    )}
                     <div className={styles.orderItemBottom}>
                       <div className={styles.qtyControls}>
                         <button
@@ -248,7 +316,45 @@ export default function CashierShell() {
             >
               Add Selected Item
             </button>
-            <button className={styles.actionButton} disabled>Apply Modifications</button>
+            <div className={styles.modifierPanel}>
+              <p className={styles.modifierTitle}>Apply Modifications</p>
+              <p className={styles.modifierHelp}>
+                {activeOrderItem ? `Editing: ${activeOrderItem.name}` : "Select an order item to apply modifiers."}
+              </p>
+              <div className={styles.modifierChipRow}>
+                {MODIFIER_PRESETS.map((modifierLabel) => (
+                  <button
+                    key={modifierLabel}
+                    type="button"
+                    className={`${styles.modifierChip} ${
+                      activeOrderItem?.modifiers.includes(modifierLabel) ? styles.modifierChipActive : ""
+                    }`}
+                    onClick={() => toggleModifier(modifierLabel)}
+                    disabled={!activeOrderItem}
+                  >
+                    {modifierLabel}
+                  </button>
+                ))}
+              </div>
+              <div className={styles.customModifierRow}>
+                <input
+                  type="text"
+                  className={styles.customModifierInput}
+                  placeholder="Custom modifier"
+                  value={customModifierInput}
+                  onChange={(event) => setCustomModifierInput(event.target.value)}
+                  disabled={!activeOrderItem}
+                />
+                <button
+                  type="button"
+                  className={styles.actionButton}
+                  onClick={addCustomModifier}
+                  disabled={!activeOrderItem || !customModifierInput.trim()}
+                >
+                  Add Note
+                </button>
+              </div>
+            </div>
             <button className={styles.primaryAction} disabled>Take Payment</button>
           </div>
         </section>
