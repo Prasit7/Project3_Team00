@@ -13,17 +13,16 @@
       <p>Step 3 of 3: Review the order and complete checkout.</p>
     </section>
 
+    <section class="status-bar" aria-live="polite">
+      <p id="checkout-status">Loading order summary...</p>
+    </section>
+
     <section class="checkout-section" aria-labelledby="checkout-heading">
       <h2 id="checkout-heading">Order Summary</h2>
-      <div class="order-box">
-        <p>Brown Sugar Milk Tea</p>
-        <p>Large, regular ice, 100% sugar, boba</p>
-        <div class="order-actions">
-          <button class="item-button" type="button">Edit Item</button>
-          <button class="item-button" type="button">Remove Item</button>
-        </div>
+      <div class="order-box" id="checkout-order-box">
+        <p>No order available yet.</p>
       </div>
-      <p class="total-text">Total: $0.00</p>
+      <p class="total-text" id="checkout-total">Total: $0.00</p>
     </section>
 
     <section class="checkout-section" aria-labelledby="customer-info-heading">
@@ -43,7 +42,7 @@
 
     <section class="checkout-section" aria-labelledby="finished-heading">
       <h2 id="finished-heading">Finished</h2>
-      <div class="order-box">
+      <div class="order-box" id="finished-box">
         <p>Order complete placeholder.</p>
         <p>This area can later show confirmation details and pickup instructions.</p>
       </div>
@@ -59,8 +58,10 @@
 
     <section class="page-actions">
       <a class="nav-button" href="customer-customize.html">Back to Customization</a>
-      <a class="nav-button primary-link" href="customer.html">Start New Order</a>
+      <button class="nav-button primary-link" id="finish-order-button" type="button">Start New Order</button>
     </section>
   </main>
+
+  <script src="customer-checkout.js"></script>
 </body>
 </html>

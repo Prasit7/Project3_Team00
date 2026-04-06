@@ -38,8 +38,19 @@ body {
 .order-section,
 .checkout-section,
 .assistant-section,
+.status-bar,
 .page-actions {
   margin-bottom: 24px;
+}
+
+.status-bar {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.status-bar p {
+  margin: 0;
 }
 
 .category-bar {
@@ -69,6 +80,13 @@ body {
 
 .category-button.active {
   font-weight: 700;
+}
+
+.category-button:disabled,
+.item-button:disabled,
+.nav-button.is-disabled {
+  opacity: 0.55;
+  pointer-events: none;
 }
 
 .menu-grid {
@@ -133,6 +151,22 @@ body {
   flex-direction: column;
   gap: 8px;
   padding: 12px;
+}
+
+.checkbox-list {
+  display: grid;
+  gap: 8px;
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-option input {
+  width: 18px;
+  height: 18px;
 }
 
 .text-box label {

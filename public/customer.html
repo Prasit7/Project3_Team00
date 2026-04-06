@@ -13,75 +13,28 @@
       <p>Step 1 of 3: Select drinks from the menu.</p>
     </section>
 
-    <section class="category-bar" aria-label="Menu categories">
-      <button class="category-button active" type="button">Milk Tea</button>
-      <button class="category-button" type="button">Fruit Tea</button>
-      <button class="category-button" type="button">Tea</button>
-      <button class="category-button" type="button">Specialty</button>
+    <section class="status-bar" aria-live="polite">
+      <p id="customer-status">Loading menu from database...</p>
+    </section>
+
+    <section class="category-bar" id="category-bar" aria-label="Menu categories">
     </section>
 
     <section class="menu-section" aria-label="Menu items">
-      <div class="menu-grid">
-        <article class="menu-item-box">
-          <h2>Brown Sugar Milk Tea</h2>
-          <p class="price-text">$6.00</p>
-          <button class="item-button" type="button">Add</button>
-        </article>
-
-        <article class="menu-item-box">
-          <h2>Taro Milk Tea</h2>
-          <p class="price-text">$5.75</p>
-          <button class="item-button" type="button">Add</button>
-        </article>
-
-        <article class="menu-item-box">
-          <h2>Matcha Milk Tea</h2>
-          <p class="price-text">$5.75</p>
-          <button class="item-button" type="button">Add</button>
-        </article>
-
-        <article class="menu-item-box">
-          <h2>Thai Tea</h2>
-          <p class="price-text">$5.75</p>
-          <button class="item-button" type="button">Add</button>
-        </article>
-
-        <article class="menu-item-box">
-          <h2>Honeydew Milk Tea</h2>
-          <p class="price-text">$5.75</p>
-          <button class="item-button" type="button">Add</button>
-        </article>
-
-        <article class="menu-item-box">
-          <h2>Strawberry Milk Tea</h2>
-          <p class="price-text">$5.75</p>
-          <button class="item-button" type="button">Add</button>
-        </article>
-
-        <article class="menu-item-box skeleton-box">
-          <h2>Menu Item Name</h2>
-          <p class="price-text">$0.00</p>
-          <button class="item-button" type="button">Add</button>
-        </article>
-
-        <article class="menu-item-box skeleton-box">
-          <h2>Menu Item Name</h2>
-          <p class="price-text">$0.00</p>
-          <button class="item-button" type="button">Add</button>
-        </article>
+      <div class="menu-grid" id="menu-grid">
       </div>
     </section>
 
     <section class="order-section" aria-labelledby="order-heading">
       <h2 id="order-heading">Current Order</h2>
-      <div class="order-box">
-        <p>No items yet.</p>
+      <div class="order-box" id="selected-item-box">
+        <p>No item selected yet.</p>
       </div>
-      <p class="total-text">Total: $0.00</p>
+      <p class="total-text" id="selected-item-total">Total: $0.00</p>
     </section>
 
     <section class="page-actions">
-      <a class="nav-button primary-link" href="customer-customize.html">Next: Customize Drinks</a>
+      <a class="nav-button primary-link is-disabled" id="next-customize-link" href="customer-customize.html" aria-disabled="true">Next: Customize Drinks</a>
     </section>
   </main>
 
