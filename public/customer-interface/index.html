@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Kiosk</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="customer-kiosk">
+    <header class="hero" aria-label="Customer kiosk welcome">
+      <div>
+        <p class="eyebrow">Lobby Ordering Kiosk</p>
+        <h1>Build your order at the screen.</h1>
+        <p class="hero-copy">
+          Large touch targets, clear categories, fast drink customization, and a checkout flow that can expand cleanly.
+        </p>
+      </div>
+      <button class="primary-button" type="button">Start Order</button>
+    </header>
+
+    <main class="kiosk-layout">
+      <section class="menu-panel" aria-labelledby="menu-heading">
+        <div class="section-heading">
+          <h2 id="menu-heading">Menu</h2>
+          <p>Step 1 will use this area for categories and menu item cards.</p>
+        </div>
+
+        <div class="category-strip" aria-label="Menu categories">
+          <button class="chip is-active" type="button">Milk Tea</button>
+          <button class="chip" type="button">Fruit Tea</button>
+          <button class="chip" type="button">Tea</button>
+          <button class="chip" type="button">Specialty</button>
+        </div>
+
+        <div class="menu-grid" aria-label="Menu items">
+          <article class="menu-card">
+            <h3>Menu items go here</h3>
+            <p>Next step: load categories and render real items from your menu source.</p>
+          </article>
+          <article class="menu-card">
+            <h3>Drink customization slot</h3>
+            <p>Sizes, ice, sugar, and toppings will attach to drink items only.</p>
+          </article>
+        </div>
+      </section>
+
+      <aside class="sidebar">
+        <section class="cart-panel" aria-labelledby="cart-heading">
+          <div class="section-heading">
+            <h2 id="cart-heading">Cart</h2>
+            <p>Later steps will handle add, edit, remove, and order summary.</p>
+          </div>
+          <div class="cart-placeholder">
+            No items yet.
+          </div>
+          <button class="secondary-button" type="button" disabled>Checkout</button>
+        </section>
+
+        <section class="assistant-panel" aria-labelledby="assistant-heading">
+          <div class="section-heading">
+            <h2 id="assistant-heading">Assistant Space</h2>
+            <p>Reserved for a future chatbot or guided ordering assistant.</p>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
