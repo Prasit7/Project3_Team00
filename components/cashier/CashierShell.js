@@ -26,6 +26,7 @@ export default function CashierShell() {
   const [cashReceived, setCashReceived] = useState("");
   const [paymentError, setPaymentError] = useState("");
   const [orderNotice, setOrderNotice] = useState("");
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -184,7 +185,7 @@ export default function CashierShell() {
     setCustomModifierInput("");
   }
 
-  function submitOrder() {
+  async function submitOrder() {
     setPaymentError("");
     setOrderNotice("");
 
@@ -198,17 +199,47 @@ export default function CashierShell() {
       return;
     }
 
-    const lineItemCount = orderItems.reduce((sum, item) => sum + item.quantity, 0);
+    setIsSubmittingOrder(true);
+    try {
+      const response = await fetch("/api/cashier/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          employeeId: 1,
+          status: "completed",
+          paymentMethod,
+          cashReceived: paymentMethod === "cash" ? cashReceivedValue : null,
+          items: orderItems.map((item) => ({
+            id: item.id,
+            quantity: item.quantity,
+            price: item.price,
+            modifiers: item.modifiers,
+          })),
+        }),
+      });
 
-    setOrderNotice(
-      `Order submitted (${lineItemCount} item${lineItemCount === 1 ? "" : "s"}) · ${paymentMethod.toUpperCase()} payment`
-    );
-    setOrderItems([]);
-    setSelectedItemId(null);
-    setActiveOrderItemId(null);
-    setCustomModifierInput("");
-    setCashReceived("");
-    setPaymentMethod("cash");
+      const payload = await response.json();
+      if (!response.ok || !payload.ok) {
+        throw new Error(payload.error || `Submit failed (${response.status})`);
+      }
+
+      const lineItemCount = orderItems.reduce((sum, item) => sum + item.quantity, 0);
+      setOrderNotice(
+        `Order #${payload.orderId} submitted (${lineItemCount} item${
+          lineItemCount === 1 ? "" : "s"
+        }) · ${paymentMethod.toUpperCase()} payment`
+      );
+      setOrderItems([]);
+      setSelectedItemId(null);
+      setActiveOrderItemId(null);
+      setCustomModifierInput("");
+      setCashReceived("");
+      setPaymentMethod("cash");
+    } catch (error) {
+      setPaymentError(error.message || "Unable to submit order.");
+    } finally {
+      setIsSubmittingOrder(false);
+    }
   }
 
   return (
@@ -444,8 +475,13 @@ export default function CashierShell() {
               {paymentError && <p className={styles.paymentError}>{paymentError}</p>}
             </div>
 
-            <button type="button" className={styles.primaryAction} onClick={submitOrder}>
-              Submit Order
+            <button
+              type="button"
+              className={styles.primaryAction}
+              onClick={submitOrder}
+              disabled={isSubmittingOrder}
+            >
+              {isSubmittingOrder ? "Submitting..." : "Submit Order"}
             </button>
             {orderNotice && <p className={styles.orderNotice}>{orderNotice}</p>}
           </div>
