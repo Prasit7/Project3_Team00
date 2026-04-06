@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Kiosk - Customize</title>
+  <link rel="stylesheet" href="customerstyle.css" />
+</head>
+<body>
+  <main class="customer-page">
+    <section class="page-header">
+      <h1>Customize Your Drink</h1>
+      <p>Step 2 of 3: Choose size, ice, sugar, and toppings.</p>
+    </section>
+
+    <section class="customization-section" aria-labelledby="customize-heading">
+      <h2 id="customize-heading">Drink Customization</h2>
+      <div class="customization-grid">
+        <div class="text-box">
+          <label for="selected-drink">Selected Drink</label>
+          <input id="selected-drink" name="selected-drink" type="text" placeholder="Brown Sugar Milk Tea" />
+        </div>
+
+        <div class="text-box">
+          <label for="drink-size">Size</label>
+          <select id="drink-size" name="drink-size">
+            <option>Regular</option>
+            <option>Large</option>
+          </select>
+        </div>
+
+        <div class="text-box">
+          <label for="ice-level">Ice Level</label>
+          <select id="ice-level" name="ice-level">
+            <option>No Ice</option>
+            <option>Less Ice</option>
+            <option selected>Regular Ice</option>
+            <option>Extra Ice</option>
+          </select>
+        </div>
+
+        <div class="text-box">
+          <label for="sugar-level">Sugar Level</label>
+          <select id="sugar-level" name="sugar-level">
+            <option>0%</option>
+            <option>25%</option>
+            <option>50%</option>
+            <option>75%</option>
+            <option selected>100%</option>
+          </select>
+        </div>
+
+        <div class="text-box">
+          <label for="toppings">Toppings</label>
+          <input id="toppings" name="toppings" type="text" placeholder="Boba, pudding, aloe" />
+        </div>
+
+        <div class="text-box">
+          <label for="special-instructions">Special Instructions</label>
+          <input id="special-instructions" name="special-instructions" type="text" placeholder="Optional note" />
+        </div>
+      </div>
+
+      <div class="customization-actions">
+        <button class="item-button" type="button">Save Customization</button>
+        <button class="item-button" type="button">Add to Order</button>
+      </div>
+    </section>
+
+    <section class="order-section" aria-labelledby="customize-order-heading">
+      <h2 id="customize-order-heading">Current Order</h2>
+      <div class="order-box">
+        <p>Selected item appears here.</p>
+        <div class="order-actions">
+          <button class="item-button" type="button">Edit Item</button>
+          <button class="item-button" type="button">Remove Item</button>
+        </div>
+      </div>
+      <p class="total-text">Total: $0.00</p>
+    </section>
+
+    <section class="page-actions">
+      <a class="nav-button" href="customer.html">Back to Menu</a>
+      <a class="nav-button primary-link" href="customer-checkout.html">Next: Checkout</a>
+    </section>
+  </main>
+</body>
+</html>

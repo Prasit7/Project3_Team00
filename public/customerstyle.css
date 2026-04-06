@@ -1,201 +1,208 @@
-/*potentially temporary page for the customer page css so that it doesn't mess up toher CSS*/
-
 :root {
-  --page-bg: #f4efe6;
-  --panel-bg: #fffaf4;
-  --text-main: #2f241d;
-  --accent: #b64d1f;
-  --border: #dcc9b8;
-  --shadow: 0 16px 32px rgba(84, 52, 34, 0.12);
+  --background: #f6f1e8;
+  --panel: #f7f2ea;
+  --text: #2f241d;
+  --border: #3d332c;
+  --button-bg: #efefef;
 }
 
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 body {
+  margin: 0;
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
-  font-size: 18px;
-  background: linear-gradient(180deg, #f8f3ec 0%, var(--page-bg) 100%);
-  color: var(--text-main);
+  background: var(--background);
+  color: var(--text);
 }
 
-.hidden {
-  display: none;
+.customer-page {
+  padding: 10px;
 }
 
-/* ── Welcome Screen ── */
-#welcome-screen {
-  display: flex;
-  position: fixed;
-  inset: 0;
-  background: var(--panel-bg);
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 40px;
+.page-header {
+  margin-bottom: 20px;
 }
 
-#welcome-screen.hidden {
-  display: none;
+.page-header h1 {
+  margin: 0 0 8px;
 }
 
-#welcome-screen h1 {
-  margin-bottom: 16px;
+.page-header p {
+  margin: 0;
 }
 
-#welcome-screen p {
+.category-bar,
+.customization-section,
+.order-section,
+.checkout-section,
+.assistant-section,
+.page-actions {
   margin-bottom: 24px;
 }
 
-/* ── App Layout ── */
-#app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-header {
-  padding: 16px;
-  border-bottom: 1px solid #000;
-}
-
-main {
-  padding: 16px;
-}
-
-/* ── Category Tabs ── */
-#category-tabs {
+.category-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
 }
 
-/* ── Menu Grid ── */
-#menu-items {
+.category-button,
+.item-button,
+.nav-button {
+  min-width: 120px;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1px solid #9a9a9a;
+  background: var(--button-bg);
+  color: var(--text);
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.category-button.active {
+  font-weight: 700;
+}
+
+.menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
 }
 
-.menu-card {
-  border: 1px solid #000;
-  padding: 12px;
+.menu-item-box,
+.order-box,
+.text-box {
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.menu-item-box {
+  min-height: 180px;
+  padding: 14px;
   text-align: center;
 }
 
-.menu-card button {
-  width: 100%;
-  padding: 10px;
-  margin-top: 8px;
+.menu-item-box h2 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  line-height: 1.2;
 }
 
-/* ── Cart Summary ── */
-#cart-summary {
-  margin-top: 24px;
-  border-top: 1px solid #000;
-  padding-top: 16px;
+.price-text {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
 }
 
-#cart-summary h2 {
-  margin-bottom: 10px;
+.skeleton-box {
+  opacity: 0.75;
 }
 
-#cart-items {
-  margin-bottom: 10px;
+.customization-section,
+.order-section,
+.checkout-section,
+.assistant-section {
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
 }
 
-.cart-item {
-  padding: 6px 0;
-  border-bottom: 1px solid #ccc;
-  font-size: 0.9rem;
+.customization-section h2,
+.order-section h2,
+.checkout-section h2,
+.assistant-section h2 {
+  margin: 0 0 14px;
+  font-size: 2rem;
+}
+
+.customization-grid,
+.checkout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.text-box {
   display: flex;
-  justify-content: space-between;
-}
-
-#cart-total {
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-/* ── Modal ── */
-#modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  justify-content: center;
-  align-items: center;
-}
-
-#modal-overlay.open {
-  display: flex;
-}
-
-#modal {
-  background: var(--panel-bg);
-  padding: 24px;
-  width: 90%;
-  max-width: 460px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-#modal h2 {
-  margin-bottom: 6px;
-}
-
-#modal-price {
-  margin-bottom: 18px;
-}
-
-.option-group {
-  margin-bottom: 14px;
-}
-
-.option-group label {
-  display: block;
-  font-weight: bold;
-  margin-bottom: 6px;
-}
-
-.option-buttons {
-  display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 8px;
-}
-
-.option-btn {
-  padding: 10px 14px;
-  border: 1px solid #000;
-  background: #fff;
-}
-
-.option-btn.selected {
-  background: #000;
-  color: #fff;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.modal-actions button {
-  flex: 1;
   padding: 12px;
 }
 
-/* ── Buttons (global) ── */
-button {
-  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
-  font-size: 1rem;
-  cursor: pointer;
+.text-box label {
+  font-weight: 700;
+}
+
+.text-box input,
+.text-box select {
   min-height: 44px;
-  min-width: 44px;
+  padding: 10px 12px;
+  border: 1px solid #9a9a9a;
+  background: #fff;
+  font: inherit;
+}
+
+.customization-actions,
+.order-actions,
+.checkout-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.order-box {
+  padding: 14px;
+}
+
+.order-box p {
+  margin-top: 0;
+}
+
+.total-text {
+  margin: 14px 0 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.assistant-box input {
+  background: #fafafa;
+}
+
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.primary-link {
+  font-weight: 700;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #8ba9ff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 700px) {
+  .menu-grid,
+  .customization-grid,
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-button,
+  .item-button {
+    width: 100%;
+  }
 }
