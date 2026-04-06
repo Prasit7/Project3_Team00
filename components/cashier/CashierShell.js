@@ -22,6 +22,10 @@ export default function CashierShell() {
   const [isLoadingMenu, setIsLoadingMenu] = useState(true);
   const [menuError, setMenuError] = useState("");
   const [customModifierInput, setCustomModifierInput] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [cashReceived, setCashReceived] = useState("");
+  const [paymentError, setPaymentError] = useState("");
+  const [orderNotice, setOrderNotice] = useState("");
 
   useEffect(() => {
     let cancelled = false;
@@ -88,8 +92,19 @@ export default function CashierShell() {
     return orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   }, [orderItems]);
 
+  const cashReceivedValue = useMemo(() => {
+    const parsed = Number.parseFloat(cashReceived);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }, [cashReceived]);
+
+  const changeDue = useMemo(() => {
+    if (paymentMethod !== "cash") return 0;
+    return Math.max(0, cashReceivedValue - orderTotal);
+  }, [cashReceivedValue, orderTotal, paymentMethod]);
+
   function addSelectedItemToOrder() {
     if (!selectedItem) return;
+    setOrderNotice("");
 
     setOrderItems((previousItems) => {
       const existingIndex = previousItems.findIndex((item) => item.id === selectedItem.id);
@@ -116,6 +131,7 @@ export default function CashierShell() {
   }
 
   function updateOrderItemQuantity(itemId, nextQuantity) {
+    setOrderNotice("");
     setOrderItems((previousItems) =>
       previousItems
         .map((item) => (item.id === itemId ? { ...item, quantity: nextQuantity } : item))
@@ -124,6 +140,7 @@ export default function CashierShell() {
   }
 
   function removeOrderItem(itemId) {
+    setOrderNotice("");
     setOrderItems((previousItems) => previousItems.filter((item) => item.id !== itemId));
     if (activeOrderItemId === itemId) {
       setActiveOrderItemId(null);
@@ -133,6 +150,7 @@ export default function CashierShell() {
 
   function toggleModifier(modifierLabel) {
     if (!activeOrderItem) return;
+    setOrderNotice("");
 
     setOrderItems((previousItems) =>
       previousItems.map((item) => {
@@ -150,6 +168,7 @@ export default function CashierShell() {
 
   function addCustomModifier() {
     if (!activeOrderItem) return;
+    setOrderNotice("");
     const trimmedValue = customModifierInput.trim();
     if (!trimmedValue) return;
     if (activeOrderItem.modifiers.includes(trimmedValue)) {
@@ -163,6 +182,33 @@ export default function CashierShell() {
       )
     );
     setCustomModifierInput("");
+  }
+
+  function submitOrder() {
+    setPaymentError("");
+    setOrderNotice("");
+
+    if (orderItems.length === 0) {
+      setPaymentError("Add at least one item before submitting an order.");
+      return;
+    }
+
+    if (paymentMethod === "cash" && cashReceivedValue < orderTotal) {
+      setPaymentError("Cash received must be at least the order total.");
+      return;
+    }
+
+    const lineItemCount = orderItems.reduce((sum, item) => sum + item.quantity, 0);
+
+    setOrderNotice(
+      `Order submitted (${lineItemCount} item${lineItemCount === 1 ? "" : "s"}) · ${paymentMethod.toUpperCase()} payment`
+    );
+    setOrderItems([]);
+    setSelectedItemId(null);
+    setActiveOrderItemId(null);
+    setCustomModifierInput("");
+    setCashReceived("");
+    setPaymentMethod("cash");
   }
 
   return (
@@ -310,7 +356,7 @@ export default function CashierShell() {
           <div className={styles.actions}>
             <button
               type="button"
-              className={styles.primaryAction}
+              className={styles.secondaryAction}
               onClick={addSelectedItemToOrder}
               disabled={!selectedItem}
             >
@@ -355,7 +401,53 @@ export default function CashierShell() {
                 </button>
               </div>
             </div>
-            <button className={styles.primaryAction} disabled>Take Payment</button>
+            <div className={styles.paymentPanel}>
+              <p className={styles.paymentTitle}>Payment</p>
+              <div className={styles.paymentMethodRow}>
+                <button
+                  type="button"
+                  className={`${styles.paymentMethodButton} ${
+                    paymentMethod === "cash" ? styles.paymentMethodButtonActive : ""
+                  }`}
+                  onClick={() => setPaymentMethod("cash")}
+                >
+                  Cash
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.paymentMethodButton} ${
+                    paymentMethod === "card" ? styles.paymentMethodButtonActive : ""
+                  }`}
+                  onClick={() => setPaymentMethod("card")}
+                >
+                  Card
+                </button>
+              </div>
+              {paymentMethod === "cash" && (
+                <div className={styles.cashRow}>
+                  <label className={styles.cashLabel} htmlFor="cash-received">
+                    Cash Received
+                  </label>
+                  <input
+                    id="cash-received"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    className={styles.cashInput}
+                    value={cashReceived}
+                    onChange={(event) => setCashReceived(event.target.value)}
+                    placeholder="0.00"
+                  />
+                  <p className={styles.changeDue}>Change Due: ${changeDue.toFixed(2)}</p>
+                </div>
+              )}
+              {paymentError && <p className={styles.paymentError}>{paymentError}</p>}
+            </div>
+
+            <button type="button" className={styles.primaryAction} onClick={submitOrder}>
+              Submit Order
+            </button>
+            {orderNotice && <p className={styles.orderNotice}>{orderNotice}</p>}
           </div>
         </section>
       </div>

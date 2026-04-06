@@ -380,7 +380,8 @@
 }
 
 .actionButton,
-.primaryAction {
+.primaryAction,
+.secondaryAction {
   min-height: 56px;
   border-radius: 12px;
   border: 1px solid #b9cadf;
@@ -397,6 +398,90 @@
   background: #0b7d51;
   color: #ffffff;
   border: none;
+}
+
+.secondaryAction {
+  background: #0d4d9a;
+  color: #ffffff;
+  border: none;
+}
+
+.paymentPanel {
+  border: 1px solid #c5d7ec;
+  background: #f7fbff;
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.paymentTitle {
+  margin: 0;
+  font-weight: 800;
+  color: #14213d;
+}
+
+.paymentMethodRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.paymentMethodButton {
+  min-height: 42px;
+  border-radius: 10px;
+  border: 1px solid #bfd5ee;
+  background: #ffffff;
+  color: #1f3254;
+  font-weight: 700;
+}
+
+.paymentMethodButtonActive {
+  border-color: #0b7d51;
+  background: #dff5eb;
+  color: #0b5c3c;
+}
+
+.cashRow {
+  display: grid;
+  gap: 6px;
+}
+
+.cashLabel {
+  font-weight: 700;
+  color: #2a3e62;
+}
+
+.cashInput {
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid #b9cadf;
+  padding: 0 12px;
+  background: #ffffff;
+}
+
+.changeDue {
+  margin: 0;
+  font-weight: 700;
+  color: #0b5c3c;
+}
+
+.paymentError {
+  margin: 0;
+  border-radius: 10px;
+  background: #ffe9e9;
+  color: #8c1d18;
+  padding: 8px 10px;
+  font-weight: 700;
+}
+
+.orderNotice {
+  margin: 0;
+  border-radius: 10px;
+  background: #e5f7ee;
+  color: #0b5c3c;
+  padding: 10px;
+  font-weight: 700;
 }
 
 @media (max-width: 980px) {
