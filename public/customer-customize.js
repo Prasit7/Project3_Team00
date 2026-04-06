@@ -11,6 +11,7 @@ const nextCheckoutLink = document.getElementById("next-checkout-link");
 const clearCustomizationButton = document.getElementById("clear-customization");
 const saveCustomizationButton = document.getElementById("save-customization-button");
 const addToOrderButton = document.getElementById("add-to-order-button");
+const postAddActions = document.getElementById("post-add-actions");
 
 const SIZE_OPTIONS = [
   { name: "Regular", priceDelta: 0 },
@@ -138,7 +139,8 @@ function addCurrentItemToCart() {
   cart.push(order);
   saveCart(cart);
   sessionStorage.removeItem("customerCustomizedOrder");
-  customizeStatus.textContent = `${order.itemName} added to order.`;
+  customizeStatus.textContent = `${order.itemName} added to order. Choose Pay or Order More.`;
+  postAddActions.classList.remove("is-hidden");
   renderCartPreview();
 }
 
@@ -252,6 +254,7 @@ clearCustomizationButton.addEventListener("click", () => {
   if (loadCart().length === 0) {
     nextCheckoutLink.classList.add("is-disabled");
     nextCheckoutLink.setAttribute("aria-disabled", "true");
+    postAddActions.classList.add("is-hidden");
     updatePreview();
     return;
   }

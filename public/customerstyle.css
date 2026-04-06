@@ -49,6 +49,10 @@ body {
   background: var(--panel);
 }
 
+.is-hidden {
+  display: none;
+}
+
 .status-bar p {
   margin: 0;
 }
@@ -219,6 +223,12 @@ body {
 
 .primary-link {
   font-weight: 700;
+}
+
+.action-choice-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 16px;
 }
 
 button:focus-visible,
