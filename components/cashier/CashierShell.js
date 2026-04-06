@@ -5,6 +5,7 @@ import styles from "../../app/cashier/cashier.module.css";
 
 export default function CashierShell() {
   const [menuItems, setMenuItems] = useState([]);
+  const [orderItems, setOrderItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedItemId, setSelectedItemId] = useState(null);
@@ -67,6 +68,47 @@ export default function CashierShell() {
     () => menuItems.find((item) => item.id === selectedItemId) || null,
     [menuItems, selectedItemId]
   );
+
+  const orderTotal = useMemo(() => {
+    return orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  }, [orderItems]);
+
+  function addSelectedItemToOrder() {
+    if (!selectedItem) return;
+
+    setOrderItems((previousItems) => {
+      const existingIndex = previousItems.findIndex((item) => item.id === selectedItem.id);
+
+      if (existingIndex === -1) {
+        return [
+          ...previousItems,
+          {
+            id: selectedItem.id,
+            name: selectedItem.name,
+            category: selectedItem.category,
+            price: Number(selectedItem.price || 0),
+            quantity: 1,
+          },
+        ];
+      }
+
+      return previousItems.map((item, index) =>
+        index === existingIndex ? { ...item, quantity: item.quantity + 1 } : item
+      );
+    });
+  }
+
+  function updateOrderItemQuantity(itemId, nextQuantity) {
+    setOrderItems((previousItems) =>
+      previousItems
+        .map((item) => (item.id === itemId ? { ...item, quantity: nextQuantity } : item))
+        .filter((item) => item.quantity > 0)
+    );
+  }
+
+  function removeOrderItem(itemId) {
+    setOrderItems((previousItems) => previousItems.filter((item) => item.id !== itemId));
+  }
 
   return (
     <section className={styles.shell} aria-label="Cashier POS Layout">
@@ -137,11 +179,54 @@ export default function CashierShell() {
         <section className={styles.orderPanel} aria-label="Current Order and Checkout">
           <div className={styles.panelHeader}>
             <h2>Current Order</h2>
-            <p className={styles.total}>$0.00</p>
+            <p className={styles.total}>${orderTotal.toFixed(2)}</p>
           </div>
 
           <div className={styles.orderListPlaceholder}>
-            {selectedItem ? (
+            {orderItems.length > 0 ? (
+              <div className={styles.orderItemsList}>
+                {orderItems.map((item) => (
+                  <article key={item.id} className={styles.orderItemCard}>
+                    <div className={styles.orderItemTop}>
+                      <div>
+                        <p className={styles.orderItemName}>{item.name}</p>
+                        <p className={styles.orderItemMeta}>{item.category}</p>
+                      </div>
+                      <button
+                        type="button"
+                        className={styles.deleteButton}
+                        onClick={() => removeOrderItem(item.id)}
+                        aria-label={`Remove ${item.name}`}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                    <div className={styles.orderItemBottom}>
+                      <div className={styles.qtyControls}>
+                        <button
+                          type="button"
+                          className={styles.qtyButton}
+                          onClick={() => updateOrderItemQuantity(item.id, item.quantity - 1)}
+                          aria-label={`Decrease ${item.name} quantity`}
+                        >
+                          -
+                        </button>
+                        <span className={styles.qtyValue}>{item.quantity}</span>
+                        <button
+                          type="button"
+                          className={styles.qtyButton}
+                          onClick={() => updateOrderItemQuantity(item.id, item.quantity + 1)}
+                          aria-label={`Increase ${item.name} quantity`}
+                        >
+                          +
+                        </button>
+                      </div>
+                      <p className={styles.orderItemTotal}>${(item.price * item.quantity).toFixed(2)}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : selectedItem ? (
               <div className={styles.selectedItemPreview}>
                 <p className={styles.selectedLabel}>Selected Item</p>
                 <p className={styles.selectedName}>{selectedItem.name}</p>
@@ -155,8 +240,15 @@ export default function CashierShell() {
           </div>
 
           <div className={styles.actions}>
+            <button
+              type="button"
+              className={styles.primaryAction}
+              onClick={addSelectedItemToOrder}
+              disabled={!selectedItem}
+            >
+              Add Selected Item
+            </button>
             <button className={styles.actionButton} disabled>Apply Modifications</button>
-            <button className={styles.actionButton} disabled>Edit / Remove</button>
             <button className={styles.primaryAction} disabled>Take Payment</button>
           </div>
         </section>

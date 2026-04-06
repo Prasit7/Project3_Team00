@@ -92,10 +92,10 @@
   border: 2px dashed #c2d4ea;
   border-radius: 12px;
   min-height: 220px;
-  display: grid;
-  place-items: center;
+  display: block;
   color: #64748b;
   font-weight: 600;
+  padding: 12px;
 }
 
 .total {
@@ -214,6 +214,84 @@
   margin: 6px 0 0;
   color: #3f5576;
   font-weight: 600;
+}
+
+.orderItemsList {
+  display: grid;
+  gap: 10px;
+}
+
+.orderItemCard {
+  border: 1px solid #bfd5ee;
+  border-radius: 12px;
+  padding: 10px;
+  background: #f8fbff;
+}
+
+.orderItemTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.orderItemName {
+  margin: 0;
+  color: #172b4d;
+  font-weight: 700;
+}
+
+.orderItemMeta {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: #4e627f;
+}
+
+.deleteButton {
+  min-height: 38px;
+  border-radius: 10px;
+  border: 1px solid #efb1b1;
+  background: #fff2f2;
+  color: #8c1d18;
+  font-weight: 700;
+  padding: 0 10px;
+}
+
+.orderItemBottom {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qtyControls {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.qtyButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #bfd5ee;
+  background: #ffffff;
+  color: #1f3254;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.qtyValue {
+  min-width: 22px;
+  text-align: center;
+  font-weight: 700;
+  color: #1f3254;
+}
+
+.orderItemTotal {
+  margin: 0;
+  font-weight: 800;
+  color: #14213d;
 }
 
 .actionButton,
