@@ -1,6 +1,73 @@
-import styles from '../../app/cashier/cashier.module.css';
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import styles from "../../app/cashier/cashier.module.css";
 
 export default function CashierShell() {
+  const [menuItems, setMenuItems] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [selectedItemId, setSelectedItemId] = useState(null);
+  const [isLoadingMenu, setIsLoadingMenu] = useState(true);
+  const [menuError, setMenuError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadMenu() {
+      setIsLoadingMenu(true);
+      setMenuError("");
+
+      try {
+        const response = await fetch("/api/menu-items");
+        if (!response.ok) {
+          throw new Error(`Menu request failed (${response.status})`);
+        }
+
+        const data = await response.json();
+        if (!cancelled) {
+          setMenuItems(Array.isArray(data) ? data : []);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setMenuError(error.message || "Unable to load menu items.");
+          setMenuItems([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoadingMenu(false);
+        }
+      }
+    }
+
+    loadMenu();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const categories = useMemo(() => {
+    const dynamicCategories = Array.from(
+      new Set(menuItems.map((item) => String(item.category || "").trim()).filter(Boolean))
+    );
+    return ["All", ...dynamicCategories];
+  }, [menuItems]);
+
+  const filteredItems = useMemo(() => {
+    return menuItems.filter((item) => {
+      const matchesCategory = activeCategory === "All" || item.category === activeCategory;
+      const normalizedSearch = searchTerm.trim().toLowerCase();
+      const matchesSearch = !normalizedSearch || String(item.name || "").toLowerCase().includes(normalizedSearch);
+      return matchesCategory && matchesSearch;
+    });
+  }, [activeCategory, menuItems, searchTerm]);
+
+  const selectedItem = useMemo(
+    () => menuItems.find((item) => item.id === selectedItemId) || null,
+    [menuItems, selectedItemId]
+  );
+
   return (
     <section className={styles.shell} aria-label="Cashier POS Layout">
       <header className={styles.header}>
@@ -16,15 +83,54 @@ export default function CashierShell() {
               type="text"
               placeholder="Search menu items"
               className={styles.searchInput}
-              disabled
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
               aria-label="Search menu items"
             />
           </div>
+
+          <div className={styles.categoryRow} role="tablist" aria-label="Menu categories">
+            {categories.map((category) => {
+              const isActive = category === activeCategory;
+              return (
+                <button
+                  key={category}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  className={`${styles.categoryChip} ${isActive ? styles.categoryChipActive : ""}`}
+                  onClick={() => setActiveCategory(category)}
+                >
+                  {category}
+                </button>
+              );
+            })}
+          </div>
+
           <div className={styles.placeholderGrid}>
-            <button className={styles.touchCard} disabled>Drink</button>
-            <button className={styles.touchCard} disabled>Main</button>
-            <button className={styles.touchCard} disabled>Snack</button>
-            <button className={styles.touchCard} disabled>Dessert</button>
+            {isLoadingMenu && <p className={styles.loadingState}>Loading menu...</p>}
+            {!isLoadingMenu && menuError && <p className={styles.errorState}>{menuError}</p>}
+            {!isLoadingMenu && !menuError && filteredItems.length === 0 && (
+              <p className={styles.emptyState}>No items match this search.</p>
+            )}
+
+            {!isLoadingMenu &&
+              !menuError &&
+              filteredItems.map((item) => {
+                const isSelected = item.id === selectedItemId;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={`${styles.menuItemCard} ${isSelected ? styles.menuItemCardSelected : ""}`}
+                    onClick={() => setSelectedItemId(item.id)}
+                  >
+                    <span className={styles.menuItemName}>{item.name}</span>
+                    <span className={styles.menuItemMeta}>{item.category}</span>
+                    <span className={styles.menuItemPrice}>${Number(item.price || 0).toFixed(2)}</span>
+                  </button>
+                );
+              })}
           </div>
         </section>
 
@@ -34,7 +140,19 @@ export default function CashierShell() {
             <p className={styles.total}>$0.00</p>
           </div>
 
-          <div className={styles.orderListPlaceholder}>No items yet</div>
+          <div className={styles.orderListPlaceholder}>
+            {selectedItem ? (
+              <div className={styles.selectedItemPreview}>
+                <p className={styles.selectedLabel}>Selected Item</p>
+                <p className={styles.selectedName}>{selectedItem.name}</p>
+                <p className={styles.selectedMeta}>
+                  {selectedItem.category} · ${Number(selectedItem.price || 0).toFixed(2)}
+                </p>
+              </div>
+            ) : (
+              "Select an item from the menu."
+            )}
+          </div>
 
           <div className={styles.actions}>
             <button className={styles.actionButton} disabled>Apply Modifications</button>
