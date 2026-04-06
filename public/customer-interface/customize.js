@@ -110,7 +110,7 @@ function updatePreview() {
 }
 
 function saveCustomization() {
-  if (!selectedMenuItem) return;
+  if (!selectedMenuItem) return null;
 
   const order = {
     ...selectedMenuItem,
@@ -127,7 +127,6 @@ function saveCustomization() {
   nextCheckoutLink.setAttribute("aria-disabled", "false");
   customizeStatus.textContent = "Customization saved from database-backed options.";
   updatePreview();
-
   return order;
 }
 

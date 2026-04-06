@@ -1,7 +1,7 @@
 const checkoutOrderBox = document.getElementById("checkout-order-box");
 const checkoutTotal = document.getElementById("checkout-total");
 const checkoutStatus = document.getElementById("checkout-status");
-const finishOrderButton = document.getElementById("finish-order-button");
+const completeOrderButton = document.getElementById("complete-order-button");
 const finishedBox = document.getElementById("finished-box");
 const customerNameInput = document.getElementById("customer-name");
 const pickupNoteInput = document.getElementById("pickup-note");
@@ -49,7 +49,11 @@ function renderOrder(cart) {
   checkoutStatus.textContent = "Order summary loaded from the saved cart.";
 }
 
-finishOrderButton.addEventListener("click", () => {
+function resetOrderSummary() {
+  renderOrder([]);
+}
+
+completeOrderButton.addEventListener("click", () => {
   const name = customerNameInput.value.trim() || "Guest";
   const pickupNote = pickupNoteInput.value.trim();
 
@@ -57,12 +61,16 @@ finishOrderButton.addEventListener("click", () => {
     <p>Finished.</p>
     <p>Order prepared for: ${name}</p>
     <p>Pickup note: ${pickupNote || "None"}</p>
+    <div class="order-actions">
+      <button class="item-button" id="complete-order-button" type="button" disabled>Finish Order</button>
+    </div>
   `;
 
   sessionStorage.removeItem("customerSelectedMenuItem");
   sessionStorage.removeItem("customerCustomizedOrder");
   sessionStorage.removeItem("customerCart");
   checkoutStatus.textContent = "Order finished. You can start a new order now.";
+  resetOrderSummary();
 });
 
 renderOrder(loadCart());

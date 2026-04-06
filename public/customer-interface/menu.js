@@ -129,7 +129,7 @@ function renderMenuItems() {
     card.querySelector("button").addEventListener("click", () => {
       saveSelectedMenuItem(item);
       statusText.textContent = `${item.name} loaded from database. Opening customization.`;
-      window.location.href = "customer-customize.html";
+      window.location.href = "customize.html";
     });
 
     menuGrid.appendChild(card);

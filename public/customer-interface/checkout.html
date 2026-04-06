@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Customer Kiosk - Checkout</title>
-  <link rel="stylesheet" href="customerstyle.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="customer-page">
@@ -45,6 +45,9 @@
       <div class="order-box" id="finished-box">
         <p>Order complete placeholder.</p>
         <p>This area can later show confirmation details and pickup instructions.</p>
+        <div class="order-actions">
+          <button class="item-button" id="complete-order-button" type="button">Finish Order</button>
+        </div>
       </div>
     </section>
 
@@ -57,11 +60,11 @@
     </section>
 
     <section class="page-actions">
-      <a class="nav-button" href="customer-customize.html">Back to Customization</a>
-      <button class="nav-button primary-link" id="finish-order-button" type="button">Start New Order</button>
+      <a class="nav-button" href="customize.html">Back to Customization</a>
+      <a class="nav-button primary-link" href="index.html">Start New Order</a>
     </section>
   </main>
 
-  <script src="customer-checkout.js"></script>
+  <script src="checkout.js"></script>
 </body>
 </html>

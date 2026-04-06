@@ -3,237 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Customer Kiosk</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <title>Customer Kiosk - Menu</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="customer-kiosk">
-    <section class="welcome-screen" aria-labelledby="welcome-title">
-      <div class="welcome-copy">
-        <p class="eyebrow">Self-Service Ordering</p>
-        <h1 id="welcome-title">Tap the screen to start your order.</h1>
-        <p>
-          This kiosk is designed for casual restaurant guests using a large public touchscreen.
-        </p>
-      </div>
-      <div class="welcome-actions">
-        <button class="primary-button" id="start-order-button" type="button">Start Order</button>
-        <button class="ghost-button" type="button">Browse Menu</button>
+  <main class="customer-page">
+    <section class="page-header">
+      <h1>Choose Your Items</h1>
+      <p>Step 1 of 3: Select drinks from the menu.</p>
+    </section>
+
+    <section class="status-bar" aria-live="polite">
+      <p id="customer-status">Loading menu from database...</p>
+    </section>
+
+    <section class="category-bar" id="category-bar" aria-label="Menu categories">
+    </section>
+
+    <section class="menu-section" aria-label="Menu items">
+      <div class="menu-grid" id="menu-grid">
       </div>
     </section>
 
-    <main class="kiosk-shell is-hidden" id="kiosk-shell">
-      <header class="hero" aria-label="Customer kiosk header">
-        <div>
-          <p class="eyebrow">Customer Interface</p>
-          <h1>Choose drinks, customize them, and review your cart.</h1>
-          <p class="hero-copy">
-            The layout below is the UI skeleton for category browsing, drink customization, cart editing, and checkout.
-          </p>
-        </div>
-        <div class="hero-actions">
-          <button class="ghost-button" type="button">Call Staff</button>
-          <button class="secondary-button" type="button">View Order</button>
-        </div>
-      </header>
-
-      <section class="flow-strip" aria-label="Customer order progress">
-        <div class="flow-step is-active">
-          <span class="flow-index">1</span>
-          <span>Browse Menu</span>
-        </div>
-        <div class="flow-step">
-          <span class="flow-index">2</span>
-          <span>Customize Drink</span>
-        </div>
-        <div class="flow-step">
-          <span class="flow-index">3</span>
-          <span>Review Cart</span>
-        </div>
-        <div class="flow-step">
-          <span class="flow-index">4</span>
-          <span>Checkout</span>
-        </div>
-      </section>
-
-      <div class="kiosk-layout">
-        <section class="menu-panel" aria-labelledby="menu-heading">
-          <div class="section-heading">
-            <h2 id="menu-heading">Menu by Category</h2>
-            <p>Touch-first category rail and menu card area.</p>
-          </div>
-
-          <div class="category-strip" aria-label="Menu categories">
-            <button class="chip is-active" type="button">Milk Tea</button>
-            <button class="chip" type="button">Fruit Tea</button>
-            <button class="chip" type="button">Tea</button>
-            <button class="chip" type="button">Specialty</button>
-            <button class="chip" type="button">Seasonal</button>
-          </div>
-
-          <div class="menu-grid" aria-label="Menu items">
-            <article class="menu-card">
-              <div class="menu-card-top">
-                <span class="pill">Popular</span>
-                <span class="price-tag">$5.75</span>
-              </div>
-              <h3>Brown Sugar Milk Tea</h3>
-              <p>Placeholder item card for touch browsing.</p>
-              <div class="menu-card-actions">
-                <button class="card-button" type="button">Customize</button>
-                <button class="card-button card-button-accent" type="button">Add</button>
-              </div>
-            </article>
-
-            <article class="menu-card">
-              <div class="menu-card-top">
-                <span class="pill">Cold</span>
-                <span class="price-tag">$5.50</span>
-              </div>
-              <h3>Mango Green Tea</h3>
-              <p>Placeholder item card for category results.</p>
-              <div class="menu-card-actions">
-                <button class="card-button" type="button">Customize</button>
-                <button class="card-button card-button-accent" type="button">Add</button>
-              </div>
-            </article>
-
-            <article class="menu-card menu-card-dashed">
-              <h3>More menu items here</h3>
-              <p>Next implementation step can replace placeholders with real data from the menu endpoint.</p>
-            </article>
-
-            <article class="menu-card menu-card-dashed">
-              <h3>Large touch targets</h3>
-              <p>All controls in this skeleton are sized for kiosk touchscreen use.</p>
-            </article>
-          </div>
-        </section>
-
-        <aside class="sidebar">
-          <section class="panel-stack customize-panel" aria-labelledby="customize-heading">
-            <div class="section-heading">
-              <h2 id="customize-heading">Drink Customization</h2>
-              <p>Skeleton area for size, ice, sugar, toppings, and special instructions.</p>
-            </div>
-
-            <div class="option-group">
-              <h3>Size</h3>
-              <div class="touch-grid">
-                <button class="option-tile is-selected" type="button">Regular</button>
-                <button class="option-tile" type="button">Large</button>
-              </div>
-            </div>
-
-            <div class="option-group">
-              <h3>Ice Level</h3>
-              <div class="touch-grid">
-                <button class="option-tile" type="button">No Ice</button>
-                <button class="option-tile" type="button">Less Ice</button>
-                <button class="option-tile is-selected" type="button">Regular Ice</button>
-                <button class="option-tile" type="button">Extra Ice</button>
-              </div>
-            </div>
-
-            <div class="option-group">
-              <h3>Sugar Level</h3>
-              <div class="touch-grid">
-                <button class="option-tile" type="button">0%</button>
-                <button class="option-tile" type="button">25%</button>
-                <button class="option-tile" type="button">50%</button>
-                <button class="option-tile" type="button">75%</button>
-                <button class="option-tile is-selected" type="button">100%</button>
-              </div>
-            </div>
-
-            <div class="option-group">
-              <h3>Toppings</h3>
-              <div class="touch-grid">
-                <button class="option-tile" type="button">Boba</button>
-                <button class="option-tile" type="button">Pudding</button>
-                <button class="option-tile" type="button">Aloe</button>
-                <button class="option-tile" type="button">Grass Jelly</button>
-              </div>
-            </div>
-
-            <button class="primary-button full-width" type="button">Add Customized Drink</button>
-          </section>
-
-          <section class="panel-stack cart-panel" aria-labelledby="cart-heading">
-            <div class="section-heading">
-              <h2 id="cart-heading">Your Cart</h2>
-              <p>Skeleton for add, edit, remove, and order summary.</p>
-            </div>
-
-            <div class="cart-list">
-              <article class="cart-item">
-                <div>
-                  <h3>Brown Sugar Milk Tea</h3>
-                  <p>Large, regular ice, 75% sugar, boba</p>
-                </div>
-                <div class="cart-meta">
-                  <span>$6.50</span>
-                  <div class="cart-actions">
-                    <button class="mini-button" type="button">Edit</button>
-                    <button class="mini-button danger" type="button">Remove</button>
-                  </div>
-                </div>
-              </article>
-
-              <article class="cart-item cart-item-dashed">
-                <div>
-                  <h3>Next items appear here</h3>
-                  <p>Order summary and pricing update here later.</p>
-                </div>
-              </article>
-            </div>
-
-            <div class="totals-card">
-              <div class="totals-row">
-                <span>Subtotal</span>
-                <span>$6.50</span>
-              </div>
-              <div class="totals-row">
-                <span>Tax</span>
-                <span>$0.54</span>
-              </div>
-              <div class="totals-row totals-row-strong">
-                <span>Total</span>
-                <span>$7.04</span>
-              </div>
-            </div>
-          </section>
-
-          <section class="panel-stack checkout-panel" aria-labelledby="checkout-heading">
-            <div class="section-heading">
-              <h2 id="checkout-heading">Checkout Flow</h2>
-              <p>Skeleton for confirmation, pickup info, and payment handoff UI.</p>
-            </div>
-
-            <div class="checkout-grid">
-              <button class="checkout-tile" type="button">Review Order</button>
-              <button class="checkout-tile" type="button">Pickup Details</button>
-              <button class="checkout-tile" type="button">Payment</button>
-              <button class="checkout-tile" type="button">Confirmation</button>
-            </div>
-
-            <button class="primary-button full-width" type="button">Proceed to Checkout</button>
-          </section>
-
-          <section class="panel-stack assistant-panel" aria-labelledby="assistant-heading">
-            <div class="section-heading">
-              <h2 id="assistant-heading">Assistant Space</h2>
-              <p>Reserved for a future chatbot, guided ordering helper, or recommendation assistant.</p>
-            </div>
-            <div class="assistant-placeholder">
-              Future conversational assistant panel
-            </div>
-          </section>
-        </aside>
+    <section class="order-section" aria-labelledby="order-heading">
+      <h2 id="order-heading">Current Order</h2>
+      <div class="order-box" id="selected-item-box">
+        <p>No item selected yet.</p>
       </div>
-    </main>
-  </div>
+      <p class="total-text" id="selected-item-total">Total: $0.00</p>
+    </section>
 
-  <script src="./app.js"></script>
+    <section class="page-actions">
+      <a class="nav-button primary-link is-disabled" id="next-customize-link" href="customize.html" aria-disabled="true">Next: Customize Drinks</a>
+    </section>
+  </main>
+
+  <script src="menu.js"></script>
 </body>
 </html>

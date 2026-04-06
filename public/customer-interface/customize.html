@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Customer Kiosk - Customize</title>
-  <link rel="stylesheet" href="customerstyle.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="customer-page">
@@ -27,20 +27,17 @@
 
         <div class="text-box">
           <label for="drink-size">Size</label>
-          <select id="drink-size" name="drink-size">
-          </select>
+          <select id="drink-size" name="drink-size"></select>
         </div>
 
         <div class="text-box">
           <label for="ice-level">Ice Level</label>
-          <select id="ice-level" name="ice-level">
-          </select>
+          <select id="ice-level" name="ice-level"></select>
         </div>
 
         <div class="text-box">
           <label for="sugar-level">Sugar Level</label>
-          <select id="sugar-level" name="sugar-level">
-          </select>
+          <select id="sugar-level" name="sugar-level"></select>
         </div>
 
         <div class="text-box">
@@ -72,16 +69,16 @@
     </section>
 
     <section class="page-actions">
-      <a class="nav-button" href="customer.html">Back to Menu</a>
-      <a class="nav-button primary-link is-disabled" id="next-checkout-link" href="customer-checkout.html" aria-disabled="true">Next: Checkout</a>
+      <a class="nav-button" href="index.html">Back to Menu</a>
+      <a class="nav-button primary-link is-disabled" id="next-checkout-link" href="checkout.html" aria-disabled="true">Next: Checkout</a>
     </section>
 
     <section class="page-actions action-choice-box is-hidden" id="post-add-actions">
-      <a class="nav-button primary-link" href="customer-checkout.html">Pay</a>
-      <a class="nav-button" href="customer.html">Order More</a>
+      <a class="nav-button primary-link" href="checkout.html">Pay</a>
+      <a class="nav-button" href="index.html">Order More</a>
     </section>
   </main>
 
-  <script src="customer-customize.js"></script>
+  <script src="customize.js"></script>
 </body>
 </html>
