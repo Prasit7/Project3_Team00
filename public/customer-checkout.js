@@ -10,36 +10,43 @@ function formatMoney(value) {
   return `$${Number(value).toFixed(2)}`;
 }
 
-function loadOrder() {
-  const storedOrder = sessionStorage.getItem("customerCustomizedOrder");
-  if (!storedOrder) return null;
+function loadCart() {
+  const storedCart = sessionStorage.getItem("customerCart");
+  if (!storedCart) return [];
 
   try {
-    return JSON.parse(storedOrder);
+    return JSON.parse(storedCart);
   } catch (_error) {
-    return null;
+    return [];
   }
 }
 
-function renderOrder(order) {
-  if (!order) {
+function renderOrder(cart) {
+  if (cart.length === 0) {
     checkoutOrderBox.innerHTML = "<p>No order available yet.</p>";
     checkoutTotal.textContent = "Total: $0.00";
-    checkoutStatus.textContent = "No saved customized order found. Go back to customization first.";
+    checkoutStatus.textContent = "No saved order found. Go back to customization first.";
     return;
   }
 
-  checkoutOrderBox.innerHTML = `
-    <p><strong>${order.itemName}</strong></p>
-    <p>Category: ${order.category}</p>
-    <p>Size: ${order.size}</p>
-    <p>Ice: ${order.ice}</p>
-    <p>Sugar: ${order.sugar}</p>
-    <p>Toppings: ${order.toppings.length ? order.toppings.join(", ") : "None"}</p>
-    <p>Instructions: ${order.specialInstructions || "None"}</p>
-  `;
-  checkoutTotal.textContent = `Total: ${formatMoney(order.totalPrice)}`;
-  checkoutStatus.textContent = "Order summary loaded from the saved customer order.";
+  checkoutOrderBox.innerHTML = cart
+    .map(
+      (order, index) => `
+        <p><strong>Item ${index + 1}: ${order.itemName}</strong></p>
+        <p>Category: ${order.category}</p>
+        <p>Size: ${order.size}</p>
+        <p>Ice: ${order.ice}</p>
+        <p>Sugar: ${order.sugar}</p>
+        <p>Toppings: ${order.toppings.length ? order.toppings.join(", ") : "None"}</p>
+        <p>Instructions: ${order.specialInstructions || "None"}</p>
+        <p>Item Total: ${formatMoney(order.totalPrice)}</p>
+      `
+    )
+    .join("");
+
+  const total = cart.reduce((sum, order) => sum + Number(order.totalPrice || 0), 0);
+  checkoutTotal.textContent = `Total: ${formatMoney(total)}`;
+  checkoutStatus.textContent = "Order summary loaded from the saved cart.";
 }
 
 finishOrderButton.addEventListener("click", () => {
@@ -54,7 +61,8 @@ finishOrderButton.addEventListener("click", () => {
 
   sessionStorage.removeItem("customerSelectedMenuItem");
   sessionStorage.removeItem("customerCustomizedOrder");
+  sessionStorage.removeItem("customerCart");
   checkoutStatus.textContent = "Order finished. You can start a new order now.";
 });
 
-renderOrder(loadOrder());
+renderOrder(loadCart());

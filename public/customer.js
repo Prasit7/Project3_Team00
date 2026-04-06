@@ -12,6 +12,17 @@ function formatMoney(value) {
   return `$${Number(value).toFixed(2)}`;
 }
 
+function loadCart() {
+  const storedCart = sessionStorage.getItem("customerCart");
+  if (!storedCart) return [];
+
+  try {
+    return JSON.parse(storedCart);
+  } catch (_error) {
+    return [];
+  }
+}
+
 function saveSelectedMenuItem(item) {
   const customerOrder = {
     itemId: item.id,
@@ -26,11 +37,18 @@ function saveSelectedMenuItem(item) {
 }
 
 function renderSelectedItem(item) {
+  const cart = loadCart();
+
   if (!item) {
-    selectedItemBox.innerHTML = "<p>No item selected yet.</p>";
-    selectedItemTotal.textContent = "Total: $0.00";
-    nextCustomizeLink.classList.add("is-disabled");
-    nextCustomizeLink.setAttribute("aria-disabled", "true");
+    if (cart.length === 0) {
+      selectedItemBox.innerHTML = "<p>No item selected yet.</p>";
+      selectedItemTotal.textContent = "Total: $0.00";
+      nextCustomizeLink.classList.add("is-disabled");
+      nextCustomizeLink.setAttribute("aria-disabled", "true");
+      return;
+    }
+
+    renderCartSummary(cart);
     return;
   }
 
@@ -39,7 +57,35 @@ function renderSelectedItem(item) {
     <p>Category: ${item.category}</p>
     <p>Base Price: ${formatMoney(item.basePrice)}</p>
   `;
-  selectedItemTotal.textContent = `Total: ${formatMoney(item.basePrice)}`;
+  const cartTotal = cart.reduce((sum, cartItem) => sum + Number(cartItem.totalPrice || 0), 0);
+  const displayTotal = cartTotal > 0 ? cartTotal : Number(item.basePrice);
+  selectedItemTotal.textContent = `Total: ${formatMoney(displayTotal)}`;
+  nextCustomizeLink.classList.remove("is-disabled");
+  nextCustomizeLink.setAttribute("aria-disabled", "false");
+}
+
+function renderCartSummary(cart) {
+  if (cart.length === 0) {
+    selectedItemBox.innerHTML = "<p>No item selected yet.</p>";
+    selectedItemTotal.textContent = "Total: $0.00";
+    return;
+  }
+
+  selectedItemBox.innerHTML = cart
+    .map(
+      (item, index) => `
+        <p><strong>Item ${index + 1}: ${item.itemName}</strong></p>
+        <p>Size: ${item.size}</p>
+        <p>Ice: ${item.ice}</p>
+        <p>Sugar: ${item.sugar}</p>
+        <p>Toppings: ${item.toppings.length ? item.toppings.join(", ") : "None"}</p>
+        <p>Item Total: ${formatMoney(item.totalPrice)}</p>
+      `
+    )
+    .join("");
+
+  const total = cart.reduce((sum, item) => sum + Number(item.totalPrice || 0), 0);
+  selectedItemTotal.textContent = `Total: ${formatMoney(total)}`;
   nextCustomizeLink.classList.remove("is-disabled");
   nextCustomizeLink.setAttribute("aria-disabled", "false");
 }

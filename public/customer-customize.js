@@ -9,7 +9,8 @@ const customizeTotal = document.getElementById("customize-total");
 const customizeStatus = document.getElementById("customize-status");
 const nextCheckoutLink = document.getElementById("next-checkout-link");
 const clearCustomizationButton = document.getElementById("clear-customization");
-const saveButtons = [...document.querySelectorAll(".customization-actions .item-button")];
+const saveCustomizationButton = document.getElementById("save-customization-button");
+const addToOrderButton = document.getElementById("add-to-order-button");
 
 const SIZE_OPTIONS = [
   { name: "Regular", priceDelta: 0 },
@@ -21,6 +22,21 @@ let modifiers = [];
 
 function formatMoney(value) {
   return `$${Number(value).toFixed(2)}`;
+}
+
+function loadCart() {
+  const storedCart = sessionStorage.getItem("customerCart");
+  if (!storedCart) return [];
+
+  try {
+    return JSON.parse(storedCart);
+  } catch (_error) {
+    return [];
+  }
+}
+
+function saveCart(cart) {
+  sessionStorage.setItem("customerCart", JSON.stringify(cart));
 }
 
 function fillSelectOptions(selectElement, options, defaultValue) {
@@ -110,6 +126,46 @@ function saveCustomization() {
   nextCheckoutLink.setAttribute("aria-disabled", "false");
   customizeStatus.textContent = "Customization saved from database-backed options.";
   updatePreview();
+
+  return order;
+}
+
+function addCurrentItemToCart() {
+  const order = saveCustomization();
+  if (!order) return;
+
+  const cart = loadCart();
+  cart.push(order);
+  saveCart(cart);
+  sessionStorage.removeItem("customerCustomizedOrder");
+  customizeStatus.textContent = `${order.itemName} added to order.`;
+  renderCartPreview();
+}
+
+function renderCartPreview() {
+  const cart = loadCart();
+
+  if (cart.length === 0) {
+    updatePreview();
+    return;
+  }
+
+  customizeOrderBox.innerHTML = cart
+    .map(
+      (item, index) => `
+        <p><strong>Item ${index + 1}: ${item.itemName}</strong></p>
+        <p>Size: ${item.size}</p>
+        <p>Ice: ${item.ice}</p>
+        <p>Sugar: ${item.sugar}</p>
+        <p>Toppings: ${item.toppings.length ? item.toppings.join(", ") : "None"}</p>
+        <p>Instructions: ${item.specialInstructions || "None"}</p>
+        <p>Item Total: ${formatMoney(item.totalPrice)}</p>
+      `
+    )
+    .join("");
+
+  const total = cart.reduce((sum, item) => sum + Number(item.totalPrice || 0), 0);
+  customizeTotal.textContent = `Total: ${formatMoney(total)}`;
 }
 
 async function loadModifiers() {
@@ -166,12 +222,16 @@ async function initializePage() {
       iceSelect.value = existingOrder.ice;
       sugarSelect.value = existingOrder.sugar;
       specialInstructionsInput.value = existingOrder.specialInstructions || "";
+    }
+
+    if (loadCart().length > 0) {
       nextCheckoutLink.classList.remove("is-disabled");
       nextCheckoutLink.setAttribute("aria-disabled", "false");
+      renderCartPreview();
     }
 
     customizeStatus.textContent = "Customization options loaded from the database.";
-    updatePreview();
+    if (loadCart().length === 0) updatePreview();
   } catch (error) {
     customizeStatus.textContent = `Could not load customization options from the database. ${error.message}`;
   }
@@ -182,15 +242,21 @@ async function initializePage() {
   element.addEventListener("input", updatePreview);
 });
 
-saveButtons.forEach((button) => button.addEventListener("click", saveCustomization));
+saveCustomizationButton.addEventListener("click", saveCustomization);
+addToOrderButton.addEventListener("click", addCurrentItemToCart);
 
 clearCustomizationButton.addEventListener("click", () => {
   sessionStorage.removeItem("customerCustomizedOrder");
-  nextCheckoutLink.classList.add("is-disabled");
-  nextCheckoutLink.setAttribute("aria-disabled", "true");
   specialInstructionsInput.value = "";
   customizeStatus.textContent = "Customization cleared.";
-  updatePreview();
+  if (loadCart().length === 0) {
+    nextCheckoutLink.classList.add("is-disabled");
+    nextCheckoutLink.setAttribute("aria-disabled", "true");
+    updatePreview();
+    return;
+  }
+
+  renderCartPreview();
 });
 
 initializePage();
