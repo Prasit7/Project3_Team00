@@ -52,7 +52,8 @@
 }
 
 .orderPanel {
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto auto auto;
+  align-content: start;
 }
 
 .panelHeader {
@@ -98,11 +99,13 @@
 .orderListPlaceholder {
   border: 2px dashed #c2d4ea;
   border-radius: 12px;
-  min-height: 220px;
+  min-height: 320px;
+  max-height: 420px;
   display: block;
   color: #64748b;
   font-weight: 600;
   padding: 12px;
+  overflow: auto;
 }
 
 .total {
