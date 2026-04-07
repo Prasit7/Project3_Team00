@@ -1,8 +1,7 @@
 const checkoutOrderBox = document.getElementById("checkout-order-box");
 const checkoutTotal = document.getElementById("checkout-total");
 const checkoutStatus = document.getElementById("checkout-status");
-const completeOrderButton = document.getElementById("complete-order-button");
-const finishedBox = document.getElementById("finished-box");
+const payButton = document.getElementById("pay-button");
 const customerNameInput = document.getElementById("customer-name");
 const pickupNoteInput = document.getElementById("pickup-note");
 
@@ -53,24 +52,14 @@ function resetOrderSummary() {
   renderOrder([]);
 }
 
-completeOrderButton.addEventListener("click", () => {
-  const name = customerNameInput.value.trim() || "Guest";
-  const pickupNote = pickupNoteInput.value.trim();
-
-  finishedBox.innerHTML = `
-    <p>Finished.</p>
-    <p>Order prepared for: ${name}</p>
-    <p>Pickup note: ${pickupNote || "None"}</p>
-    <div class="order-actions">
-      <button class="item-button" id="complete-order-button" type="button" disabled>Finish Order</button>
-    </div>
-  `;
-
+payButton.addEventListener("click", () => {
   sessionStorage.removeItem("customerSelectedMenuItem");
   sessionStorage.removeItem("customerCustomizedOrder");
   sessionStorage.removeItem("customerCart");
-  checkoutStatus.textContent = "Order finished. You can start a new order now.";
+  customerNameInput.value = "";
+  pickupNoteInput.value = "";
   resetOrderSummary();
+  checkoutStatus.textContent = "Payment complete. Ready for a new order.";
 });
 
 renderOrder(loadCart());
