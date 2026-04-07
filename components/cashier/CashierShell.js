@@ -12,6 +12,8 @@ const MODIFIER_PRESETS = [
   "Large Size",
 ];
 
+const QUICK_CASH_AMOUNTS = [5, 10, 20, 50];
+
 export default function CashierShell() {
   const [menuItems, setMenuItems] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
@@ -110,6 +112,8 @@ export default function CashierShell() {
     if (paymentMethod !== "cash") return 0;
     return Math.max(0, cashReceivedValue - orderTotal);
   }, [cashReceivedValue, orderTotal, paymentMethod]);
+  const checkoutReady =
+    orderItems.length > 0 && (paymentMethod === "card" || (paymentMethod === "cash" && cashReceivedValue >= orderTotal));
 
   function addItemToOrder(itemToAdd) {
     if (!itemToAdd) return;
@@ -252,6 +256,11 @@ export default function CashierShell() {
     } finally {
       setIsSubmittingOrder(false);
     }
+  }
+
+  function applyQuickCashAmount(amount) {
+    setCashReceived(String(amount.toFixed(2)));
+    setPaymentError("");
   }
 
   return (
@@ -465,6 +474,7 @@ export default function CashierShell() {
             </div>
             <div className={styles.paymentPanel}>
               <p className={styles.paymentTitle}>Payment</p>
+              <p className={styles.paymentHint}>Total due: ${orderTotal.toFixed(2)}</p>
               <div className={styles.paymentMethodRow}>
                 <button
                   type="button"
@@ -500,6 +510,18 @@ export default function CashierShell() {
                     onChange={(event) => setCashReceived(event.target.value)}
                     placeholder="0.00"
                   />
+                  <div className={styles.quickCashRow}>
+                    {QUICK_CASH_AMOUNTS.map((amount) => (
+                      <button
+                        key={amount}
+                        type="button"
+                        className={styles.quickCashButton}
+                        onClick={() => applyQuickCashAmount(amount)}
+                      >
+                        ${amount}
+                      </button>
+                    ))}
+                  </div>
                   <p className={styles.changeDue}>Change Due: ${changeDue.toFixed(2)}</p>
                 </div>
               )}
@@ -510,10 +532,11 @@ export default function CashierShell() {
               type="button"
               className={styles.primaryAction}
               onClick={submitOrder}
-              disabled={isSubmittingOrder}
+              disabled={isSubmittingOrder || !checkoutReady}
             >
               {isSubmittingOrder ? "Submitting..." : "Submit Order"}
             </button>
+            {!checkoutReady && <p className={styles.checkoutHint}>Complete payment details to submit this order.</p>}
             {orderNotice && <p className={styles.orderNotice}>{orderNotice}</p>}
           </div>
         </section>

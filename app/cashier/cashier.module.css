@@ -456,6 +456,13 @@
   color: #14213d;
 }
 
+.paymentHint {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #31527f;
+  font-weight: 700;
+}
+
 .paymentMethodRow {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -495,6 +502,21 @@
   background: #ffffff;
 }
 
+.quickCashRow {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(56px, 1fr));
+  gap: 8px;
+}
+
+.quickCashButton {
+  min-height: 42px;
+  border-radius: 10px;
+  border: 1px solid #bfd5ee;
+  background: #ffffff;
+  color: #1f3254;
+  font-weight: 700;
+}
+
 .changeDue {
   margin: 0;
   font-weight: 700;
@@ -519,6 +541,15 @@
   font-weight: 700;
 }
 
+.checkoutHint {
+  margin: 0;
+  border-radius: 10px;
+  background: #edf5ff;
+  color: #31527f;
+  padding: 10px;
+  font-weight: 700;
+}
+
 @media (max-width: 980px) {
   .columns {
     grid-template-columns: 1fr;
@@ -527,5 +558,22 @@
   .menuPanel,
   .orderPanel {
     min-height: auto;
+  }
+
+  .panelHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchInput {
+    width: 100%;
+  }
+
+  .drinkButtons {
+    grid-template-columns: 1fr;
+  }
+
+  .quickCashRow {
+    grid-template-columns: repeat(2, minmax(56px, 1fr));
   }
 }
