@@ -21,6 +21,7 @@ export default function CashierShell() {
   const [customModifierInput, setCustomModifierInput] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [cashReceived, setCashReceived] = useState("");
+  const [isCashModalOpen, setIsCashModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState("");
   const [orderNotice, setOrderNotice] = useState("");
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
@@ -208,6 +209,16 @@ export default function CashierShell() {
     setCustomModifierInput("");
   }
 
+  function selectPaymentMethod(method) {
+    setPaymentMethod(method);
+    setPaymentError("");
+    if (method === "cash") {
+      setIsCashModalOpen(true);
+    } else {
+      setIsCashModalOpen(false);
+    }
+  }
+
   async function submitOrder() {
     setPaymentError("");
     setOrderNotice("");
@@ -219,6 +230,7 @@ export default function CashierShell() {
 
     if (paymentMethod === "cash" && cashReceivedValue < orderTotal) {
       setPaymentError("Cash received must be at least the order total.");
+      setIsCashModalOpen(true);
       return;
     }
 
@@ -258,22 +270,12 @@ export default function CashierShell() {
       setCustomModifierInput("");
       setCashReceived("");
       setPaymentMethod("cash");
+      setIsCashModalOpen(false);
     } catch (error) {
       setPaymentError(error.message || "Unable to submit order.");
     } finally {
       setIsSubmittingOrder(false);
     }
-  }
-
-  function applyQuickCashAmount(amount) {
-    setCashReceived(String(amount.toFixed(2)));
-    setPaymentError("");
-  }
-
-  function addCashIncrement(increment) {
-    const nextAmount = Math.max(0, cashReceivedValue + increment);
-    setCashReceived(nextAmount.toFixed(2));
-    setPaymentError("");
   }
 
   return (
@@ -501,7 +503,7 @@ export default function CashierShell() {
                   className={`${styles.paymentMethodButton} ${
                     paymentMethod === "cash" ? styles.paymentMethodButtonActive : ""
                   }`}
-                  onClick={() => setPaymentMethod("cash")}
+                  onClick={() => selectPaymentMethod("cash")}
                 >
                   Cash
                 </button>
@@ -510,52 +512,14 @@ export default function CashierShell() {
                   className={`${styles.paymentMethodButton} ${
                     paymentMethod === "card" ? styles.paymentMethodButtonActive : ""
                   }`}
-                  onClick={() => setPaymentMethod("card")}
+                  onClick={() => selectPaymentMethod("card")}
                 >
                   Card
                 </button>
               </div>
               {paymentMethod === "cash" && (
-                <div className={styles.cashRow}>
-                  <label className={styles.cashLabel} htmlFor="cash-received">
-                    Cash Received
-                  </label>
-                  <input
-                    id="cash-received"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    className={styles.cashInput}
-                    value={cashReceived}
-                    onChange={(event) => setCashReceived(event.target.value)}
-                    placeholder="0.00"
-                  />
-                  <div className={styles.cashPrimaryActions}>
-                    <button
-                      type="button"
-                      className={styles.quickCashButton}
-                      onClick={() => applyQuickCashAmount(orderTotal)}
-                    >
-                      Exact (${orderTotal.toFixed(2)})
-                    </button>
-                    <button type="button" className={styles.quickCashButton} onClick={() => setCashReceived("")}>
-                      Clear
-                    </button>
-                  </div>
-                  <div className={styles.quickCashRow}>
-                    <button type="button" className={styles.quickCashButton} onClick={() => addCashIncrement(1)}>
-                      +$1
-                    </button>
-                    <button type="button" className={styles.quickCashButton} onClick={() => addCashIncrement(5)}>
-                      +$5
-                    </button>
-                    <button type="button" className={styles.quickCashButton} onClick={() => addCashIncrement(10)}>
-                      +$10
-                    </button>
-                    <button type="button" className={styles.quickCashButton} onClick={() => addCashIncrement(20)}>
-                      +$20
-                    </button>
-                  </div>
+                <div className={styles.cashSummaryRow}>
+                  <p className={styles.cashSummaryText}>Cash received: ${cashReceivedValue.toFixed(2)}</p>
                   <p className={styles.changeDue}>Change Due: ${changeDue.toFixed(2)}</p>
                 </div>
               )}
@@ -575,6 +539,49 @@ export default function CashierShell() {
           </div>
         </section>
       </div>
+
+      {isCashModalOpen && (
+        <div className={styles.modalOverlay} role="presentation" onClick={() => setIsCashModalOpen(false)}>
+          <div
+            className={styles.modalCard}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Enter cash received"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h3 className={styles.modalTitle}>Cash Received</h3>
+            <p className={styles.modalHint}>Total due: ${orderTotal.toFixed(2)}</p>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              className={styles.cashInput}
+              value={cashReceived}
+              onChange={(event) => {
+                setCashReceived(event.target.value);
+                setPaymentError("");
+              }}
+              placeholder="0.00"
+              autoFocus
+            />
+            <div className={styles.modalActions}>
+              <button
+                type="button"
+                className={styles.actionButton}
+                onClick={() => setCashReceived(orderTotal.toFixed(2))}
+              >
+                Exact
+              </button>
+              <button type="button" className={styles.actionButton} onClick={() => setCashReceived("")}>
+                Clear
+              </button>
+              <button type="button" className={styles.secondaryAction} onClick={() => setIsCashModalOpen(false)}>
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
