@@ -7,11 +7,8 @@ const specialInstructionsInput = document.getElementById("special-instructions")
 const customizeOrderBox = document.getElementById("customize-order-box");
 const customizeTotal = document.getElementById("customize-total");
 const customizeStatus = document.getElementById("customize-status");
-const nextCheckoutLink = document.getElementById("next-checkout-link");
-const clearCustomizationButton = document.getElementById("clear-customization");
-const saveCustomizationButton = document.getElementById("save-customization-button");
-const addToOrderButton = document.getElementById("add-to-order-button");
-const postAddActions = document.getElementById("post-add-actions");
+const orderMoreButton = document.getElementById("order-more-button");
+const checkoutButton = document.getElementById("checkout-button");
 
 const SIZE_OPTIONS = [
   { name: "Regular", priceDelta: 0 },
@@ -109,10 +106,10 @@ function updatePreview() {
   customizeTotal.textContent = `Total: ${formatMoney(total)}`;
 }
 
-function saveCustomization() {
+function buildCurrentOrder() {
   if (!selectedMenuItem) return null;
 
-  const order = {
+  return {
     ...selectedMenuItem,
     size: sizeSelect.value,
     ice: iceSelect.value,
@@ -121,26 +118,22 @@ function saveCustomization() {
     specialInstructions: specialInstructionsInput.value.trim(),
     totalPrice: calculateTotal(),
   };
-
-  sessionStorage.setItem("customerCustomizedOrder", JSON.stringify(order));
-  nextCheckoutLink.classList.remove("is-disabled");
-  nextCheckoutLink.setAttribute("aria-disabled", "false");
-  customizeStatus.textContent = "Customization saved from database-backed options.";
-  updatePreview();
-  return order;
 }
 
 function addCurrentItemToCart() {
-  const order = saveCustomization();
-  if (!order) return;
+  const order = buildCurrentOrder();
+  if (!order) {
+    customizeStatus.textContent = "No selected drink found. Go back to the menu page first.";
+    return false;
+  }
 
   const cart = loadCart();
   cart.push(order);
   saveCart(cart);
   sessionStorage.removeItem("customerCustomizedOrder");
-  customizeStatus.textContent = `${order.itemName} added to order. Choose Pay or Order More.`;
-  postAddActions.classList.remove("is-hidden");
+  customizeStatus.textContent = `${order.itemName} added to order.`;
   renderCartPreview();
+  return true;
 }
 
 function renderCartPreview() {
@@ -225,11 +218,7 @@ async function initializePage() {
       specialInstructionsInput.value = existingOrder.specialInstructions || "";
     }
 
-    if (loadCart().length > 0) {
-      nextCheckoutLink.classList.remove("is-disabled");
-      nextCheckoutLink.setAttribute("aria-disabled", "false");
-      renderCartPreview();
-    }
+    if (loadCart().length > 0) renderCartPreview();
 
     customizeStatus.textContent = "Customization options loaded from the database.";
     if (loadCart().length === 0) updatePreview();
@@ -243,22 +232,22 @@ async function initializePage() {
   element.addEventListener("input", updatePreview);
 });
 
-saveCustomizationButton.addEventListener("click", saveCustomization);
-addToOrderButton.addEventListener("click", addCurrentItemToCart);
+orderMoreButton.addEventListener("click", () => {
+  if (addCurrentItemToCart()) {
+    window.location.href = "index.html";
+  }
+});
 
-clearCustomizationButton.addEventListener("click", () => {
-  sessionStorage.removeItem("customerCustomizedOrder");
-  specialInstructionsInput.value = "";
-  customizeStatus.textContent = "Customization cleared.";
-  if (loadCart().length === 0) {
-    nextCheckoutLink.classList.add("is-disabled");
-    nextCheckoutLink.setAttribute("aria-disabled", "true");
-    postAddActions.classList.add("is-hidden");
-    updatePreview();
+checkoutButton.addEventListener("click", () => {
+  const cart = loadCart();
+  if (selectedMenuItem && !addCurrentItemToCart()) return;
+
+  if (cart.length === 0 && loadCart().length === 0) {
+    customizeStatus.textContent = "No order found. Choose a drink before checkout.";
     return;
   }
 
-  renderCartPreview();
+  window.location.href = "checkout.html";
 });
 
 initializePage();
