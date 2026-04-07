@@ -9,8 +9,6 @@ const MODIFIER_GROUPS = [
   { title: "Size", exclusive: true, options: ["Medium", "Large"] },
 ];
 
-const QUICK_CASH_AMOUNTS = [5, 10, 20, 50];
-
 export default function CashierShell() {
   const [menuItems, setMenuItems] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
@@ -272,6 +270,12 @@ export default function CashierShell() {
     setPaymentError("");
   }
 
+  function addCashIncrement(increment) {
+    const nextAmount = Math.max(0, cashReceivedValue + increment);
+    setCashReceived(nextAmount.toFixed(2));
+    setPaymentError("");
+  }
+
   return (
     <section className={styles.shell} aria-label="Cashier POS Layout">
       <header className={styles.header}>
@@ -526,17 +530,31 @@ export default function CashierShell() {
                     onChange={(event) => setCashReceived(event.target.value)}
                     placeholder="0.00"
                   />
+                  <div className={styles.cashPrimaryActions}>
+                    <button
+                      type="button"
+                      className={styles.quickCashButton}
+                      onClick={() => applyQuickCashAmount(orderTotal)}
+                    >
+                      Exact (${orderTotal.toFixed(2)})
+                    </button>
+                    <button type="button" className={styles.quickCashButton} onClick={() => setCashReceived("")}>
+                      Clear
+                    </button>
+                  </div>
                   <div className={styles.quickCashRow}>
-                    {QUICK_CASH_AMOUNTS.map((amount) => (
-                      <button
-                        key={amount}
-                        type="button"
-                        className={styles.quickCashButton}
-                        onClick={() => applyQuickCashAmount(amount)}
-                      >
-                        ${amount}
-                      </button>
-                    ))}
+                    <button type="button" className={styles.quickCashButton} onClick={() => addCashIncrement(1)}>
+                      +$1
+                    </button>
+                    <button type="button" className={styles.quickCashButton} onClick={() => addCashIncrement(5)}>
+                      +$5
+                    </button>
+                    <button type="button" className={styles.quickCashButton} onClick={() => addCashIncrement(10)}>
+                      +$10
+                    </button>
+                    <button type="button" className={styles.quickCashButton} onClick={() => addCashIncrement(20)}>
+                      +$20
+                    </button>
                   </div>
                   <p className={styles.changeDue}>Change Due: ${changeDue.toFixed(2)}</p>
                 </div>

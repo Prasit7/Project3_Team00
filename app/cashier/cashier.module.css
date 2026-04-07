@@ -44,8 +44,15 @@
   padding: 16px;
   min-height: 64vh;
   display: grid;
-  grid-template-rows: auto 1fr auto;
   gap: 16px;
+}
+
+.menuPanel {
+  grid-template-rows: auto auto auto 1fr;
+}
+
+.orderPanel {
+  grid-template-rows: auto 1fr auto;
 }
 
 .panelHeader {
@@ -113,6 +120,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  align-items: center;
 }
 
 .categoryChip {
@@ -379,6 +387,27 @@
   gap: 8px;
 }
 
+.modifierGroups {
+  display: grid;
+  gap: 10px;
+}
+
+.modifierGroup {
+  border: 1px solid #d2e0f0;
+  border-radius: 10px;
+  padding: 8px;
+  background: #ffffff;
+}
+
+.modifierGroupTitle {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #35527b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
 .modifierChip {
   min-height: 36px;
   border-radius: 999px;
@@ -489,6 +518,12 @@
   gap: 6px;
 }
 
+.cashPrimaryActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
 .cashLabel {
   font-weight: 700;
   color: #2a3e62;
@@ -575,5 +610,9 @@
 
   .quickCashRow {
     grid-template-columns: repeat(2, minmax(56px, 1fr));
+  }
+
+  .cashPrimaryActions {
+    grid-template-columns: 1fr;
   }
 }
