@@ -3,13 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "../../app/cashier/cashier.module.css";
 
-const MODIFIER_PRESETS = [
-  "No Ice",
-  "Light Ice",
-  "Extra Shot",
-  "No Sugar",
-  "Extra Sweet",
-  "Large Size",
+const MODIFIER_GROUPS = [
+  { title: "Ice", exclusive: true, options: ["No Ice", "Light Ice"] },
+  { title: "Sugar", exclusive: true, options: ["100%", "75%", "50%", "25%", "0%"] },
+  { title: "Size", exclusive: true, options: ["Medium", "Large"] },
 ];
 
 const QUICK_CASH_AMOUNTS = [5, 10, 20, 50];
@@ -165,7 +162,7 @@ export default function CashierShell() {
     }
   }
 
-  function toggleModifier(modifierLabel) {
+  function toggleModifier(modifierLabel, groupOptions, isExclusive) {
     if (!activeOrderItem) return;
     setOrderNotice("");
 
@@ -173,11 +170,23 @@ export default function CashierShell() {
       previousItems.map((item) => {
         if (item.id !== activeOrderItem.id) return item;
         const hasModifier = item.modifiers.includes(modifierLabel);
+        if (hasModifier) {
+          return {
+            ...item,
+            modifiers: item.modifiers.filter((modifier) => modifier !== modifierLabel),
+          };
+        }
+
+        if (isExclusive) {
+          return {
+            ...item,
+            modifiers: [...item.modifiers.filter((modifier) => !groupOptions.includes(modifier)), modifierLabel],
+          };
+        }
+
         return {
           ...item,
-          modifiers: hasModifier
-            ? item.modifiers.filter((modifier) => modifier !== modifierLabel)
-            : [...item.modifiers, modifierLabel],
+          modifiers: [...item.modifiers, modifierLabel],
         };
       })
     );
@@ -438,19 +447,26 @@ export default function CashierShell() {
               <p className={styles.modifierHelp}>
                 {activeOrderItem ? `Editing: ${activeOrderItem.name}` : "Select an order item to apply modifiers."}
               </p>
-              <div className={styles.modifierChipRow}>
-                {MODIFIER_PRESETS.map((modifierLabel) => (
-                  <button
-                    key={modifierLabel}
-                    type="button"
-                    className={`${styles.modifierChip} ${
-                      activeOrderItem?.modifiers.includes(modifierLabel) ? styles.modifierChipActive : ""
-                    }`}
-                    onClick={() => toggleModifier(modifierLabel)}
-                    disabled={!activeOrderItem}
-                  >
-                    {modifierLabel}
-                  </button>
+              <div className={styles.modifierGroups}>
+                {MODIFIER_GROUPS.map((group) => (
+                  <section key={group.title} className={styles.modifierGroup}>
+                    <p className={styles.modifierGroupTitle}>{group.title}</p>
+                    <div className={styles.modifierChipRow}>
+                      {group.options.map((modifierLabel) => (
+                        <button
+                          key={modifierLabel}
+                          type="button"
+                          className={`${styles.modifierChip} ${
+                            activeOrderItem?.modifiers.includes(modifierLabel) ? styles.modifierChipActive : ""
+                          }`}
+                          onClick={() => toggleModifier(modifierLabel, group.options, group.exclusive)}
+                          disabled={!activeOrderItem}
+                        >
+                          {modifierLabel}
+                        </button>
+                      ))}
+                    </div>
+                  </section>
                 ))}
               </div>
               <div className={styles.customModifierRow}>
