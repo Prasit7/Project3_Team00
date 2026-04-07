@@ -132,6 +132,41 @@
   color: #0b5c3c;
 }
 
+.drinkStrip {
+  border: 1px solid #c6d9ef;
+  background: #f4faff;
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.drinkStripTitle {
+  margin: 0;
+  font-weight: 800;
+  color: #1a3055;
+}
+
+.drinkButtons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.drinkQuickButton {
+  min-height: 50px;
+  border-radius: 10px;
+  border: 1px solid #b7d0ec;
+  background: #ffffff;
+  color: #1f3254;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 10px;
+}
+
 .menuItemCard {
   min-height: 90px;
   border: 1px solid #bfd5ee;

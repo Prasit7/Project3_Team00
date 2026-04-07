@@ -84,6 +84,14 @@ export default function CashierShell() {
     () => menuItems.find((item) => item.id === selectedItemId) || null,
     [menuItems, selectedItemId]
   );
+  const quickDrinkItems = useMemo(() => {
+    return menuItems
+      .filter((item) => {
+        const category = String(item.category || "").toLowerCase();
+        return category.includes("drink") || category.includes("beverage");
+      })
+      .slice(0, 6);
+  }, [menuItems]);
   const activeOrderItem = useMemo(
     () => orderItems.find((item) => item.id === activeOrderItemId) || null,
     [orderItems, activeOrderItemId]
@@ -103,21 +111,21 @@ export default function CashierShell() {
     return Math.max(0, cashReceivedValue - orderTotal);
   }, [cashReceivedValue, orderTotal, paymentMethod]);
 
-  function addSelectedItemToOrder() {
-    if (!selectedItem) return;
+  function addItemToOrder(itemToAdd) {
+    if (!itemToAdd) return;
     setOrderNotice("");
 
     setOrderItems((previousItems) => {
-      const existingIndex = previousItems.findIndex((item) => item.id === selectedItem.id);
+      const existingIndex = previousItems.findIndex((item) => item.id === itemToAdd.id);
 
       if (existingIndex === -1) {
         return [
           ...previousItems,
           {
-            id: selectedItem.id,
-            name: selectedItem.name,
-            category: selectedItem.category,
-            price: Number(selectedItem.price || 0),
+            id: itemToAdd.id,
+            name: itemToAdd.name,
+            category: itemToAdd.category,
+            price: Number(itemToAdd.price || 0),
             quantity: 1,
             modifiers: [],
           },
@@ -128,7 +136,11 @@ export default function CashierShell() {
         index === existingIndex ? { ...item, quantity: item.quantity + 1 } : item
       );
     });
-    setActiveOrderItemId(selectedItem.id);
+    setActiveOrderItemId(itemToAdd.id);
+  }
+
+  function addSelectedItemToOrder() {
+    addItemToOrder(selectedItem);
   }
 
   function updateOrderItemQuantity(itemId, nextQuantity) {
@@ -280,6 +292,25 @@ export default function CashierShell() {
               );
             })}
           </div>
+
+          {quickDrinkItems.length > 0 && (
+            <div className={styles.drinkStrip} aria-label="Quick Add Drinks">
+              <p className={styles.drinkStripTitle}>Quick Add Drinks</p>
+              <div className={styles.drinkButtons}>
+                {quickDrinkItems.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className={styles.drinkQuickButton}
+                    onClick={() => addItemToOrder(item)}
+                  >
+                    <span>{item.name}</span>
+                    <span>${Number(item.price || 0).toFixed(2)}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className={styles.placeholderGrid}>
             {isLoadingMenu && <p className={styles.loadingState}>Loading menu...</p>}
