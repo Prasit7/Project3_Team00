@@ -19,7 +19,7 @@ export default function CashierShell() {
   const [isLoadingMenu, setIsLoadingMenu] = useState(true);
   const [menuError, setMenuError] = useState("");
   const [customModifierInput, setCustomModifierInput] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [cashReceived, setCashReceived] = useState("");
   const [isCashModalOpen, setIsCashModalOpen] = useState(false);
   const [paymentError, setPaymentError] = useState("");
@@ -109,7 +109,8 @@ export default function CashierShell() {
     return Math.max(0, cashReceivedValue - orderTotal);
   }, [cashReceivedValue, orderTotal, paymentMethod]);
   const checkoutReady =
-    orderItems.length > 0 && (paymentMethod === "card" || (paymentMethod === "cash" && cashReceivedValue >= orderTotal));
+    orderItems.length > 0 &&
+    (paymentMethod === "card" || (paymentMethod === "cash" && cashReceivedValue >= orderTotal));
 
   function addItemToOrder(itemToAdd) {
     if (!itemToAdd) return;
@@ -228,6 +229,11 @@ export default function CashierShell() {
       return;
     }
 
+    if (!paymentMethod) {
+      setPaymentError("Select a payment method.");
+      return;
+    }
+
     if (paymentMethod === "cash" && cashReceivedValue < orderTotal) {
       setPaymentError("Cash received must be at least the order total.");
       setIsCashModalOpen(true);
@@ -269,7 +275,7 @@ export default function CashierShell() {
       setActiveOrderItemId(null);
       setCustomModifierInput("");
       setCashReceived("");
-      setPaymentMethod("cash");
+      setPaymentMethod("");
       setIsCashModalOpen(false);
     } catch (error) {
       setPaymentError(error.message || "Unable to submit order.");
