@@ -1,29 +1,3 @@
-<!--
-Menu Board Interface Placeholder
-
-Purpose:
-- This page will later serve as a large non-interactive menu board display.
-- User focus: casual end user
-- Input modality: non-interactive
-- Place setting: publicly viewable large screen of key menu items above the restaurant counter
-
-Requirements reminders:
-- This page should NOT link back to portal.html/index.html once implemented.
-- This page should NOT link to manager, cashier, or customer interfaces.
-- This page should present key menu information clearly at a distance.
-- This page should remain display-oriented and not depend on user interaction.
-
-Suggested future sections:
-- Brand header / restaurant identity
-- Featured categories or promotions
-- Readable menu items and pricing
-- Rotating or scheduled display content if the team chooses
-
-Ownership suggestion:
-- Assign to teammate responsible for public-display readability and layout
--->
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,405 +5,252 @@ Ownership suggestion:
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zero Sugar Boba | Menu Board</title>
   <style>
-    /* === Global Styles === */
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #fdf6ec; /* light beige */
-      color: #333;
-    }
-    h1, h2 {
-      margin: 0;
+    :root {
+      --bg: #0f0a0e;
+      --surface: #1a1118;
+      --card: #221728;
+      --accent1: #e8a2c8;
+      --accent2: #f7d49b;
+      --accent3: #9bd4c8;
+      --text: #f5ece9;
+      --muted: #9a8a95;
+      --divider: rgba(232, 162, 200, 0.18);
+      --error: #f5b7b1;
     }
 
-    /* === Banner / Header === */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
     .board-header {
-      background-color: #fff8f0;
-      border-bottom: 2px solid #e2d8c3;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 2rem;
+      gap: 1rem;
+      padding: 1.5rem 3rem;
+      border-bottom: 1px solid var(--divider);
     }
-    .header-brand .eyebrow {
-      font-size: 0.9rem;
-      color: #a08c72;
+
+    .eyebrow {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.8rem;
+      margin-bottom: 0.35rem;
     }
-    .header-brand h1 {
-      font-size: 2.5rem;
-      color: #b86b48;
+
+    .board-header h1 {
+      font-size: 2.2rem;
+      background: linear-gradient(120deg, var(--accent1), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
+
     .header-meta {
-      text-align: right;
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
     }
+
     .meta-pill {
-      display: inline-block;
-      background-color: #f7e9d7;
-      color: #b86b48;
-      padding: 0.3rem 0.7rem;
-      border-radius: 12px;
-      margin-left: 0.5rem;
-      font-size: 0.9rem;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--divider);
+      background: rgba(255, 255, 255, 0.04);
     }
 
-    /* === Scrolling ticker === */
-    .ticker-wrap {
-      overflow: hidden;
-      background-color: #f7f0e6;
-      border-bottom: 2px solid #e2d8c3;
-    }
-    .ticker-track {
-      display: flex;
-      animation: scroll 20s linear infinite;
-    }
-    .ticker-track span {
-      padding: 0.5rem 2rem;
-      white-space: nowrap;
-      font-weight: 600;
-      color: #b86b48;
-    }
-    @keyframes scroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+    .status-banner {
+      padding: 0.9rem 3rem;
+      border-bottom: 1px solid var(--divider);
+      color: var(--muted);
+      font-size: 0.95rem;
     }
 
-    /* === Main Menu === */
+    .status-banner.error {
+      color: var(--error);
+    }
+
     .board-main {
-      display: flex;
-      justify-content: space-around;
-      padding: 2rem;
-      gap: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      min-height: calc(100vh - 208px);
     }
+
     .menu-column {
-      flex: 1;
-      background-color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      padding: 1rem;
+      padding: 2rem;
+      border-right: 1px solid var(--divider);
+      background: rgba(255, 255, 255, 0.02);
     }
+
+    .menu-column:last-child {
+      border-right: none;
+    }
+
     .column-header {
       display: flex;
       align-items: center;
-      margin-bottom: 1rem;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
     }
+
     .cat-icon {
-      font-size: 1.8rem;
-      margin-right: 0.5rem;
-    }
-    h2 {
       font-size: 1.5rem;
-      color: #b86b48;
     }
+
+    .menu-column h2 {
+      font-size: 1.5rem;
+    }
+
     .item-list {
       list-style: none;
-      padding: 0;
-      margin: 0;
     }
-    .menu-item {
+
+    .menu-item,
+    .empty-item {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 1rem;
-      border-bottom: 1px dashed #eee;
-      padding-bottom: 0.5rem;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
+
+    .empty-item {
+      color: var(--muted);
+      justify-content: flex-start;
+    }
+
     .item-info {
-      max-width: 70%;
+      min-width: 0;
     }
+
     .item-name {
-      font-weight: 600;
-      font-size: 1.1rem;
-      color: #6a3b2d;
+      display: block;
+      font-size: 1.05rem;
+      font-weight: 700;
     }
+
     .item-desc {
+      display: block;
+      color: var(--muted);
+      margin-top: 0.2rem;
       font-size: 0.9rem;
-      color: #8c7a6b;
     }
-    .item-tag {
-      background-color: #ffe6c7;
-      color: #b86b48;
-      padding: 0.2rem 0.5rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      margin-top: 0.3rem;
-      display: inline-block;
-    }
-    .tag-pop { background-color: #ffd1a6; }
-    .tag-new { background-color: #cde3d7; color: #3b5d4b; }
 
     .item-price {
-      font-weight: 600;
-      color: #b86b48;
-      font-size: 1rem;
-      text-align: right;
+      font-size: 1.15rem;
+      font-weight: 700;
+      white-space: nowrap;
     }
 
-    /* === Footer / Customization Options === */
     .board-footer {
-      background-color: #fff8f0;
-      border-top: 2px solid #e2d8c3;
-      padding: 1rem 2rem;
       display: flex;
       justify-content: space-around;
-      flex-wrap: wrap;
       gap: 1rem;
+      flex-wrap: wrap;
+      padding: 1rem;
+      background: var(--surface);
+      border-top: 1px solid var(--divider);
     }
+
     .opt-group {
       text-align: center;
     }
+
     .opt-label {
-      font-weight: 600;
-      color: #6a3b2d;
-      margin-bottom: 0.3rem;
+      margin-bottom: 0.35rem;
+      font-weight: 700;
     }
+
     .opt-pills {
       display: flex;
       gap: 0.5rem;
       flex-wrap: wrap;
       justify-content: center;
     }
+
     .opt-pill {
-      background-color: #f7e9d7;
-      color: #b86b48;
       padding: 0.3rem 0.7rem;
-      border-radius: 12px;
+      border-radius: 999px;
+      border: 1px solid var(--divider);
+      color: var(--muted);
       font-size: 0.85rem;
     }
-    .opt-pill.active {
-      background-color: #b86b48;
-      color: #fff;
+
+    @media (max-width: 1100px) {
+      .board-main {
+        grid-template-columns: 1fr;
+      }
+
+      .menu-column {
+        border-right: none;
+        border-bottom: 1px solid var(--divider);
+      }
+
+      .menu-column:last-child {
+        border-bottom: none;
+      }
     }
   </style>
 </head>
 <body>
-
-  <!-- Banner -->
   <header class="board-header">
     <div class="header-brand">
       <p class="eyebrow">Artisan Bubble Tea</p>
       <h1>Zero Sugar Boba</h1>
     </div>
     <div class="header-meta">
-      <span class="meta-pill" id="clock">--:--</span>
-      <span class="meta-pill now-serving">Now Serving</span>
+      <span class="meta-pill" id="clock">--:-- --</span>
+      <span class="meta-pill">Live Menu</span>
     </div>
   </header>
 
-  <!-- Scrolling ticker -->
-  <div class="ticker-wrap" aria-hidden="true">
-    <div class="ticker-track">
-      <span>Brown Sugar Milk Tea</span>
-      <span>Taro Milk Tea</span>
-      <span>Mango Green Tea</span>
-      <span>Matcha Milk Tea</span>
-      <span>Thai Tea</span>
-      <span>Honeydew Milk Tea</span>
-      <span>Lychee Black Tea</span>
-      <span>Cheese Foam Tea</span>
-      <!-- loop duplicates -->
-      <span>Brown Sugar Milk Tea</span>
-      <span>Taro Milk Tea</span>
-      <span>Mango Green Tea</span>
-      <span>Matcha Milk Tea</span>
-      <span>Thai Tea</span>
-      <span>Honeydew Milk Tea</span>
-      <span>Lychee Black Tea</span>
-      <span>Cheese Foam Tea</span>
-    </div>
-  </div>
+  <section class="status-banner" aria-live="polite">
+    <p id="board-status">Loading menu from database...</p>
+  </section>
 
-  <!-- Main menu columns -->
   <main class="board-main" aria-label="Menu">
-
-    <!-- Milk Teas -->
-    <section class="menu-column" aria-labelledby="cat-milktea">
+    <section class="menu-column" aria-labelledby="cat-milk-tea">
       <div class="column-header">
         <span class="cat-icon">🧋</span>
-        <h2 id="cat-milktea">Milk Teas</h2>
+        <h2 id="cat-milk-tea">Milk Teas</h2>
       </div>
-      <ul class="item-list">
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Brown Sugar Milk Tea</span>
-            <span class="item-desc">Tiger-stripe brown sugar syrup, fresh tapioca pearls</span>
-            <span class="item-tag tag-pop">Popular</span>
-          </div>
-          <span class="item-price">$6.00</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Taro Milk Tea</span>
-            <span class="item-desc">Creamy taro blended with whole milk</span>
-            <span class="item-tag tag-pop">Popular</span>
-          </div>
-          <span class="item-price">$5.75</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Matcha Milk Tea</span>
-            <span class="item-desc">Ceremonial-grade matcha with creamy milk</span>
-          </div>
-          <span class="item-price">$5.75</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Thai Tea</span>
-            <span class="item-desc">Spiced Ceylon tea, evaporated milk, vibrant orange</span>
-          </div>
-          <span class="item-price">$5.75</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Honeydew Milk Tea</span>
-            <span class="item-desc">Sweet honeydew melon blended with fresh milk</span>
-            <span class="item-tag tag-new">New</span>
-          </div>
-          <span class="item-price">$5.75</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Coconut Milk Tea</span>
-            <span class="item-desc">Tropical coconut milk, smooth and refreshing</span>
-          </div>
-          <span class="item-price">$5.75</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Classic Milk Tea</span>
-            <span class="item-desc">Black tea with creamy milk, smooth and timeless</span>
-          </div>
-          <span class="item-price">$5.50</span>
-        </li>
+      <ul class="item-list" id="milk-tea-list">
+        <li class="empty-item">Loading items...</li>
       </ul>
     </section>
 
-    <!-- Fruit Teas -->
-    <section class="menu-column" aria-labelledby="cat-fruittea">
+    <section class="menu-column" aria-labelledby="cat-fruit-tea">
       <div class="column-header">
         <span class="cat-icon">🍓</span>
-        <h2 id="cat-fruittea">Fruit Teas</h2>
+        <h2 id="cat-fruit-tea">Fruit Teas</h2>
       </div>
-      <ul class="item-list">
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Mango Green Tea</span>
-            <span class="item-desc">Fresh mango over light jasmine green tea</span>
-            <span class="item-tag tag-pop">Popular</span>
-          </div>
-          <span class="item-price">$5.50</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Passion Fruit Tea</span>
-            <span class="item-desc">Tangy passion fruit, lightly sweetened green tea</span>
-            <span class="item-tag tag-pop">Popular</span>
-          </div>
-          <span class="item-price">$5.50</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Lychee Black Tea</span>
-            <span class="item-desc">Fragrant lychee over bold Assam black tea</span>
-          </div>
-          <span class="item-price">$5.50</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Peach Oolong Tea</span>
-            <span class="item-desc">Sun-ripe peach meets floral oolong</span>
-          </div>
-          <span class="item-price">$5.50</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Wintermelon Tea</span>
-            <span class="item-desc">Classic delicate wintermelon, lightly sweet</span>
-          </div>
-          <span class="item-price">$5.50</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Fruit Tea Combo</span>
-            <span class="item-desc">Seasonal mixed fruit blend over green tea</span>
-            <span class="item-tag tag-new">New</span>
-          </div>
-          <span class="item-price">$5.75</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Peppermint Tea</span>
-            <span class="item-desc">Cool and refreshing peppermint, served iced</span>
-          </div>
-          <span class="item-price">$5.50</span>
-        </li>
+      <ul class="item-list" id="fruit-tea-list">
+        <li class="empty-item">Loading items...</li>
       </ul>
     </section>
 
-    <!-- Tea & Specialty -->
     <section class="menu-column" aria-labelledby="cat-specialty">
       <div class="column-header">
         <span class="cat-icon">🍵</span>
-        <h2 id="cat-specialty">Tea & Specialty</h2>
+        <h2 id="cat-specialty">Specialty</h2>
       </div>
-      <ul class="item-list">
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Cheese Foam Tea</span>
-            <span class="item-desc">Salted cream cheese crown on any tea base</span>
-            <span class="item-tag tag-pop">Popular</span>
-          </div>
-          <span class="item-price">$6.75</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Jasmine Green Tea</span>
-            <span class="item-desc">Delicate jasmine-scented green tea, served iced</span>
-          </div>
-          <span class="item-price">$5.00</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Oreo Milk Tea</span>
-            <span class="item-desc">Crushed Oreo blended into a creamy milk tea</span>
-          </div>
-          <span class="item-price">$5.75</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Rose Milk Tea</span>
-            <span class="item-desc">Floral rose syrup in a smooth milk tea base</span>
-            <span class="item-tag tag-new">New</span>
-          </div>
-          <span class="item-price">$5.75</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Lavender Milk Tea</span>
-            <span class="item-desc">Calming lavender with creamy whole milk</span>
-            <span class="item-tag tag-new">New</span>
-          </div>
-          <span class="item-price">$5.75</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Almond Milk Tea</span>
-            <span class="item-desc">Nutty almond with lightly sweetened black tea</span>
-          </div>
-          <span class="item-price">$5.75</span>
-        </li>
-        <li class="menu-item">
-          <div class="item-info">
-            <span class="item-name">Coffee Milk Tea</span>
-            <span class="item-desc">Espresso meets classic milk tea — best of both</span>
-          </div>
-          <span class="item-price">$5.75</span>
-        </li>
+      <ul class="item-list" id="specialty-list">
+        <li class="empty-item">Loading items...</li>
       </ul>
     </section>
-
   </main>
 
-  <!-- Footer / Customization Options -->
   <footer class="board-footer" aria-label="Customization options">
     <div class="opt-group">
       <p class="opt-label">Sugar Level</p>
@@ -438,56 +259,136 @@ Ownership suggestion:
         <span class="opt-pill">25%</span>
         <span class="opt-pill">50%</span>
         <span class="opt-pill">75%</span>
-        <span class="opt-pill active">100%</span>
+        <span class="opt-pill">100%</span>
       </div>
     </div>
     <div class="opt-group">
       <p class="opt-label">Ice Level</p>
       <div class="opt-pills">
         <span class="opt-pill">No Ice</span>
-        <span class="opt-pill">Less Ice</span>
-        <span class="opt-pill active">Regular</span>
-        <span class="opt-pill">Extra Ice</span>
+        <span class="opt-pill">Light Ice</span>
+        <span class="opt-pill">Regular Ice</span>
       </div>
     </div>
     <div class="opt-group">
-      <p class="opt-label">Size</p>
+      <p class="opt-label">Sizes</p>
       <div class="opt-pills">
-        <span class="opt-pill active">Regular</span>
-        <span class="opt-pill">Large +$0.75</span>
-      </div>
-    </div>
-    <div class="opt-group">
-      <p class="opt-label">Toppings +$0.50–$0.75</p>
-      <div class="opt-pills">
-        <span class="opt-pill">Tapioca Pearls</span>
-        <span class="opt-pill">Mini Pearls</span>
-        <span class="opt-pill">Popping Boba</span>
-        <span class="opt-pill">Grass Jelly</span>
-        <span class="opt-pill">Aloe Vera</span>
-        <span class="opt-pill">Pudding</span>
+        <span class="opt-pill">Medium</span>
+        <span class="opt-pill">Large</span>
       </div>
     </div>
   </footer>
 
+  <script>
+    const boardStatus = document.getElementById("board-status");
+    const boardStatusSection = boardStatus.parentElement;
 
- <!-- add clock time -->
- <script>
-  function updateClock() {
-    const clockEl = document.getElementById('clock');
-    const now = new Date();
-    let hours = now.getHours();
-    let minutes = now.getMinutes();
-    // Optional: pad single digits with 0
-    hours = hours < 10 ? '0' + hours : hours;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    clockEl.textContent = `${hours}:${minutes}`;
-  }
+    const CATEGORY_TARGETS = [
+      {
+        id: "milk-tea-list",
+        title: "Milk Teas",
+        matchers: ["milk"],
+      },
+      {
+        id: "fruit-tea-list",
+        title: "Fruit Teas",
+        matchers: ["fruit", "green tea", "black tea", "oolong", "tea"],
+      },
+      {
+        id: "specialty-list",
+        title: "Specialty",
+        matchers: [],
+      },
+    ];
 
-  // update clock immediately and every minute
-  updateClock();
-  setInterval(updateClock, 1000 * 60);
-</script>
+    function updateClock() {
+      const now = new Date();
+      let hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12 || 12;
+      document.getElementById("clock").textContent = `${hours}:${minutes} ${ampm}`;
+    }
 
+    function formatMoney(value) {
+      return `$${Number(value).toFixed(2)}`;
+    }
+
+    function buildDescription(item) {
+      const parts = [];
+      if (item.category) parts.push(item.category);
+      parts.push("Available now");
+      return parts.join(" · ");
+    }
+
+    function renderItems(listId, items) {
+      const list = document.getElementById(listId);
+      if (!items.length) {
+        list.innerHTML = '<li class="empty-item">No items available.</li>';
+        return;
+      }
+
+      list.innerHTML = items
+        .map(
+          (item) => `
+            <li class="menu-item">
+              <div class="item-info">
+                <span class="item-name">${item.name}</span>
+                <span class="item-desc">${buildDescription(item)}</span>
+              </div>
+              <span class="item-price">${formatMoney(item.price)}</span>
+            </li>
+          `
+        )
+        .join("");
+    }
+
+    function categorizeItems(items) {
+      const buckets = CATEGORY_TARGETS.map((target) => ({ ...target, items: [] }));
+
+      items.forEach((item) => {
+        const category = String(item.category || "").toLowerCase();
+        const exactMatch = buckets.find(
+          (bucket) => bucket.matchers.length > 0 && bucket.matchers.some((matcher) => category.includes(matcher))
+        );
+
+        if (exactMatch) {
+          exactMatch.items.push(item);
+          return;
+        }
+
+        buckets[buckets.length - 1].items.push(item);
+      });
+
+      return buckets;
+    }
+
+    async function loadMenuBoard() {
+      try {
+        const response = await fetch("/api/menu-items");
+        if (!response.ok) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const items = await response.json();
+        const menuItems = Array.isArray(items) ? items : [];
+        const categories = categorizeItems(menuItems);
+
+        categories.forEach((category) => renderItems(category.id, category.items));
+        boardStatus.textContent = "Menu items loaded from database.";
+        boardStatusSection.classList.remove("error");
+      } catch (error) {
+        CATEGORY_TARGETS.forEach((category) => {
+          renderItems(category.id, []);
+        });
+        boardStatus.textContent = `Could not load menu from database. ${error.message}`;
+        boardStatusSection.classList.add("error");
+      }
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+    loadMenuBoard();
+  </script>
 </body>
 </html>

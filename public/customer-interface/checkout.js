@@ -52,14 +52,62 @@ function resetOrderSummary() {
   renderOrder([]);
 }
 
-payButton.addEventListener("click", () => {
-  sessionStorage.removeItem("customerSelectedMenuItem");
-  sessionStorage.removeItem("customerCustomizedOrder");
-  sessionStorage.removeItem("customerCart");
-  customerNameInput.value = "";
-  pickupNoteInput.value = "";
-  resetOrderSummary();
-  checkoutStatus.textContent = "Payment complete. Ready for a new order.";
+function buildOrderPayload(cart) {
+  return {
+    employeeId: 1,
+    status: "completed",
+    paymentMethod: "customer-kiosk",
+    items: cart.map((order) => ({
+      id: Number(order.itemId),
+      quantity: 1,
+      price: Number(order.totalPrice),
+      modifiers: [order.size, order.ice, order.sugar, ...(order.toppings || [])].filter(Boolean),
+    })),
+  };
+}
+
+async function submitOrder(cart) {
+  const response = await fetch("/api/cashier/orders", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(buildOrderPayload(cart)),
+  });
+
+  const payload = await response.json();
+  if (!response.ok || !payload.ok) {
+    throw new Error(payload.error || `Submit failed (${response.status})`);
+  }
+
+  return payload;
+}
+
+payButton.addEventListener("click", async () => {
+  const cart = loadCart();
+  if (cart.length === 0) {
+    checkoutStatus.textContent = "No order available yet. Go back to customization first.";
+    return;
+  }
+
+  payButton.disabled = true;
+  const originalButtonText = payButton.textContent;
+  payButton.textContent = "Processing...";
+  checkoutStatus.textContent = "Submitting order to database...";
+
+  try {
+    const payload = await submitOrder(cart);
+    sessionStorage.removeItem("customerSelectedMenuItem");
+    sessionStorage.removeItem("customerCustomizedOrder");
+    sessionStorage.removeItem("customerCart");
+    customerNameInput.value = "";
+    pickupNoteInput.value = "";
+    resetOrderSummary();
+    checkoutStatus.textContent = `Payment complete. Order #${payload.orderId} saved to the database.`;
+  } catch (error) {
+    checkoutStatus.textContent = `Payment failed. ${error.message}`;
+  } finally {
+    payButton.disabled = false;
+    payButton.textContent = originalButtonText;
+  }
 });
 
 renderOrder(loadCart());
