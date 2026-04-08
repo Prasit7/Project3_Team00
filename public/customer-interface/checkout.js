@@ -2,8 +2,6 @@ const checkoutOrderBox = document.getElementById("checkout-order-box");
 const checkoutTotal = document.getElementById("checkout-total");
 const checkoutStatus = document.getElementById("checkout-status");
 const payButton = document.getElementById("pay-button");
-const customerNameInput = document.getElementById("customer-name");
-const pickupNoteInput = document.getElementById("pickup-note");
 
 function formatMoney(value) {
   return `$${Number(value).toFixed(2)}`;
@@ -97,8 +95,6 @@ payButton.addEventListener("click", async () => {
     sessionStorage.removeItem("customerSelectedMenuItem");
     sessionStorage.removeItem("customerCustomizedOrder");
     sessionStorage.removeItem("customerCart");
-    customerNameInput.value = "";
-    pickupNoteInput.value = "";
     resetOrderSummary();
     checkoutStatus.textContent = `Payment complete. Order #${payload.orderId} saved to the database.`;
   } catch (error) {

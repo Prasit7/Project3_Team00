@@ -7,6 +7,7 @@ const specialInstructionsInput = document.getElementById("special-instructions")
 const customizeOrderBox = document.getElementById("customize-order-box");
 const customizeTotal = document.getElementById("customize-total");
 const customizeStatus = document.getElementById("customize-status");
+const addToOrderButton = document.getElementById("add-to-order-button");
 const orderMoreButton = document.getElementById("order-more-button");
 const checkoutButton = document.getElementById("checkout-button");
 
@@ -233,17 +234,17 @@ async function initializePage() {
 });
 
 orderMoreButton.addEventListener("click", () => {
-  if (addCurrentItemToCart()) {
-    window.location.href = "index.html";
-  }
+  window.location.href = "index.html";
+});
+
+addToOrderButton.addEventListener("click", () => {
+  addCurrentItemToCart();
 });
 
 checkoutButton.addEventListener("click", () => {
   const cart = loadCart();
-  if (selectedMenuItem && !addCurrentItemToCart()) return;
-
-  if (cart.length === 0 && loadCart().length === 0) {
-    customizeStatus.textContent = "No order found. Choose a drink before checkout.";
+  if (cart.length === 0) {
+    customizeStatus.textContent = "Add at least one customized drink to the order before checkout.";
     return;
   }
 
