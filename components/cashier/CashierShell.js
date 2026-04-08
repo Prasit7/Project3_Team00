@@ -3,14 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "../../app/cashier/cashier.module.css";
 
-const MODIFIER_GROUPS = [
-  { title: "Ice", exclusive: true, options: ["No Ice", "Light Ice"] },
-  { title: "Sugar", exclusive: true, options: ["100%", "75%", "50%", "25%", "0%"] },
-  { title: "Size", exclusive: true, options: ["Medium", "Large"] },
-];
-
 export default function CashierShell() {
   const [menuItems, setMenuItems] = useState([]);
+  const [modifierGroups, setModifierGroups] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
@@ -55,7 +50,37 @@ export default function CashierShell() {
       }
     }
 
+    async function loadModifiers() {
+      try {
+        const response = await fetch("/api/menu-modifiers");
+        if (!response.ok) {
+          throw new Error(`Modifier request failed (${response.status})`);
+        }
+
+        const data = await response.json();
+        if (!cancelled) {
+          const grouped = [
+            { title: "Ice Level", exclusive: true, options: [] },
+            { title: "Sugar Level", exclusive: true, options: [] },
+            { title: "Topping", exclusive: false, options: [] },
+          ].map((group) => ({
+            ...group,
+            options: (Array.isArray(data) ? data : [])
+              .filter((item) => item.modifierType === group.title)
+              .map((item) => item.name),
+          }));
+
+          setModifierGroups(grouped.filter((group) => group.options.length > 0));
+        }
+      } catch (_error) {
+        if (!cancelled) {
+          setModifierGroups([]);
+        }
+      }
+    }
+
     loadMenu();
+    loadModifiers();
 
     return () => {
       cancelled = true;
@@ -246,7 +271,6 @@ export default function CashierShell() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          employeeId: 1,
           status: "completed",
           paymentMethod,
           cashReceived: paymentMethod === "cash" ? cashReceivedValue : null,
@@ -460,7 +484,7 @@ export default function CashierShell() {
                 {activeOrderItem ? `Editing: ${activeOrderItem.name}` : "Select an order item to apply modifiers."}
               </p>
               <div className={styles.modifierGroups}>
-                {MODIFIER_GROUPS.map((group) => (
+                {modifierGroups.map((group) => (
                   <section key={group.title} className={styles.modifierGroup}>
                     <p className={styles.modifierGroupTitle}>{group.title}</p>
                     <div className={styles.modifierChipRow}>
@@ -480,6 +504,9 @@ export default function CashierShell() {
                     </div>
                   </section>
                 ))}
+                {modifierGroups.length === 0 && (
+                  <p className={styles.modifierHelp}>Modifier options could not be loaded from the database.</p>
+                )}
               </div>
               <div className={styles.customModifierRow}>
                 <input

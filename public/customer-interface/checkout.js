@@ -54,7 +54,6 @@ function resetOrderSummary() {
 
 function buildOrderPayload(cart) {
   return {
-    employeeId: 1,
     status: "completed",
     paymentMethod: "customer-kiosk",
     items: cart.map((order) => ({

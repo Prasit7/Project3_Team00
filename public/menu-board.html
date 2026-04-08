@@ -1,3 +1,29 @@
+<!--
+Menu Board Interface Placeholder
+
+Purpose:
+- This page will later serve as a large non-interactive menu board display.
+- User focus: casual end user
+- Input modality: non-interactive
+- Place setting: publicly viewable large screen of key menu items above the restaurant counter
+
+Requirements reminders:
+- This page should NOT link back to portal.html/index.html once implemented.
+- This page should NOT link to manager, cashier, or customer interfaces.
+- This page should present key menu information clearly at a distance.
+- This page should remain display-oriented and not depend on user interaction.
+
+Suggested future sections:
+- Brand header / restaurant identity
+- Featured categories or promotions
+- Readable menu items and pricing
+- Rotating or scheduled display content if the team chooses
+
+Ownership suggestion:
+- Assign to teammate responsible for public-display readability and layout
+-->
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,213 +31,205 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zero Sugar Boba | Menu Board</title>
   <style>
-    :root {
-      --bg: #0f0a0e;
-      --surface: #1a1118;
-      --card: #221728;
-      --accent1: #e8a2c8;
-      --accent2: #f7d49b;
-      --accent3: #9bd4c8;
-      --text: #f5ece9;
-      --muted: #9a8a95;
-      --divider: rgba(232, 162, 200, 0.18);
-      --error: #f5b7b1;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    /* === Global Styles === */
     body {
-      min-height: 100vh;
-      font-family: Georgia, serif;
-      background: var(--bg);
-      color: var(--text);
-      overflow-x: hidden;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fdf6ec; /* light beige */
+      color: #333;
+    }
+    h1, h2 {
+      margin: 0;
     }
 
+    /* === Banner / Header === */
     .board-header {
+      background-color: #fff8f0;
+      border-bottom: 2px solid #e2d8c3;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 1rem;
-      padding: 1.5rem 3rem;
-      border-bottom: 1px solid var(--divider);
+      padding: 1rem 2rem;
     }
-
-    .eyebrow {
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 0.8rem;
-      margin-bottom: 0.35rem;
+    .header-brand .eyebrow {
+      font-size: 0.9rem;
+      color: #a08c72;
     }
-
-    .board-header h1 {
-      font-size: 2.2rem;
-      background: linear-gradient(120deg, var(--accent1), var(--accent2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .header-brand h1 {
+      font-size: 2.5rem;
+      color: #b86b48;
     }
-
     .header-meta {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      justify-content: flex-end;
+      text-align: right;
     }
-
     .meta-pill {
-      padding: 0.4rem 1rem;
-      border-radius: 999px;
-      border: 1px solid var(--divider);
-      background: rgba(255, 255, 255, 0.04);
+      display: inline-block;
+      background-color: #f7e9d7;
+      color: #b86b48;
+      padding: 0.3rem 0.7rem;
+      border-radius: 12px;
+      margin-left: 0.5rem;
+      font-size: 0.9rem;
     }
-
     .status-banner {
-      padding: 0.9rem 3rem;
-      border-bottom: 1px solid var(--divider);
-      color: var(--muted);
+      background-color: #f7f0e6;
+      border-bottom: 2px solid #e2d8c3;
+      color: #8c7a6b;
+      padding: 0.7rem 2rem;
       font-size: 0.95rem;
     }
-
     .status-banner.error {
-      color: var(--error);
+      color: #9c4a2d;
     }
 
+    /* === Scrolling ticker === */
+    .ticker-wrap {
+      overflow: hidden;
+      background-color: #f7f0e6;
+      border-bottom: 2px solid #e2d8c3;
+    }
+    .ticker-track {
+      display: flex;
+      animation: scroll 20s linear infinite;
+    }
+    .ticker-track span {
+      padding: 0.5rem 2rem;
+      white-space: nowrap;
+      font-weight: 600;
+      color: #b86b48;
+    }
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* === Main Menu === */
     .board-main {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      min-height: calc(100vh - 208px);
-    }
-
-    .menu-column {
+      display: flex;
+      justify-content: space-around;
       padding: 2rem;
-      border-right: 1px solid var(--divider);
-      background: rgba(255, 255, 255, 0.02);
+      gap: 1.5rem;
     }
-
-    .menu-column:last-child {
-      border-right: none;
+    .menu-column {
+      flex: 1;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      padding: 1rem;
     }
-
     .column-header {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1rem;
     }
-
     .cat-icon {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
+      margin-right: 0.5rem;
     }
-
-    .menu-column h2 {
+    h2 {
       font-size: 1.5rem;
+      color: #b86b48;
     }
-
     .item-list {
       list-style: none;
+      padding: 0;
+      margin: 0;
     }
-
-    .menu-item,
     .empty-item {
+      color: #8c7a6b;
+      padding: 0.6rem 0;
+    }
+    .menu-item {
       display: flex;
       justify-content: space-between;
-      gap: 1rem;
-      padding: 1rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      border-bottom: 1px dashed #eee;
+      padding-bottom: 0.5rem;
     }
-
-    .empty-item {
-      color: var(--muted);
-      justify-content: flex-start;
-    }
-
     .item-info {
-      min-width: 0;
+      max-width: 70%;
     }
-
     .item-name {
-      display: block;
-      font-size: 1.05rem;
-      font-weight: 700;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #6a3b2d;
     }
-
     .item-desc {
-      display: block;
-      color: var(--muted);
-      margin-top: 0.2rem;
       font-size: 0.9rem;
+      color: #8c7a6b;
     }
+    .item-tag {
+      background-color: #ffe6c7;
+      color: #b86b48;
+      padding: 0.2rem 0.5rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      margin-top: 0.3rem;
+      display: inline-block;
+    }
+    .tag-pop { background-color: #ffd1a6; }
+    .tag-new { background-color: #cde3d7; color: #3b5d4b; }
 
     .item-price {
-      font-size: 1.15rem;
-      font-weight: 700;
-      white-space: nowrap;
+      font-weight: 600;
+      color: #b86b48;
+      font-size: 1rem;
+      text-align: right;
     }
 
+    /* === Footer / Customization Options === */
     .board-footer {
+      background-color: #fff8f0;
+      border-top: 2px solid #e2d8c3;
+      padding: 1rem 2rem;
       display: flex;
       justify-content: space-around;
-      gap: 1rem;
       flex-wrap: wrap;
-      padding: 1rem;
-      background: var(--surface);
-      border-top: 1px solid var(--divider);
+      gap: 1rem;
     }
-
     .opt-group {
       text-align: center;
     }
-
     .opt-label {
-      margin-bottom: 0.35rem;
-      font-weight: 700;
+      font-weight: 600;
+      color: #6a3b2d;
+      margin-bottom: 0.3rem;
     }
-
     .opt-pills {
       display: flex;
       gap: 0.5rem;
       flex-wrap: wrap;
       justify-content: center;
     }
-
     .opt-pill {
+      background-color: #f7e9d7;
+      color: #b86b48;
       padding: 0.3rem 0.7rem;
-      border-radius: 999px;
-      border: 1px solid var(--divider);
-      color: var(--muted);
+      border-radius: 12px;
       font-size: 0.85rem;
     }
-
-    @media (max-width: 1100px) {
-      .board-main {
-        grid-template-columns: 1fr;
-      }
-
-      .menu-column {
-        border-right: none;
-        border-bottom: 1px solid var(--divider);
-      }
-
-      .menu-column:last-child {
-        border-bottom: none;
-      }
+    .opt-pill.active {
+      background-color: #b86b48;
+      color: #fff;
+    }
+    .opt-pill.subtle {
+      background-color: #fff;
+      border: 1px solid #e2d8c3;
     }
   </style>
 </head>
 <body>
+
+  <!-- Banner -->
   <header class="board-header">
     <div class="header-brand">
       <p class="eyebrow">Artisan Bubble Tea</p>
       <h1>Zero Sugar Boba</h1>
     </div>
     <div class="header-meta">
-      <span class="meta-pill" id="clock">--:-- --</span>
-      <span class="meta-pill">Live Menu</span>
+      <span class="meta-pill" id="clock">--:--</span>
+      <span class="meta-pill now-serving">Now Serving</span>
     </div>
   </header>
 
@@ -219,176 +237,248 @@
     <p id="board-status">Loading menu from database...</p>
   </section>
 
+  <!-- Scrolling ticker -->
+  <div class="ticker-wrap" aria-hidden="true">
+    <div class="ticker-track" id="ticker-track">
+      <span>Loading menu...</span>
+    </div>
+  </div>
+
+  <!-- Main menu columns -->
   <main class="board-main" aria-label="Menu">
-    <section class="menu-column" aria-labelledby="cat-milk-tea">
+
+    <!-- Milk Teas -->
+    <section class="menu-column" aria-labelledby="cat-milktea">
       <div class="column-header">
         <span class="cat-icon">🧋</span>
-        <h2 id="cat-milk-tea">Milk Teas</h2>
+        <h2 id="cat-milktea">Milk Teas</h2>
       </div>
       <ul class="item-list" id="milk-tea-list">
         <li class="empty-item">Loading items...</li>
       </ul>
     </section>
 
-    <section class="menu-column" aria-labelledby="cat-fruit-tea">
+    <!-- Fruit Teas -->
+    <section class="menu-column" aria-labelledby="cat-fruittea">
       <div class="column-header">
         <span class="cat-icon">🍓</span>
-        <h2 id="cat-fruit-tea">Fruit Teas</h2>
+        <h2 id="cat-fruittea">Fruit Teas</h2>
       </div>
       <ul class="item-list" id="fruit-tea-list">
         <li class="empty-item">Loading items...</li>
       </ul>
     </section>
 
+    <!-- Tea & Specialty -->
     <section class="menu-column" aria-labelledby="cat-specialty">
       <div class="column-header">
         <span class="cat-icon">🍵</span>
-        <h2 id="cat-specialty">Specialty</h2>
+        <h2 id="cat-specialty">Tea & Specialty</h2>
       </div>
       <ul class="item-list" id="specialty-list">
         <li class="empty-item">Loading items...</li>
       </ul>
     </section>
+
   </main>
 
+  <!-- Footer / Customization Options -->
   <footer class="board-footer" aria-label="Customization options">
     <div class="opt-group">
       <p class="opt-label">Sugar Level</p>
-      <div class="opt-pills">
-        <span class="opt-pill">0%</span>
-        <span class="opt-pill">25%</span>
-        <span class="opt-pill">50%</span>
-        <span class="opt-pill">75%</span>
-        <span class="opt-pill">100%</span>
+      <div class="opt-pills" id="sugar-options">
+        <span class="opt-pill">Loading...</span>
       </div>
     </div>
     <div class="opt-group">
       <p class="opt-label">Ice Level</p>
-      <div class="opt-pills">
-        <span class="opt-pill">No Ice</span>
-        <span class="opt-pill">Light Ice</span>
-        <span class="opt-pill">Regular Ice</span>
+      <div class="opt-pills" id="ice-options">
+        <span class="opt-pill">Loading...</span>
       </div>
     </div>
     <div class="opt-group">
-      <p class="opt-label">Sizes</p>
+      <p class="opt-label">Size</p>
       <div class="opt-pills">
-        <span class="opt-pill">Medium</span>
-        <span class="opt-pill">Large</span>
+        <span class="opt-pill active">Regular</span>
+        <span class="opt-pill">Large +$0.75</span>
+      </div>
+    </div>
+    <div class="opt-group">
+      <p class="opt-label">Toppings +$0.50–$0.75</p>
+      <div class="opt-pills" id="topping-options">
+        <span class="opt-pill">Loading...</span>
       </div>
     </div>
   </footer>
 
-  <script>
-    const boardStatus = document.getElementById("board-status");
-    const boardStatusSection = boardStatus.parentElement;
 
-    const CATEGORY_TARGETS = [
-      {
-        id: "milk-tea-list",
-        title: "Milk Teas",
-        matchers: ["milk"],
-      },
-      {
-        id: "fruit-tea-list",
-        title: "Fruit Teas",
-        matchers: ["fruit", "green tea", "black tea", "oolong", "tea"],
-      },
-      {
-        id: "specialty-list",
-        title: "Specialty",
-        matchers: [],
-      },
-    ];
+ <!-- add clock time -->
+ <script>
+  const boardStatus = document.getElementById("board-status");
+  const statusBanner = document.querySelector(".status-banner");
+  const tickerTrack = document.getElementById("ticker-track");
+  const sugarOptions = document.getElementById("sugar-options");
+  const iceOptions = document.getElementById("ice-options");
+  const toppingOptions = document.getElementById("topping-options");
 
-    function updateClock() {
-      const now = new Date();
-      let hours = now.getHours();
-      const minutes = String(now.getMinutes()).padStart(2, "0");
-      const ampm = hours >= 12 ? "PM" : "AM";
-      hours = hours % 12 || 12;
-      document.getElementById("clock").textContent = `${hours}:${minutes} ${ampm}`;
+  const CATEGORY_TARGETS = [
+    { id: "milk-tea-list", matchers: ["milk"] },
+    { id: "fruit-tea-list", matchers: ["fruit", "green tea", "black tea", "oolong", "tea"] },
+    { id: "specialty-list", matchers: [] },
+  ];
+
+  function updateClock() {
+    const clockEl = document.getElementById('clock');
+    const now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    // Optional: pad single digits with 0
+    hours = hours < 10 ? '0' + hours : hours;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    clockEl.textContent = `${hours}:${minutes}`;
+  }
+
+  // update clock immediately and every minute
+  updateClock();
+  setInterval(updateClock, 1000 * 60);
+
+  function formatMoney(value) {
+    return `$${Number(value || 0).toFixed(2)}`;
+  }
+
+  function itemTag(item, index) {
+    if (index < 2) {
+      return '<span class="item-tag tag-pop">Popular</span>';
+    }
+    if (String(item.name || "").toLowerCase().includes("rose") || String(item.name || "").toLowerCase().includes("lavender")) {
+      return '<span class="item-tag tag-new">New</span>';
+    }
+    return "";
+  }
+
+  function buildDescription(item) {
+    const category = String(item.category || "").trim();
+    if (!category) {
+      return "Available now";
+    }
+    return `${category} · Available now`;
+  }
+
+  function renderItems(listId, items) {
+    const list = document.getElementById(listId);
+    if (!items.length) {
+      list.innerHTML = '<li class="empty-item">No items available.</li>';
+      return;
     }
 
-    function formatMoney(value) {
-      return `$${Number(value).toFixed(2)}`;
-    }
+    list.innerHTML = items
+      .map(
+        (item, index) => `
+          <li class="menu-item">
+            <div class="item-info">
+              <span class="item-name">${item.name}</span>
+              <span class="item-desc">${buildDescription(item)}</span>
+              ${itemTag(item, index)}
+            </div>
+            <span class="item-price">${formatMoney(item.price)}</span>
+          </li>
+        `
+      )
+      .join("");
+  }
 
-    function buildDescription(item) {
-      const parts = [];
-      if (item.category) parts.push(item.category);
-      parts.push("Available now");
-      return parts.join(" · ");
-    }
+  function categorizeItems(items) {
+    const buckets = CATEGORY_TARGETS.map((category) => ({ ...category, items: [] }));
 
-    function renderItems(listId, items) {
-      const list = document.getElementById(listId);
-      if (!items.length) {
-        list.innerHTML = '<li class="empty-item">No items available.</li>';
-        return;
-      }
+    items.forEach((item) => {
+      const category = String(item.category || "").toLowerCase();
+      const target = buckets.find(
+        (bucket) => bucket.matchers.length > 0 && bucket.matchers.some((matcher) => category.includes(matcher))
+      );
 
-      list.innerHTML = items
-        .map(
-          (item) => `
-            <li class="menu-item">
-              <div class="item-info">
-                <span class="item-name">${item.name}</span>
-                <span class="item-desc">${buildDescription(item)}</span>
-              </div>
-              <span class="item-price">${formatMoney(item.price)}</span>
-            </li>
-          `
-        )
-        .join("");
-    }
-
-    function categorizeItems(items) {
-      const buckets = CATEGORY_TARGETS.map((target) => ({ ...target, items: [] }));
-
-      items.forEach((item) => {
-        const category = String(item.category || "").toLowerCase();
-        const exactMatch = buckets.find(
-          (bucket) => bucket.matchers.length > 0 && bucket.matchers.some((matcher) => category.includes(matcher))
-        );
-
-        if (exactMatch) {
-          exactMatch.items.push(item);
-          return;
-        }
-
+      if (target) {
+        target.items.push(item);
+      } else {
         buckets[buckets.length - 1].items.push(item);
-      });
-
-      return buckets;
-    }
-
-    async function loadMenuBoard() {
-      try {
-        const response = await fetch("/api/menu-items");
-        if (!response.ok) {
-          throw new Error(`Request failed with status ${response.status}`);
-        }
-
-        const items = await response.json();
-        const menuItems = Array.isArray(items) ? items : [];
-        const categories = categorizeItems(menuItems);
-
-        categories.forEach((category) => renderItems(category.id, category.items));
-        boardStatus.textContent = "Menu items loaded from database.";
-        boardStatusSection.classList.remove("error");
-      } catch (error) {
-        CATEGORY_TARGETS.forEach((category) => {
-          renderItems(category.id, []);
-        });
-        boardStatus.textContent = `Could not load menu from database. ${error.message}`;
-        boardStatusSection.classList.add("error");
       }
+    });
+
+    return buckets;
+  }
+
+  function updateTicker(items) {
+    const featured = items.slice(0, 8).map((item) => `<span>${item.name}</span>`).join("");
+    tickerTrack.innerHTML = featured ? `${featured}${featured}` : "<span>No menu items available</span>";
+  }
+
+  function renderModifierOptions(target, items, defaultLabel = "") {
+    if (!items.length) {
+      target.innerHTML = '<span class="opt-pill subtle">Unavailable</span>';
+      return;
     }
 
-    updateClock();
-    setInterval(updateClock, 1000);
-    loadMenuBoard();
-  </script>
+    target.innerHTML = items
+      .map((item) => {
+        const isActive = item.name === defaultLabel;
+        const priceText = Number(item.priceDelta || 0) > 0 ? ` +${formatMoney(item.priceDelta)}` : "";
+        return `<span class="opt-pill ${isActive ? "active" : ""}">${item.name}${priceText}</span>`;
+      })
+      .join("");
+  }
+
+  async function loadModifierOptions() {
+    const response = await fetch("/api/menu-modifiers");
+    if (!response.ok) {
+      throw new Error(`Modifier request failed with status ${response.status}`);
+    }
+
+    const items = await response.json();
+    const modifiers = Array.isArray(items) ? items : [];
+
+    renderModifierOptions(
+      sugarOptions,
+      modifiers.filter((item) => item.modifierType === "Sugar Level"),
+      "100% Sugar"
+    );
+    renderModifierOptions(
+      iceOptions,
+      modifiers.filter((item) => item.modifierType === "Ice Level"),
+      "Regular Ice"
+    );
+    renderModifierOptions(
+      toppingOptions,
+      modifiers.filter((item) => item.modifierType === "Topping")
+    );
+  }
+
+  async function loadMenuBoard() {
+    try {
+      const [menuResponse] = await Promise.all([fetch("/api/menu-items"), loadModifierOptions()]);
+      if (!menuResponse.ok) {
+        throw new Error(`Request failed with status ${menuResponse.status}`);
+      }
+
+      const items = await menuResponse.json();
+      const menuItems = Array.isArray(items) ? items : [];
+      const categories = categorizeItems(menuItems);
+
+      categories.forEach((category) => renderItems(category.id, category.items));
+      updateTicker(menuItems);
+      boardStatus.textContent = "Menu items loaded from database.";
+      statusBanner.classList.remove("error");
+    } catch (error) {
+      CATEGORY_TARGETS.forEach((category) => renderItems(category.id, []));
+      updateTicker([]);
+      renderModifierOptions(sugarOptions, []);
+      renderModifierOptions(iceOptions, []);
+      renderModifierOptions(toppingOptions, []);
+      boardStatus.textContent = `Could not load menu from database. ${error.message}`;
+      statusBanner.classList.add("error");
+    }
+  }
+
+  loadMenuBoard();
+ </script>
+
 </body>
 </html>

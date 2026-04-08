@@ -18,18 +18,43 @@ function normalizeOrderItems(payloadItems) {
     .filter((item) => Number.isFinite(item.id) && Number.isFinite(item.quantity) && item.quantity > 0 && Number.isFinite(item.price));
 }
 
+async function resolveEmployeeId(client, requestedEmployeeId) {
+  if (Number.isFinite(requestedEmployeeId) && requestedEmployeeId > 0) {
+    const exactMatch = await client.query(
+      `SELECT employee_id
+       FROM "Employee"
+       WHERE employee_id = $1 AND is_active = TRUE`,
+      [requestedEmployeeId]
+    );
+
+    if (exactMatch.rowCount > 0) {
+      return Number(exactMatch.rows[0].employee_id);
+    }
+  }
+
+  const fallback = await client.query(
+    `SELECT employee_id
+     FROM "Employee"
+     WHERE is_active = TRUE
+     ORDER BY employee_id
+     LIMIT 1`
+  );
+
+  if (fallback.rowCount === 0) {
+    throw new Error("No active employee found for order submission.");
+  }
+
+  return Number(fallback.rows[0].employee_id);
+}
+
 export async function POST(request) {
   const pool = getPool();
 
   try {
     const body = await request.json();
-    const employeeId = Number(body.employeeId || 1);
+    const requestedEmployeeId = Number(body.employeeId);
     const status = String(body.status || "completed");
     const orderItems = normalizeOrderItems(body.items);
-
-    if (!Number.isFinite(employeeId) || employeeId <= 0) {
-      return NextResponse.json({ ok: false, error: "Invalid employeeId." }, { status: 400 });
-    }
 
     if (orderItems.length === 0) {
       return NextResponse.json({ ok: false, error: "Order must include at least one item." }, { status: 400 });
@@ -42,6 +67,8 @@ export async function POST(request) {
       await client.query("BEGIN");
       await client.query('LOCK TABLE "Order" IN EXCLUSIVE MODE');
       await client.query('LOCK TABLE "Order_Item" IN EXCLUSIVE MODE');
+
+      const employeeId = await resolveEmployeeId(client, requestedEmployeeId);
 
       const orderIdResult = await client.query('SELECT COALESCE(MAX(order_id), 0) + 1 AS next_order_id FROM "Order"');
       const orderId = Number(orderIdResult.rows[0].next_order_id);
