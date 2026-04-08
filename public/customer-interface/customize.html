@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer Kiosk - Customize</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="customer-page">
+    <section class="page-header">
+      <h1>Customize Your Drink</h1>
+      <p>Step 2 of 3: Choose size, ice, sugar, and toppings.</p>
+    </section>
+
+    <section class="status-bar" aria-live="polite">
+      <p id="customize-status">Loading selected item and customization options...</p>
+    </section>
+
+    <section class="customization-section" aria-labelledby="customize-heading">
+      <h2 id="customize-heading">Drink Customization</h2>
+      <div class="customization-grid">
+        <div class="text-box">
+          <label for="selected-drink">Selected Drink</label>
+          <input id="selected-drink" name="selected-drink" type="text" readonly />
+        </div>
+
+        <div class="text-box">
+          <label for="drink-size">Size</label>
+          <select id="drink-size" name="drink-size"></select>
+        </div>
+
+        <div class="text-box">
+          <label for="ice-level">Ice Level</label>
+          <select id="ice-level" name="ice-level"></select>
+        </div>
+
+        <div class="text-box">
+          <label for="sugar-level">Sugar Level</label>
+          <select id="sugar-level" name="sugar-level"></select>
+        </div>
+
+        <div class="text-box">
+          <label for="toppings">Toppings</label>
+          <div id="toppings-list" class="checkbox-list"></div>
+        </div>
+
+        <div class="text-box">
+          <label for="special-instructions">Special Instructions</label>
+          <input id="special-instructions" name="special-instructions" type="text" placeholder="Optional note" />
+        </div>
+      </div>
+
+    </section>
+
+    <section class="order-section" aria-labelledby="customize-order-heading">
+      <h2 id="customize-order-heading">Current Order</h2>
+      <div class="order-box" id="customize-order-box">
+        <p>No customization saved yet.</p>
+      </div>
+      <p class="total-text" id="customize-total">Total: $0.00</p>
+    </section>
+
+    <section class="page-actions">
+      <a class="nav-button" href="index.html">Back to Menu</a>
+      <button class="nav-button" id="order-more-button" type="button">Order More</button>
+      <button class="nav-button primary-link" id="checkout-button" type="button">Checkout</button>
+    </section>
+  </main>
+
+  <script src="customize.js"></script>
+</body>
+</html>

@@ -3,70 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Customer Kiosk</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <title>Customer Kiosk - Menu</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="customer-kiosk">
-    <header class="hero" aria-label="Customer kiosk welcome">
-      <div>
-        <p class="eyebrow">Lobby Ordering Kiosk</p>
-        <h1>Build your order at the screen.</h1>
-        <p class="hero-copy">
-          Large touch targets, clear categories, fast drink customization, and a checkout flow that can expand cleanly.
-        </p>
+  <main class="customer-page">
+    <section class="page-header">
+      <h1>Choose Your Items</h1>
+      <p>Step 1 of 3: Select drinks from the menu.</p>
+    </section>
+
+    <section class="status-bar" aria-live="polite">
+      <p id="customer-status">Loading menu from database...</p>
+    </section>
+
+    <section class="category-bar" id="category-bar" aria-label="Menu categories">
+    </section>
+
+    <section class="menu-section" aria-label="Menu items">
+      <div class="menu-grid" id="menu-grid">
       </div>
-      <button class="primary-button" type="button">Start Order</button>
-    </header>
+    </section>
 
-    <main class="kiosk-layout">
-      <section class="menu-panel" aria-labelledby="menu-heading">
-        <div class="section-heading">
-          <h2 id="menu-heading">Menu</h2>
-          <p>Step 1 will use this area for categories and menu item cards.</p>
-        </div>
+    <section class="order-section" aria-labelledby="order-heading">
+      <h2 id="order-heading">Current Order</h2>
+      <div class="order-box" id="selected-item-box">
+        <p>No item selected yet.</p>
+      </div>
+      <p class="total-text" id="selected-item-total">Total: $0.00</p>
+    </section>
 
-        <div class="category-strip" aria-label="Menu categories">
-          <button class="chip is-active" type="button">Milk Tea</button>
-          <button class="chip" type="button">Fruit Tea</button>
-          <button class="chip" type="button">Tea</button>
-          <button class="chip" type="button">Specialty</button>
-        </div>
+    <section class="page-actions">
+      <a class="nav-button primary-link is-disabled" id="next-customize-link" href="customize.html" aria-disabled="true">Next: Customize Drinks</a>
+    </section>
+  </main>
 
-        <div class="menu-grid" aria-label="Menu items">
-          <article class="menu-card">
-            <h3>Menu items go here</h3>
-            <p>Next step: load categories and render real items from your menu source.</p>
-          </article>
-          <article class="menu-card">
-            <h3>Drink customization slot</h3>
-            <p>Sizes, ice, sugar, and toppings will attach to drink items only.</p>
-          </article>
-        </div>
-      </section>
-
-      <aside class="sidebar">
-        <section class="cart-panel" aria-labelledby="cart-heading">
-          <div class="section-heading">
-            <h2 id="cart-heading">Cart</h2>
-            <p>Later steps will handle add, edit, remove, and order summary.</p>
-          </div>
-          <div class="cart-placeholder">
-            No items yet.
-          </div>
-          <button class="secondary-button" type="button" disabled>Checkout</button>
-        </section>
-
-        <section class="assistant-panel" aria-labelledby="assistant-heading">
-          <div class="section-heading">
-            <h2 id="assistant-heading">Assistant Space</h2>
-            <p>Reserved for a future chatbot or guided ordering assistant.</p>
-          </div>
-        </section>
-      </aside>
-    </main>
-  </div>
-
-  <script src="./app.js"></script>
+  <script src="menu.js"></script>
 </body>
 </html>

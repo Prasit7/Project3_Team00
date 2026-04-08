@@ -1,169 +1,252 @@
 :root {
-  --bg: #f3eadf;
-  --panel: rgba(255, 249, 242, 0.92);
-  --panel-strong: #fffaf3;
-  --text: #2a1e16;
-  --muted: #6d5a4e;
-  --line: rgba(89, 61, 43, 0.18);
-  --accent: #b54d21;
-  --accent-dark: #8f3816;
-  --shadow: 0 18px 48px rgba(76, 47, 29, 0.12);
-  --radius-lg: 28px;
-  --radius-md: 18px;
+  --background: #f6f1e8;
+  --panel: #f7f2ea;
+  --text: #2f241d;
+  --border: #3d332c;
+  --button-bg: #efefef;
 }
 
-*{
+* {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
-  font-family: "Avenir Next", "Trebuchet MS", sans-serif;
-  background:
-    radial-gradient(circle at top left, rgba(255, 214, 170, 0.55), transparent 30%),
-    linear-gradient(180deg, #fbf5ee 0%, var(--bg) 100%);
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  background: var(--background);
   color: var(--text);
 }
 
-button {
-  font: inherit;
+.customer-page {
+  padding: 10px;
 }
 
-.customer-kiosk {
-  padding: 32px;
+.page-header {
+  margin-bottom: 20px;
 }
 
-.hero,
-.menu-panel,
-.cart-panel,
-.assistant-panel {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-}
-
-.hero {
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
-  align-items: center;
-  padding: 32px;
-  margin-bottom: 24px;
-}
-
-.eyebrow {
+.page-header h1 {
   margin: 0 0 8px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent-dark);
 }
 
-.hero h1,
-.section-heading h2,
-.menu-card h3 {
+.page-header p {
   margin: 0;
 }
 
-.hero-copy,
-.section-heading p,
-.menu-card p {
-  color: var(--muted);
+.category-bar,
+.customization-section,
+.order-section,
+.checkout-section,
+.assistant-section,
+.status-bar,
+.page-actions {
+  margin-bottom: 24px;
 }
 
-.kiosk-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
-  gap: 24px;
+.status-bar {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  background: var(--panel);
 }
 
-.menu-panel,
-.cart-panel,
-.assistant-panel {
-  padding: 24px;
+.status-bar p {
+  margin: 0;
 }
 
-.sidebar {
-  display: grid;
-  gap: 24px;
+.is-hidden {
+  display: none;
 }
 
-.section-heading {
-  margin-bottom: 20px;
-}
-
-.category-strip {
+.category-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 8px;
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
 }
 
-.chip,
-.primary-button,
-.secondary-button {
-  min-height: 56px;
-  padding: 14px 22px;
-  border-radius: 999px;
-  border: 0;
+.category-button,
+.item-button,
+.nav-button {
+  min-width: 120px;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1px solid #9a9a9a;
+  background: var(--button-bg);
+  color: var(--text);
+  font-size: 1rem;
   cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.chip {
-  background: #f2dfcf;
-  color: var(--text);
+.category-button.active {
+  font-weight: 700;
 }
 
-.chip.is-active,
-.primary-button {
-  background: var(--accent);
-  color: #fff;
-}
-
-.secondary-button {
-  width: 100%;
-  background: #eadbcf;
-  color: var(--text);
-}
-
-.secondary-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.7;
+.category-button:disabled,
+.item-button:disabled,
+.nav-button.is-disabled {
+  opacity: 0.55;
+  pointer-events: none;
 }
 
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
 }
 
-.menu-card,
-.cart-placeholder {
-  background: var(--panel-strong);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: 20px;
+.menu-item-box,
+.order-box,
+.text-box {
+  border: 1px solid var(--border);
+  background: var(--panel);
 }
 
-@media (max-width: 980px) {
-  .customer-kiosk {
-    padding: 20px;
-  }
+.menu-item-box {
+  min-height: 180px;
+  padding: 14px;
+  text-align: center;
+}
 
-  .hero,
-  .kiosk-layout {
+.menu-item-box h2 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+
+.price-text {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+}
+
+.skeleton-box {
+  opacity: 0.75;
+}
+
+.customization-section,
+.order-section,
+.checkout-section,
+.assistant-section {
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.customization-section h2,
+.order-section h2,
+.checkout-section h2,
+.assistant-section h2 {
+  margin: 0 0 14px;
+  font-size: 2rem;
+}
+
+.customization-grid,
+.checkout-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.text-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+
+.checkbox-list {
+  display: grid;
+  gap: 8px;
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.checkbox-option input {
+  width: 18px;
+  height: 18px;
+}
+
+.text-box label {
+  font-weight: 700;
+}
+
+.text-box input,
+.text-box select {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #9a9a9a;
+  background: #fff;
+  font: inherit;
+}
+
+.customization-actions,
+.order-actions,
+.checkout-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.order-box {
+  padding: 14px;
+}
+
+.order-box p {
+  margin-top: 0;
+}
+
+.total-text {
+  margin: 14px 0 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.assistant-box input {
+  background: #fafafa;
+}
+
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.primary-link {
+  font-weight: 700;
+}
+
+.action-choice-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 16px;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #8ba9ff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 700px) {
+  .menu-grid,
+  .customization-grid,
+  .checkout-grid {
     grid-template-columns: 1fr;
   }
 
-  .hero {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .menu-grid {
-    grid-template-columns: 1fr;
+  .category-button,
+  .item-button {
+    width: 100%;
   }
 }
