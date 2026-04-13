@@ -5,6 +5,8 @@ export const runtime = 'nodejs'
 
 export async function GET() {
   try {
+    // query the database to find the top 10 most ordered menu items
+    // by summing quantities from order items and grouping by item name
     const result = await getPool().query(`
       SELECT 
         mi.name,
@@ -16,7 +18,7 @@ export async function GET() {
       ORDER BY total_sold DESC
       LIMIT 10;
     `)
-
+    // return the aggregated results as JSON (top-selling menu items)
     return NextResponse.json(result.rows)
   } catch (err) {
     console.error('Usage failed:', err.message)
