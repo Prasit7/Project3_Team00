@@ -9,8 +9,8 @@
 <body>
   <main class="customer-page">
     <section class="page-header">
-      <h1>Checkout</h1>
-      <p>Step 3 of 3: Review the order and complete checkout.</p>
+      <h1 data-i18n="checkoutTitle">Checkout</h1>
+      <p data-i18n="checkoutStep">Step 3 of 3: Review the order and complete checkout.</p>
     </section>
 
     <section class="status-bar" aria-live="polite">
@@ -18,15 +18,15 @@
     </section>
 
     <section class="checkout-section" aria-labelledby="checkout-heading">
-      <h2 id="checkout-heading">Order Summary</h2>
+      <h2 id="checkout-heading" data-i18n="orderSummary">Order Summary</h2>
       <div class="order-box" id="checkout-order-box">
-        <p>No order available yet.</p>
+        <p data-i18n="noOrder">No order available yet.</p>
       </div>
       <p class="total-text" id="checkout-total">Total: $0.00</p>
     </section>
 
     <section class="assistant-section" aria-labelledby="assistant-heading">
-      <h2 id="assistant-heading">Assistant Space</h2>
+      <h2 id="assistant-heading" data-i18n="assistantSpace">Assistant Space</h2>
       <div class="text-box assistant-box">
         <label for="assistant-placeholder">Future chatbot / assistant</label>
         <input id="assistant-placeholder" name="assistant-placeholder" type="text" placeholder="Reserved for later" />
@@ -34,12 +34,14 @@
     </section>
 
     <section class="page-actions">
-      <a class="nav-button" href="customize.html">Back to Customization</a>
-      <a class="nav-button primary-link" href="index.html">Start New Order</a>
-      <button class="nav-button primary-link" id="pay-button" type="button">Pay</button>
+      <a class="nav-button" href="customize.html" data-i18n="backToCustomize">Back to Customization</a>
+      <a class="nav-button primary-link" href="index.html" data-i18n="startNewOrder">Start New Order</a>
+      <button class="nav-button primary-link" id="pay-button" type="button" data-i18n="pay">Pay</button>
     </section>
   </main>
 
+  <script src="../translations.js"></script>
+  <script src="../accessibility.js"></script>
   <script src="checkout.js"></script>
 </body>
 </html>

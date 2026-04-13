@@ -20,9 +20,9 @@ function loadCart() {
 
 function renderOrder(cart) {
   if (cart.length === 0) {
-    checkoutOrderBox.innerHTML = "<p>No order available yet.</p>";
+    checkoutOrderBox.innerHTML = `<p>${t("noOrder")}</p>`;
     checkoutTotal.textContent = "Total: $0.00";
-    checkoutStatus.textContent = "No saved order found. Go back to customization first.";
+    checkoutStatus.textContent = t("noOrder");
     return;
   }
 
@@ -31,19 +31,19 @@ function renderOrder(cart) {
       (order, index) => `
         <p><strong>Item ${index + 1}: ${order.itemName}</strong></p>
         <p>Category: ${order.category}</p>
-        <p>Size: ${order.size}</p>
-        <p>Ice: ${order.ice}</p>
-        <p>Sugar: ${order.sugar}</p>
-        <p>Toppings: ${order.toppings.length ? order.toppings.join(", ") : "None"}</p>
-        <p>Instructions: ${order.specialInstructions || "None"}</p>
+        <p>${t("size")}: ${order.size}</p>
+        <p>${t("iceLevel")}: ${order.ice}</p>
+        <p>${t("sugarLevel")}: ${order.sugar}</p>
+        <p>${t("toppings")}: ${order.toppings.length ? order.toppings.join(", ") : "None"}</p>
+        <p>${t("specialInstructions")}: ${order.specialInstructions || "None"}</p>
         <p>Item Total: ${formatMoney(order.totalPrice)}</p>
       `
     )
     .join("");
 
   const total = cart.reduce((sum, order) => sum + Number(order.totalPrice || 0), 0);
-  checkoutTotal.textContent = `Total: ${formatMoney(total)}`;
-  checkoutStatus.textContent = "Order summary loaded from the saved cart.";
+  checkoutTotal.textContent = `${t("total")} ${formatMoney(total)}`;
+  checkoutStatus.textContent = t("checkoutStep");
 }
 
 function resetOrderSummary() {
@@ -81,13 +81,13 @@ async function submitOrder(cart) {
 payButton.addEventListener("click", async () => {
   const cart = loadCart();
   if (cart.length === 0) {
-    checkoutStatus.textContent = "No order available yet. Go back to customization first.";
+    checkoutStatus.textContent = t("noOrder");
     return;
   }
 
   payButton.disabled = true;
   const originalButtonText = payButton.textContent;
-  payButton.textContent = "Processing...";
+  payButton.textContent = t("processing");
   checkoutStatus.textContent = "Submitting order to database...";
 
   try {

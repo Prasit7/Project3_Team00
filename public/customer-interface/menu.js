@@ -41,7 +41,7 @@ function renderSelectedItem(item) {
 
   if (!item) {
     if (cart.length === 0) {
-      selectedItemBox.innerHTML = "<p>No item selected yet.</p>";
+      selectedItemBox.innerHTML = `<p>${t("noItemSelected")}</p>`;
       selectedItemTotal.textContent = "Total: $0.00";
       nextCustomizeLink.classList.add("is-disabled");
       nextCustomizeLink.setAttribute("aria-disabled", "true");
@@ -59,14 +59,14 @@ function renderSelectedItem(item) {
   `;
   const cartTotal = cart.reduce((sum, cartItem) => sum + Number(cartItem.totalPrice || 0), 0);
   const displayTotal = cartTotal > 0 ? cartTotal : Number(item.basePrice);
-  selectedItemTotal.textContent = `Total: ${formatMoney(displayTotal)}`;
+  selectedItemTotal.textContent = `${t("total")} ${formatMoney(displayTotal)}`;
   nextCustomizeLink.classList.remove("is-disabled");
   nextCustomizeLink.setAttribute("aria-disabled", "false");
 }
 
 function renderCartSummary(cart) {
   if (cart.length === 0) {
-    selectedItemBox.innerHTML = "<p>No item selected yet.</p>";
+    selectedItemBox.innerHTML = `<p>${t("noItemSelected")}</p>`;
     selectedItemTotal.textContent = "Total: $0.00";
     return;
   }
@@ -85,7 +85,7 @@ function renderCartSummary(cart) {
     .join("");
 
   const total = cart.reduce((sum, item) => sum + Number(item.totalPrice || 0), 0);
-  selectedItemTotal.textContent = `Total: ${formatMoney(total)}`;
+  selectedItemTotal.textContent = `${t("total")} ${formatMoney(total)}`;
   nextCustomizeLink.classList.remove("is-disabled");
   nextCustomizeLink.setAttribute("aria-disabled", "false");
 }
@@ -152,9 +152,9 @@ async function loadMenuItems() {
 
     renderCategories();
     renderMenuItems();
-    statusText.textContent = "Menu items loaded from the database.";
+    statusText.textContent = t("statusLoaded");
   } catch (error) {
-    statusText.textContent = `Could not load menu items from the database. ${error.message}`;
+    statusText.textContent = `${t("statusError")} ${error.message}`;
     menuGrid.innerHTML = '<article class="menu-item-box skeleton-box"><h2>Menu unavailable</h2><p class="price-text">Database load failed</p></article>';
   }
 }

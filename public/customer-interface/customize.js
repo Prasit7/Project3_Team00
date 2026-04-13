@@ -88,7 +88,7 @@ function calculateTotal() {
 
 function updatePreview() {
   if (!selectedMenuItem) {
-    customizeOrderBox.innerHTML = "<p>Select an item on the menu page first.</p>";
+    customizeOrderBox.innerHTML = `<p>${t("noItemSelected")}</p>`;
     customizeTotal.textContent = "Total: $0.00";
     return;
   }
@@ -98,13 +98,13 @@ function updatePreview() {
 
   customizeOrderBox.innerHTML = `
     <p><strong>${selectedMenuItem.itemName}</strong></p>
-    <p>Size: ${sizeSelect.value || "Regular"}</p>
-    <p>Ice: ${iceSelect.value || "Regular Ice"}</p>
-    <p>Sugar: ${sugarSelect.value || "100% Sugar"}</p>
-    <p>Toppings: ${toppings.length ? toppings.join(", ") : "None"}</p>
-    <p>Instructions: ${specialInstructionsInput.value.trim() || "None"}</p>
+    <p>${t("size")}: ${sizeSelect.value || "Regular"}</p>
+    <p>${t("iceLevel")}: ${iceSelect.value || "Regular Ice"}</p>
+    <p>${t("sugarLevel")}: ${sugarSelect.value || "100% Sugar"}</p>
+    <p>${t("toppings")}: ${toppings.length ? toppings.join(", ") : "None"}</p>
+    <p>${t("specialInstructions")}: ${specialInstructionsInput.value.trim() || "None"}</p>
   `;
-  customizeTotal.textContent = `Total: ${formatMoney(total)}`;
+  customizeTotal.textContent = `${t("total")} ${formatMoney(total)}`;
 }
 
 function buildCurrentOrder() {
@@ -124,7 +124,7 @@ function buildCurrentOrder() {
 function addCurrentItemToCart() {
   const order = buildCurrentOrder();
   if (!order) {
-    customizeStatus.textContent = "No selected drink found. Go back to the menu page first.";
+    customizeStatus.textContent = t("noItemSelected");
     return false;
   }
 
@@ -132,7 +132,7 @@ function addCurrentItemToCart() {
   cart.push(order);
   saveCart(cart);
   sessionStorage.removeItem("customerCustomizedOrder");
-  customizeStatus.textContent = `${order.itemName} added to order.`;
+  customizeStatus.textContent = `${order.itemName} ${t("addToOrder")}.`;
   renderCartPreview();
   return true;
 }
@@ -149,18 +149,18 @@ function renderCartPreview() {
     .map(
       (item, index) => `
         <p><strong>Item ${index + 1}: ${item.itemName}</strong></p>
-        <p>Size: ${item.size}</p>
-        <p>Ice: ${item.ice}</p>
-        <p>Sugar: ${item.sugar}</p>
-        <p>Toppings: ${item.toppings.length ? item.toppings.join(", ") : "None"}</p>
-        <p>Instructions: ${item.specialInstructions || "None"}</p>
+        <p>${t("size")}: ${item.size}</p>
+        <p>${t("iceLevel")}: ${item.ice}</p>
+        <p>${t("sugarLevel")}: ${item.sugar}</p>
+        <p>${t("toppings")}: ${item.toppings.length ? item.toppings.join(", ") : "None"}</p>
+        <p>${t("specialInstructions")}: ${item.specialInstructions || "None"}</p>
         <p>Item Total: ${formatMoney(item.totalPrice)}</p>
       `
     )
     .join("");
 
   const total = cart.reduce((sum, item) => sum + Number(item.totalPrice || 0), 0);
-  customizeTotal.textContent = `Total: ${formatMoney(total)}`;
+  customizeTotal.textContent = `${t("total")} ${formatMoney(total)}`;
 }
 
 async function loadModifiers() {
@@ -195,7 +195,7 @@ async function initializePage() {
   selectedMenuItem = loadSelectedItem();
 
   if (!selectedMenuItem) {
-    customizeStatus.textContent = "No selected drink found. Go back to the menu page first.";
+    customizeStatus.textContent = t("noItemSelected");
     updatePreview();
     return;
   }
@@ -221,10 +221,10 @@ async function initializePage() {
 
     if (loadCart().length > 0) renderCartPreview();
 
-    customizeStatus.textContent = "Customization options loaded from the database.";
+    customizeStatus.textContent = t("statusLoaded");
     if (loadCart().length === 0) updatePreview();
   } catch (error) {
-    customizeStatus.textContent = `Could not load customization options from the database. ${error.message}`;
+    customizeStatus.textContent = `${t("statusError")} ${error.message}`;
   }
 }
 
@@ -244,7 +244,7 @@ addToOrderButton.addEventListener("click", () => {
 checkoutButton.addEventListener("click", () => {
   const cart = loadCart();
   if (cart.length === 0) {
-    customizeStatus.textContent = "Add at least one customized drink to the order before checkout.";
+    customizeStatus.textContent = t("noCustomization");
     return;
   }
 

@@ -217,6 +217,103 @@ Ownership suggestion:
       background-color: #fff;
       border: 1px solid #e2d8c3;
     }
+
+    /* === High Contrast Mode === */
+    /* activated when data-theme="high-contrast" is set on <html> */
+    [data-theme="high-contrast"] body {
+      background-color: #000;
+      color: #fff;
+      font-size: 120%;
+    }
+    [data-theme="high-contrast"] .board-header {
+      background-color: #000;
+      border-bottom: 3px solid #fff;
+    }
+    [data-theme="high-contrast"] .header-brand .eyebrow {
+      color: #fff;
+      font-size: 1.2rem;
+    }
+    [data-theme="high-contrast"] .header-brand h1 {
+      color: #ff0;
+      font-size: 3.5rem;
+    }
+    [data-theme="high-contrast"] .meta-pill {
+      background-color: #333;
+      color: #ff0;
+      font-size: 1.2rem;
+      border: 2px solid #fff;
+    }
+    [data-theme="high-contrast"] .status-banner {
+      background-color: #111;
+      border-bottom: 3px solid #fff;
+      color: #fff;
+      font-size: 1.2rem;
+    }
+    [data-theme="high-contrast"] .ticker-wrap {
+      background-color: #111;
+      border-bottom: 3px solid #fff;
+    }
+    [data-theme="high-contrast"] .ticker-track span {
+      color: #ff0;
+      font-size: 1.3rem;
+    }
+    [data-theme="high-contrast"] .board-main {
+      gap: 2rem;
+      padding: 2rem;
+    }
+    [data-theme="high-contrast"] .menu-column {
+      background-color: #111;
+      border: 3px solid #fff;
+      box-shadow: none;
+      border-radius: 8px;
+    }
+    [data-theme="high-contrast"] h2 {
+      color: #ff0;
+      font-size: 2rem;
+    }
+    [data-theme="high-contrast"] .cat-icon {
+      font-size: 2.2rem;
+    }
+    [data-theme="high-contrast"] .item-name {
+      color: #fff;
+      font-size: 1.4rem;
+    }
+    [data-theme="high-contrast"] .item-desc {
+      color: #ccc;
+      font-size: 1.1rem;
+    }
+    [data-theme="high-contrast"] .item-price {
+      color: #ff0;
+      font-size: 1.4rem;
+    }
+    [data-theme="high-contrast"] .menu-item {
+      border-bottom: 1px solid #444;
+      padding-bottom: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    [data-theme="high-contrast"] .board-footer {
+      background-color: #000;
+      border-top: 3px solid #fff;
+    }
+    [data-theme="high-contrast"] .opt-label {
+      color: #ff0;
+      font-size: 1.2rem;
+    }
+    [data-theme="high-contrast"] .opt-pill {
+      background-color: #222;
+      color: #fff;
+      border: 2px solid #fff;
+      font-size: 1.1rem;
+    }
+    [data-theme="high-contrast"] .opt-pill.active {
+      background-color: #ff0;
+      color: #000;
+      font-weight: 700;
+    }
+    [data-theme="high-contrast"] .empty-item {
+      color: #ccc;
+      font-size: 1.2rem;
+    }
   </style>
 </head>
 <body>
@@ -229,7 +326,7 @@ Ownership suggestion:
     </div>
     <div class="header-meta">
       <span class="meta-pill" id="clock">--:--</span>
-      <span class="meta-pill now-serving">Now Serving</span>
+      <span class="meta-pill now-serving" data-i18n="nowServing">Now Serving</span>
     </div>
   </header>
 
@@ -251,7 +348,7 @@ Ownership suggestion:
     <section class="menu-column" aria-labelledby="cat-milktea">
       <div class="column-header">
         <span class="cat-icon">🧋</span>
-        <h2 id="cat-milktea">Milk Teas</h2>
+        <h2 id="cat-milktea" data-i18n="milkTeas">Milk Teas</h2>
       </div>
       <ul class="item-list" id="milk-tea-list">
         <li class="empty-item">Loading items...</li>
@@ -262,7 +359,7 @@ Ownership suggestion:
     <section class="menu-column" aria-labelledby="cat-fruittea">
       <div class="column-header">
         <span class="cat-icon">🍓</span>
-        <h2 id="cat-fruittea">Fruit Teas</h2>
+        <h2 id="cat-fruittea" data-i18n="fruitTeas">Fruit Teas</h2>
       </div>
       <ul class="item-list" id="fruit-tea-list">
         <li class="empty-item">Loading items...</li>
@@ -273,7 +370,7 @@ Ownership suggestion:
     <section class="menu-column" aria-labelledby="cat-specialty">
       <div class="column-header">
         <span class="cat-icon">🍵</span>
-        <h2 id="cat-specialty">Tea & Specialty</h2>
+        <h2 id="cat-specialty" data-i18n="teaSpecialty">Tea & Specialty</h2>
       </div>
       <ul class="item-list" id="specialty-list">
         <li class="empty-item">Loading items...</li>
@@ -311,6 +408,8 @@ Ownership suggestion:
     </div>
   </footer>
 
+ <script src="translations.js"></script>
+ <script src="accessibility.js"></script>
 
  <!-- add clock time -->
  <script>
