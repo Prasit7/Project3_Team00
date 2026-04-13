@@ -5,6 +5,7 @@ export const runtime = 'nodejs'
 
 export async function GET() {
   try {
+    // get the most recent date in the Order table and count how many orders happened that day
     const result = await getPool().query(`
       SELECT 
         DATE(order_time) AS report_date,
@@ -16,7 +17,7 @@ export async function GET() {
       )
       GROUP BY DATE(order_time);
     `)
-
+     // return the result as JSON, or send a 500 error if something breaks
     return NextResponse.json(result.rows[0])
   } catch (err) {
     console.error('XReport failed:', err.message)
