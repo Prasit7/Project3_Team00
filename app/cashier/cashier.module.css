@@ -1,0 +1,802 @@
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f5f7ff 0%, #eef8ff 100%);
+  color: #14213d;
+  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  padding: 16px;
+}
+
+.shell {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+}
+
+.header {
+  background: #ffffff;
+  border: 1px solid #d7e5f4;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+}
+
+.subtitle {
+  margin: 8px 0 0;
+  color: #45556f;
+}
+
+.columns {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1.3fr 1fr;
+}
+
+.menuPanel,
+.orderPanel {
+  background: #ffffff;
+  border: 1px solid #d7e5f4;
+  border-radius: 14px;
+  padding: 16px;
+  min-height: 64vh;
+  display: grid;
+  gap: 16px;
+}
+
+.menuPanel {
+  grid-template-rows: auto auto auto 1fr;
+}
+
+.orderPanel {
+  grid-template-rows: auto auto auto;
+  align-content: start;
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.panelHeader h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.searchInput {
+  width: min(320px, 100%);
+  min-height: 48px;
+  font-size: 1rem;
+  border: 1px solid #b9cadf;
+  border-radius: 10px;
+  padding: 0 12px;
+  background: #f8fbff;
+}
+
+.placeholderGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 12px;
+  align-content: start;
+  align-items: start;
+}
+
+.touchCard {
+  min-height: 64px;
+  border: 1px solid #bfd5ee;
+  border-radius: 12px;
+  background: #f5faff;
+  color: #1f3254;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.orderListPlaceholder {
+  border: 2px dashed #c2d4ea;
+  border-radius: 12px;
+  min-height: 320px;
+  max-height: 420px;
+  display: block;
+  color: #64748b;
+  font-weight: 600;
+  padding: 12px;
+  overflow: auto;
+}
+
+.total {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.actions {
+  display: grid;
+  gap: 10px;
+}
+
+.categoryRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.categoryChip {
+  min-height: 42px;
+  width: 120px;
+  border-radius: 999px;
+  border: 1px solid #bfd5ee;
+  background: #f5faff;
+  color: #1f3254;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.categoryChipActive {
+  border-color: #0b7d51;
+  background: #dff5eb;
+  color: #0b5c3c;
+}
+
+.drinkStrip {
+  border: 1px solid #c6d9ef;
+  background: #f4faff;
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.drinkStripTitle {
+  margin: 0;
+  font-weight: 800;
+  color: #1a3055;
+}
+
+.drinkButtons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.drinkQuickButton {
+  min-height: 50px;
+  border-radius: 10px;
+  border: 1px solid #b7d0ec;
+  background: #ffffff;
+  color: #1f3254;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 10px;
+}
+
+.menuItemCard {
+  min-height: 90px;
+  border: 1px solid #bfd5ee;
+  border-radius: 12px;
+  background: #f5faff;
+  color: #1f3254;
+  font-size: 1rem;
+  text-align: left;
+  padding: 12px;
+  display: grid;
+  gap: 4px;
+}
+
+.menuItemCardSelected {
+  border-color: #0b7d51;
+  background: #e8f8ef;
+  box-shadow: inset 0 0 0 1px #0b7d51;
+}
+
+.menuItemName {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.menuItemMeta {
+  font-size: 0.85rem;
+  color: #5a6a82;
+}
+
+.menuItemPrice {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.loadingState,
+.errorState,
+.emptyState {
+  grid-column: 1 / -1;
+  margin: 0;
+  border-radius: 12px;
+  padding: 12px;
+  font-weight: 600;
+}
+
+.loadingState {
+  background: #edf5ff;
+  color: #2e4a78;
+}
+
+.errorState {
+  background: #ffe9e9;
+  color: #8c1d18;
+}
+
+.emptyState {
+  background: #f6f8fb;
+  color: #526174;
+}
+
+.selectedItemPreview {
+  text-align: left;
+}
+
+.selectedLabel {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #4e627f;
+}
+
+.selectedName {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #172b4d;
+}
+
+.selectedMeta {
+  margin: 6px 0 0;
+  color: #3f5576;
+  font-weight: 600;
+}
+
+.orderItemsList {
+  display: grid;
+  gap: 10px;
+}
+
+.orderItemCard {
+  border: 1px solid #bfd5ee;
+  border-radius: 12px;
+  padding: 10px;
+  background: #f8fbff;
+}
+
+.orderItemCardActive {
+  border-color: #0b7d51;
+  box-shadow: inset 0 0 0 1px #0b7d51;
+  background: #eef9f2;
+}
+
+.orderItemTop {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.orderItemName {
+  margin: 0;
+  color: #172b4d;
+  font-weight: 700;
+}
+
+.orderItemMeta {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: #4e627f;
+}
+
+.deleteButton {
+  min-height: 38px;
+  border-radius: 10px;
+  border: 1px solid #efb1b1;
+  background: #fff2f2;
+  color: #8c1d18;
+  font-weight: 700;
+  padding: 0 10px;
+}
+
+.selectForModsButton {
+  margin-top: 8px;
+  min-height: 38px;
+  border-radius: 10px;
+  border: 1px solid #b8cde8;
+  background: #ffffff;
+  color: #1f3254;
+  font-weight: 700;
+  padding: 0 10px;
+}
+
+.modifierSummary {
+  margin: 8px 0 0;
+  font-size: 0.84rem;
+  color: #365074;
+}
+
+.orderItemBottom {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.qtyControls {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.qtyButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #bfd5ee;
+  background: #ffffff;
+  color: #1f3254;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.qtyValue {
+  min-width: 22px;
+  text-align: center;
+  font-weight: 700;
+  color: #1f3254;
+}
+
+.orderItemTotal {
+  margin: 0;
+  font-weight: 800;
+  color: #14213d;
+}
+
+.modifierPanel {
+  border: 1px solid #c5d7ec;
+  background: #f7fbff;
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.modifierTitle {
+  margin: 0;
+  font-weight: 800;
+  color: #14213d;
+}
+
+.modifierHelp {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #4f6381;
+}
+
+.modifierChipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.modifierGroups {
+  display: grid;
+  gap: 10px;
+}
+
+.modifierGroup {
+  border: 1px solid #d2e0f0;
+  border-radius: 10px;
+  padding: 8px;
+  background: #ffffff;
+}
+
+.modifierGroupTitle {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #35527b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.modifierChip {
+  min-height: 36px;
+  border-radius: 999px;
+  border: 1px solid #bfd5ee;
+  background: #ffffff;
+  color: #1f3254;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0 12px;
+}
+
+.modifierChip:disabled {
+  opacity: 0.5;
+}
+
+.modifierChipActive {
+  border-color: #0b7d51;
+  background: #dff5eb;
+  color: #0b5c3c;
+}
+
+.customModifierRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.customModifierInput {
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid #b9cadf;
+  padding: 0 12px;
+  background: #ffffff;
+}
+
+.actionButton,
+.primaryAction,
+.secondaryAction {
+  min-height: 56px;
+  border-radius: 12px;
+  border: 1px solid #b9cadf;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.actionButton {
+  background: #f4f9ff;
+  color: #1f3254;
+}
+
+.primaryAction {
+  background: #0b7d51;
+  color: #ffffff;
+  border: none;
+}
+
+.secondaryAction {
+  background: #0d4d9a;
+  color: #ffffff;
+  border: none;
+}
+
+.paymentPanel {
+  border: 1px solid #c5d7ec;
+  background: #f7fbff;
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  gap: 10px;
+}
+
+.paymentTitle {
+  margin: 0;
+  font-weight: 800;
+  color: #14213d;
+}
+
+.paymentHint {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #31527f;
+  font-weight: 700;
+}
+
+.paymentMethodRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.paymentMethodButton {
+  min-height: 42px;
+  border-radius: 10px;
+  border: 1px solid #bfd5ee;
+  background: #ffffff;
+  color: #1f3254;
+  font-weight: 700;
+}
+
+.paymentMethodButtonActive {
+  border-color: #0b7d51;
+  background: #dff5eb;
+  color: #0b5c3c;
+}
+
+.cashInput {
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid #b9cadf;
+  padding: 0 12px;
+  background: #ffffff;
+}
+
+.cashSummaryRow {
+  display: grid;
+  gap: 8px;
+}
+
+.cashSummaryText {
+  margin: 0;
+  font-weight: 700;
+  color: #2a3e62;
+}
+
+.changeDue {
+  margin: 0;
+  font-weight: 700;
+  color: #0b5c3c;
+}
+
+.paymentError {
+  margin: 0;
+  border-radius: 10px;
+  background: #ffe9e9;
+  color: #8c1d18;
+  padding: 8px 10px;
+  font-weight: 700;
+}
+
+.orderNotice {
+  margin: 0;
+  border-radius: 10px;
+  background: #e5f7ee;
+  color: #0b5c3c;
+  padding: 10px;
+  font-weight: 700;
+}
+
+.checkoutHint {
+  margin: 0;
+  border-radius: 10px;
+  background: #edf5ff;
+  color: #31527f;
+  padding: 10px;
+  font-weight: 700;
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 21, 43, 0.35);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 40;
+}
+
+.modalCard {
+  width: min(460px, 100%);
+  background: #ffffff;
+  border: 1px solid #c5d7ec;
+  border-radius: 14px;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.modalTitle {
+  margin: 0;
+  color: #14213d;
+}
+
+.modalHint {
+  margin: 0;
+  color: #466086;
+  font-weight: 700;
+}
+
+.modalActions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 980px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+
+  .menuPanel,
+  .orderPanel {
+    min-height: auto;
+  }
+
+  .panelHeader {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchInput {
+    width: 100%;
+  }
+
+  .drinkButtons {
+    grid-template-columns: 1fr;
+  }
+
+  .modalActions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* high contrast overrides */
+:global([data-theme="high-contrast"]) .page {
+  background: #000;
+  color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .header {
+  background: #111;
+  border: 2px solid #fff;
+}
+
+:global([data-theme="high-contrast"]) .title {
+  color: #fff;
+  font-size: 2.2rem;
+}
+
+:global([data-theme="high-contrast"]) .subtitle {
+  color: #ccc;
+}
+
+:global([data-theme="high-contrast"]) .menuPanel,
+:global([data-theme="high-contrast"]) .orderPanel {
+  background: #111;
+  border: 2px solid #fff;
+}
+
+:global([data-theme="high-contrast"]) .searchInput {
+  background: #000;
+  color: #fff;
+  border: 2px solid #fff;
+  font-size: 1.1rem;
+}
+
+:global([data-theme="high-contrast"]) .categoryChip {
+  background: #000;
+  color: #fff;
+  border: 2px solid #fff;
+  font-size: 1rem;
+}
+
+:global([data-theme="high-contrast"]) .categoryChipActive {
+  background: #fff;
+  color: #000;
+  border-color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .menuItemCard {
+  background: #111;
+  border: 2px solid #fff;
+  color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .menuItemName {
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .menuItemPrice {
+  color: #ff0;
+  font-size: 1.1rem;
+}
+
+:global([data-theme="high-contrast"]) .menuItemMeta {
+  color: #ccc;
+}
+
+:global([data-theme="high-contrast"]) .orderItemCard {
+  background: #111;
+  border: 2px solid #fff;
+  color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .orderItemName {
+  color: #fff;
+  font-size: 1.1rem;
+}
+
+:global([data-theme="high-contrast"]) .orderItemTotal {
+  color: #ff0;
+  font-size: 1.1rem;
+}
+
+:global([data-theme="high-contrast"]) .total {
+  color: #ff0;
+  font-size: 1.6rem;
+}
+
+:global([data-theme="high-contrast"]) .primaryAction {
+  background: #ff0;
+  color: #000;
+  font-size: 1.1rem;
+}
+
+:global([data-theme="high-contrast"]) .secondaryAction {
+  background: #fff;
+  color: #000;
+  font-size: 1.1rem;
+}
+
+:global([data-theme="high-contrast"]) .actionButton {
+  background: #333;
+  color: #fff;
+  border: 2px solid #fff;
+  font-size: 1.1rem;
+}
+
+:global([data-theme="high-contrast"]) .deleteButton {
+  background: #f00;
+  color: #fff;
+  border-color: #f00;
+}
+
+:global([data-theme="high-contrast"]) .modifierChip {
+  background: #000;
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+:global([data-theme="high-contrast"]) .modifierChipActive {
+  background: #ff0;
+  color: #000;
+  border-color: #ff0;
+}
+
+:global([data-theme="high-contrast"]) .modifierPanel {
+  background: #111;
+  border: 2px solid #fff;
+}
+
+:global([data-theme="high-contrast"]) .paymentPanel {
+  background: #111;
+  border: 2px solid #fff;
+}
+
+:global([data-theme="high-contrast"]) .paymentMethodButton {
+  background: #000;
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+:global([data-theme="high-contrast"]) .paymentMethodButtonActive {
+  background: #ff0;
+  color: #000;
+  border-color: #ff0;
+}
+
+:global([data-theme="high-contrast"]) .cashInput {
+  background: #000;
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+:global([data-theme="high-contrast"]) .modalCard {
+  background: #111;
+  border: 2px solid #fff;
+  color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .qtyButton {
+  background: #000;
+  color: #fff;
+  border: 2px solid #fff;
+}
