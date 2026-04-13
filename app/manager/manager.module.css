@@ -184,3 +184,135 @@
     flex-direction: column;
   }
 }
+
+/* accessibility bar */
+.a11yBar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #c9d6e5;
+  font-size: 0.85rem;
+}
+
+.a11yBtn {
+  background: #ffffff;
+  border: 1px solid #c9d6e5;
+  border-radius: 4px;
+  color: #103050;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 3px 10px;
+}
+
+.a11yBtn:hover {
+  border-color: #103050;
+}
+
+.a11yBtn:focus-visible {
+  outline: 2px solid #103050;
+  outline-offset: 2px;
+}
+
+.a11yBtnActive {
+  background: #103050;
+  color: #ffffff;
+  border-color: #103050;
+  font-weight: 700;
+}
+
+.langDivider {
+  color: #c9d6e5;
+}
+
+/* high contrast overrides */
+:global([data-theme="high-contrast"]) .page {
+  background: #000;
+  color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .a11yBar {
+  border-color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .a11yBtn {
+  background: #000;
+  border-color: #fff;
+  color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .a11yBtnActive {
+  background: #fff;
+  color: #000;
+}
+
+:global([data-theme="high-contrast"]) .card {
+  background: #111;
+  border: 2px solid #fff;
+  color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .card p {
+  color: #ccc;
+}
+
+:global([data-theme="high-contrast"]) .cardLink {
+  background: #ff0;
+  color: #000;
+}
+
+:global([data-theme="high-contrast"]) .section {
+  background: #111;
+  border: 2px solid #fff;
+}
+
+:global([data-theme="high-contrast"]) .navLink {
+  background: #000;
+  color: #fff;
+  border-color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .navLinkActive {
+  background: #fff;
+  color: #000;
+}
+
+:global([data-theme="high-contrast"]) .input,
+:global([data-theme="high-contrast"]) .select {
+  background: #000;
+  color: #fff;
+  border-color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .buttonPrimary {
+  background: #ff0;
+  color: #000;
+}
+
+:global([data-theme="high-contrast"]) .buttonSecondary {
+  background: #333;
+  color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .buttonDanger {
+  background: #f00;
+  color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .table th,
+:global([data-theme="high-contrast"]) .table td {
+  border-color: #444;
+  color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .title {
+  color: #fff;
+  font-size: 2.2rem;
+}
+
+:global([data-theme="high-contrast"]) .subtitle {
+  color: #ccc;
+  font-size: 1.1rem;
+}

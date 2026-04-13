@@ -218,6 +218,52 @@ Ownership suggestion:
       border: 1px solid #e2d8c3;
     }
 
+    /* accessibility toolbar */
+    .a11y-bar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 6px 12px;
+      background: #fff8f0;
+      border-bottom: 1px solid #e2d8c3;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 0.85rem;
+    }
+    .a11y-bar button {
+      background: none;
+      border: 1px solid #e2d8c3;
+      border-radius: 4px;
+      color: #6a3b2d;
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 3px 10px;
+    }
+    .a11y-bar button:hover {
+      border-color: #b86b48;
+      color: #b86b48;
+    }
+    .a11y-bar button:focus-visible {
+      outline: 2px solid #b86b48;
+      outline-offset: 2px;
+    }
+    .a11y-bar .lang-active {
+      font-weight: 700;
+      border-color: #b86b48;
+      color: #b86b48;
+    }
+    [data-theme="high-contrast"] .a11y-bar {
+      background: #000;
+      border-color: #fff;
+    }
+    [data-theme="high-contrast"] .a11y-bar button {
+      border-color: #fff;
+      color: #fff;
+    }
+    [data-theme="high-contrast"] .a11y-bar .lang-active {
+      background: #fff;
+      color: #000;
+    }
+
     /* === High Contrast Mode === */
     /* activated when data-theme="high-contrast" is set on <html> */
     [data-theme="high-contrast"] body {

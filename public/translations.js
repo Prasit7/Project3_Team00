@@ -1,5 +1,5 @@
 // EN/ES dictionary for all static public pages.
-// Keys match data-i18n attributes in the HTML files.
+// Keys match data-i18n attributes in the HTML files and t() calls in JS files.
 
 const translations = {
   en: {
@@ -16,6 +16,8 @@ const translations = {
     menuStep: "Step 1 of 3: Select drinks from the menu.",
     nextCustomize: "Next: Customize Drinks",
     noItemSelected: "No item selected yet.",
+    statusLoaded: "Menu items loaded from the database.",
+    statusError: "Could not load menu items from the database.",
 
     // customer kiosk - customize page
     customizeTitle: "Customize Your Drink",
@@ -32,6 +34,7 @@ const translations = {
     orderMore: "Order More",
     checkout: "Checkout",
     backToMenu: "Back to Menu",
+    total: "Total:",
 
     // customer kiosk - checkout page
     checkoutTitle: "Checkout",
@@ -42,6 +45,7 @@ const translations = {
     backToCustomize: "Back to Customization",
     startNewOrder: "Start New Order",
     pay: "Pay",
+    processing: "Processing...",
 
     // menu board
     milkTeas: "Milk Teas",
@@ -64,6 +68,8 @@ const translations = {
     menuStep: "Paso 1 de 3: Selecciona bebidas del menú.",
     nextCustomize: "Siguiente: Personalizar Bebidas",
     noItemSelected: "Ningún artículo seleccionado.",
+    statusLoaded: "Artículos del menú cargados correctamente.",
+    statusError: "No se pudo cargar el menú desde la base de datos.",
 
     // customer kiosk - customize page
     customizeTitle: "Personaliza tu Bebida",
@@ -80,6 +86,7 @@ const translations = {
     orderMore: "Pedir Más",
     checkout: "Pagar",
     backToMenu: "Regresar al Menú",
+    total: "Total:",
 
     // customer kiosk - checkout page
     checkoutTitle: "Pago",
@@ -90,6 +97,7 @@ const translations = {
     backToCustomize: "Regresar a Personalización",
     startNewOrder: "Iniciar Nuevo Pedido",
     pay: "Pagar",
+    processing: "Procesando...",
 
     // menu board
     milkTeas: "Tés con Leche",
