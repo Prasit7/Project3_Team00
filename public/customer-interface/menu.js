@@ -189,7 +189,9 @@ function renderCartSummary() {
 
   selectedItemBox.innerHTML = cart
     .map(
-      (item, index) => `
+      (item, index) => {
+        const itemImagePath = getItemImagePath(item.itemName);
+        return `
         <article class="cart-item-row">
           <div class="cart-item-content">
             <p><strong>${t("itemWord")} ${index + 1}: ${item.itemName}</strong></p>
@@ -199,17 +201,27 @@ function renderCartSummary() {
             <p>${t("toppings")}: ${item.toppings.length ? item.toppings.join(", ") : t("none")}</p>
             <p>${t("itemTotal")}: ${formatMoney(item.totalPrice)}</p>
           </div>
-          <button
-            type="button"
-            class="cart-item-remove"
-            data-remove-index="${index}"
-            aria-label="${t("removeFromCart")}: ${item.itemName}"
-            title="${t("removeFromCart")}"
-          >
-            🗑
-          </button>
+          <div class="cart-item-side">
+            <div class="cart-item-thumb" aria-hidden="true">
+              ${
+                itemImagePath
+                  ? `<img src="${itemImagePath}" alt="${item.itemName}" class="menu-item-image" loading="lazy" />`
+                  : "Image"
+              }
+            </div>
+            <button
+              type="button"
+              class="cart-item-remove"
+              data-remove-index="${index}"
+              aria-label="${t("removeFromCart")}: ${item.itemName}"
+              title="${t("removeFromCart")}"
+            >
+              ×
+            </button>
+          </div>
         </article>
-      `
+      `;
+      }
     )
     .join("");
 
