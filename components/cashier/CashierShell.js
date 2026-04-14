@@ -63,12 +63,20 @@ export default function CashierShell() {
             { title: "Ice Level", exclusive: true, options: [] },
             { title: "Sugar Level", exclusive: true, options: [] },
             { title: "Topping", exclusive: false, options: [] },
-          ].map((group) => ({
-            ...group,
-            options: (Array.isArray(data) ? data : [])
+          ].map((group) => {
+            const options = (Array.isArray(data) ? data : [])
               .filter((item) => item.modifierType === group.title)
-              .map((item) => item.name),
-          }));
+              .map((item) => item.name);
+
+            if (group.title === "Sugar Level" && !options.includes("Extra Sugar")) {
+              options.push("Extra Sugar");
+            }
+
+            return {
+              ...group,
+              options,
+            };
+          });
 
           setModifierGroups(grouped.filter((group) => group.options.length > 0));
         }

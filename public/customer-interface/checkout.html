@@ -14,7 +14,7 @@
     </section>
 
     <section class="status-bar" aria-live="polite">
-      <p id="checkout-status">Loading order summary...</p>
+      <p id="checkout-status" data-i18n="checkoutStep">Loading order summary...</p>
     </section>
 
     <section class="checkout-section" aria-labelledby="checkout-heading">
@@ -28,8 +28,8 @@
     <section class="assistant-section" aria-labelledby="assistant-heading">
       <h2 id="assistant-heading" data-i18n="assistantSpace">Assistant Space</h2>
       <div class="text-box assistant-box">
-        <label for="assistant-placeholder">Future chatbot / assistant</label>
-        <input id="assistant-placeholder" name="assistant-placeholder" type="text" placeholder="Reserved for later" />
+        <label for="assistant-placeholder" data-i18n="assistantFuture">Future chatbot / assistant</label>
+        <input id="assistant-placeholder" name="assistant-placeholder" type="text" placeholder="Reserved for later" data-i18n="assistantReserved" />
       </div>
     </section>
 
@@ -38,6 +38,17 @@
       <a class="nav-button primary-link" href="index.html" data-i18n="startNewOrder">Start New Order</a>
       <button class="nav-button primary-link" id="pay-button" type="button" data-i18n="pay">Pay</button>
     </section>
+
+    <div class="payment-success-overlay is-hidden" id="payment-success-overlay" role="presentation">
+      <section class="payment-success-modal" role="dialog" aria-modal="true" aria-labelledby="payment-success-title">
+        <h2 id="payment-success-title" data-i18n="paymentSuccessTitle">Payment Successful</h2>
+        <p id="payment-success-message">Order is confirmed.</p>
+        <p id="payment-success-countdown" data-i18n="autoNewOrderIn">Starting a new order in 15s</p>
+        <button class="nav-button primary-link" id="success-new-order-btn" type="button" data-i18n="startNewOrder">
+          Start New Order
+        </button>
+      </section>
+    </div>
   </main>
 
   <script src="../translations.js"></script>

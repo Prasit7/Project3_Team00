@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurant Portal</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="portal-page">
+    <!-- Portal header introduces the page and gives users quick context. -->
+    <header class="portal-header">
+      <h1>Kungfu Boba Portal Page</h1>
+    </header>
+
+    <main class="portal-main">
+      <!-- This section holds the direct links to every required interface. -->
+      <section class="interface-section" aria-labelledby="interface-heading">
+        <!-- This heading labels the group of interface launch buttons. -->
+        <h2 id="interface-heading" class="section-heading">Interface Options</h2>
+        <div class="interface-grid">
+          <!-- Manager portal button for desktop management tasks. -->
+          <a class="interface-card" href="manager.html">
+            <span class="interface-label">Manager</span>
+          </a>
+
+          <!-- Cashier portal button for register-facing checkout tasks. -->
+          <a class="interface-card" href="cashier.html">
+            <span class="interface-label">Cashier</span>
+          </a>
+
+          <!-- Customer kiosk button for guest ordering on a shared device. -->
+          <a class="interface-card" href="customer.html">
+            <span class="interface-label">Customer Kiosk</span>
+          </a>
+
+          <!-- Menu board button for the public-facing display page. -->
+          <a class="interface-card" href="menu-board.html">
+            <span class="interface-label">Menu Board</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+
+    <script src="script.js"></script>
+  </body>
+</html>

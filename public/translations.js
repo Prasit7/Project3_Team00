@@ -15,9 +15,30 @@ const translations = {
     menuTitle: "Choose Your Items",
     menuStep: "Step 1 of 3: Select drinks from the menu.",
     nextCustomize: "Next: Customize Drinks",
+    nextCheckout: "Next: Checkout",
     noItemSelected: "No item selected yet.",
-    statusLoaded: "Menu items loaded from the database.",
-    statusError: "Could not load menu items from the database.",
+    loadingMenu: "Loading menu...",
+    menuReady: "Menu is ready.",
+    statusError: "Something went wrong. Please try again.",
+    loadingCustomization: "Loading customization options...",
+    customizationReady: "Customization options are ready.",
+    noMenuItems: "No menu items available right now.",
+    menuUnavailable: "Menu unavailable",
+    databaseLoadFailed: "Please try again soon.",
+    tapToCustomize: "Tap to customize",
+    openCustomization: "Open customization",
+    closeCustomization: "Close customization",
+    selectSize: "Select Size",
+    baseLabel: "Base",
+    categoryLabel: "Category",
+    none: "None",
+    itemWord: "Item",
+    itemTotal: "Item Total",
+    removeFromCart: "Remove from cart",
+    addedToCartStatus: "added to cart.",
+    removedFromCartStatus: "removed from cart.",
+    sizeRegular: "Regular",
+    sizeLarge: "Large",
 
     // customer kiosk - customize page
     customizeTitle: "Customize Your Drink",
@@ -28,7 +49,8 @@ const translations = {
     sugarLevel: "Sugar Level",
     toppings: "Toppings",
     specialInstructions: "Special Instructions",
-    currentOrder: "Current Order",
+    optionalNote: "Optional note",
+    currentOrder: "Cart",
     noCustomization: "No customization saved yet.",
     addToOrder: "Add to Order",
     orderMore: "Order More",
@@ -42,10 +64,20 @@ const translations = {
     orderSummary: "Order Summary",
     noOrder: "No order available yet.",
     assistantSpace: "Assistant Space",
+    assistantFuture: "Future chatbot / assistant",
+    assistantReserved: "Reserved for later",
     backToCustomize: "Back to Customization",
     startNewOrder: "Start New Order",
     pay: "Pay",
     processing: "Processing...",
+    submittingOrder: "Submitting your order...",
+    paymentComplete: "Payment complete. Order",
+    savedToDatabase: "is confirmed.",
+    paymentFailed: "Payment failed.",
+    paymentSuccessTitle: "Payment Successful",
+    autoNewOrderIn: "Starting a new order in",
+    secondsShort: "s",
+    drinkCustomization: "Drink Customization",
 
     // menu board
     milkTeas: "Milk Teas",
@@ -67,9 +99,30 @@ const translations = {
     menuTitle: "Elige tus Artículos",
     menuStep: "Paso 1 de 3: Selecciona bebidas del menú.",
     nextCustomize: "Siguiente: Personalizar Bebidas",
+    nextCheckout: "Siguiente: Pagar",
     noItemSelected: "Ningún artículo seleccionado.",
-    statusLoaded: "Artículos del menú cargados correctamente.",
-    statusError: "No se pudo cargar el menú desde la base de datos.",
+    loadingMenu: "Cargando menú...",
+    menuReady: "El menú está listo.",
+    statusError: "Algo salió mal. Inténtalo de nuevo.",
+    loadingCustomization: "Cargando opciones de personalización...",
+    customizationReady: "Las opciones de personalización están listas.",
+    noMenuItems: "No hay artículos disponibles en este momento.",
+    menuUnavailable: "Menú no disponible",
+    databaseLoadFailed: "Inténtalo de nuevo en un momento.",
+    tapToCustomize: "Toca para personalizar",
+    openCustomization: "Abrir personalización",
+    closeCustomization: "Cerrar personalización",
+    selectSize: "Seleccionar tamaño",
+    baseLabel: "Base",
+    categoryLabel: "Categoría",
+    none: "Ninguno",
+    itemWord: "Artículo",
+    itemTotal: "Total del artículo",
+    removeFromCart: "Eliminar del carrito",
+    addedToCartStatus: "agregado al carrito.",
+    removedFromCartStatus: "eliminado del carrito.",
+    sizeRegular: "Regular",
+    sizeLarge: "Grande",
 
     // customer kiosk - customize page
     customizeTitle: "Personaliza tu Bebida",
@@ -80,7 +133,8 @@ const translations = {
     sugarLevel: "Nivel de Azúcar",
     toppings: "Toppings",
     specialInstructions: "Instrucciones Especiales",
-    currentOrder: "Pedido Actual",
+    optionalNote: "Nota opcional",
+    currentOrder: "Carrito",
     noCustomization: "No hay personalización guardada.",
     addToOrder: "Agregar al Pedido",
     orderMore: "Pedir Más",
@@ -94,10 +148,20 @@ const translations = {
     orderSummary: "Resumen del Pedido",
     noOrder: "No hay pedido disponible aún.",
     assistantSpace: "Espacio del Asistente",
+    assistantFuture: "Chatbot / asistente futuro",
+    assistantReserved: "Reservado para después",
     backToCustomize: "Regresar a Personalización",
     startNewOrder: "Iniciar Nuevo Pedido",
     pay: "Pagar",
     processing: "Procesando...",
+    submittingOrder: "Enviando tu pedido...",
+    paymentComplete: "Pago completado. Pedido",
+    savedToDatabase: "está confirmado.",
+    paymentFailed: "Pago fallido.",
+    paymentSuccessTitle: "Pago Exitoso",
+    autoNewOrderIn: "Iniciando un nuevo pedido en",
+    secondsShort: "s",
+    drinkCustomization: "Personalización de bebida",
 
     // menu board
     milkTeas: "Tés con Leche",
@@ -128,5 +192,15 @@ function applyTranslations() {
     } else {
       el.textContent = value;
     }
+  });
+
+  document.querySelectorAll("[data-i18n-aria-label]").forEach((el) => {
+    const key = el.getAttribute("data-i18n-aria-label");
+    el.setAttribute("aria-label", t(key));
+  });
+
+  document.querySelectorAll("[data-i18n-title]").forEach((el) => {
+    const key = el.getAttribute("data-i18n-title");
+    el.setAttribute("title", t(key));
   });
 }

@@ -3,11 +3,11 @@
   background: linear-gradient(180deg, #f5f7ff 0%, #eef8ff 100%);
   color: #14213d;
   font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
-  padding: 16px;
+  padding: 10px;
 }
 
 .shell {
-  max-width: 1280px;
+  max-width: 1580px;
   margin: 0 auto;
   display: grid;
   gap: 16px;
