@@ -17,26 +17,32 @@
       <p id="checkout-status" data-i18n="checkoutStep">Loading order summary...</p>
     </section>
 
-    <section class="checkout-section" aria-labelledby="checkout-heading">
-      <h2 id="checkout-heading" data-i18n="orderSummary">Order Summary</h2>
-      <div class="order-box" id="checkout-order-box">
-        <p data-i18n="noOrder">No order available yet.</p>
+    <section class="page-shell page-shell--checkout" aria-label="Checkout summary and actions">
+      <div class="page-shell-main">
+        <section class="checkout-section" aria-labelledby="checkout-heading">
+          <h2 id="checkout-heading" data-i18n="orderSummary">Order Summary</h2>
+          <div class="order-box order-box--feature" id="checkout-order-box">
+            <p data-i18n="noOrder">No order available yet.</p>
+          </div>
+          <p class="total-text" id="checkout-total">Total: $0.00</p>
+        </section>
       </div>
-      <p class="total-text" id="checkout-total">Total: $0.00</p>
-    </section>
 
-    <section class="assistant-section" aria-labelledby="assistant-heading">
-      <h2 id="assistant-heading" data-i18n="assistantSpace">Assistant Space</h2>
-      <div class="text-box assistant-box">
-        <label for="assistant-placeholder" data-i18n="assistantFuture">Future chatbot / assistant</label>
-        <input id="assistant-placeholder" name="assistant-placeholder" type="text" placeholder="Reserved for later" data-i18n="assistantReserved" />
-      </div>
-    </section>
+      <aside class="page-shell-side page-stack">
+        <section class="assistant-section" aria-labelledby="assistant-heading">
+          <h2 id="assistant-heading" data-i18n="assistantSpace">Assistant Space</h2>
+          <div class="text-box assistant-box">
+            <label for="assistant-placeholder" data-i18n="assistantFuture">Future chatbot / assistant</label>
+            <input id="assistant-placeholder" name="assistant-placeholder" type="text" placeholder="Reserved for later" data-i18n="assistantReserved" />
+          </div>
+        </section>
 
-    <section class="page-actions">
-      <a class="nav-button" href="customize.html" data-i18n="backToCustomize">Back to Customization</a>
-      <a class="nav-button primary-link" href="index.html" data-i18n="startNewOrder">Start New Order</a>
-      <button class="nav-button primary-link" id="pay-button" type="button" data-i18n="pay">Pay</button>
+        <section class="page-actions page-actions--stacked">
+          <a class="nav-button" href="customize.html" data-i18n="backToCustomize">Back to Customization</a>
+          <a class="nav-button" href="index.html" data-i18n="startNewOrder">Start New Order</a>
+          <button class="nav-button primary-link nav-button--strong" id="pay-button" type="button" data-i18n="pay">Pay</button>
+        </section>
+      </aside>
     </section>
 
     <div class="payment-success-overlay is-hidden" id="payment-success-overlay" role="presentation">
