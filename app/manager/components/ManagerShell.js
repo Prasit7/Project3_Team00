@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "../manager.module.css";
@@ -81,6 +82,13 @@ export default function ManagerShell({ title, subtitle, children }) {
             <h1 className={styles.title}>{title}</h1>
             {subtitle ? <p className={styles.subtitle}>{subtitle}</p> : null}
           </div>
+          <button
+            className={`${styles.button} ${styles.buttonSecondary}`}
+            type="button"
+            onClick={() => signOut({ callbackUrl: "/manager/login" })}
+          >
+            Sign Out
+          </button>
         </header>
 
         <nav className={styles.nav}>
