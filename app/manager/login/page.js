@@ -19,8 +19,9 @@ function getErrorMessage(errorCode) {
 
 export default async function ManagerLoginPage({ searchParams }) {
   const session = await getServerSession(authOptions);
-  const callbackUrl = normalizeCallbackUrl(searchParams?.callbackUrl);
-  const errorMessage = getErrorMessage(searchParams?.error);
+  const resolvedSearchParams = await searchParams;
+  const callbackUrl = normalizeCallbackUrl(resolvedSearchParams?.callbackUrl);
+  const errorMessage = getErrorMessage(resolvedSearchParams?.error);
 
   if (session?.user?.email && isManagerEmail(session.user.email)) {
     redirect(callbackUrl || MANAGER_HOME_PATH);
