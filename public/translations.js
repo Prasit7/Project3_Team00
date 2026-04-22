@@ -10,6 +10,16 @@ const translations = {
     cashier: "Cashier",
     customerKiosk: "Customer Kiosk",
     menuBoard: "Menu Board",
+    weatherEyebrow: "Today at the shop",
+    weatherTitle: "Local weather",
+    weatherLoading: "Loading current weather...",
+    weatherTemp: "Temperature",
+    weatherFeelsLike: "Feels like",
+    weatherHumidity: "Humidity",
+    weatherWind: "Wind",
+    weatherUnavailable: "Weather is unavailable in this browser.",
+    weatherPermissionDenied: "Location permission is required to load local weather.",
+    weatherFailed: "Weather could not be loaded right now.",
 
     // customer kiosk - menu page
     menuTitle: "Choose Your Items",
@@ -94,6 +104,16 @@ const translations = {
     cashier: "Cajero",
     customerKiosk: "Quiosco de Cliente",
     menuBoard: "Menú Digital",
+    weatherEyebrow: "Hoy en la tienda",
+    weatherTitle: "Clima local",
+    weatherLoading: "Cargando el clima actual...",
+    weatherTemp: "Temperatura",
+    weatherFeelsLike: "Sensación térmica",
+    weatherHumidity: "Humedad",
+    weatherWind: "Viento",
+    weatherUnavailable: "El clima no está disponible en este navegador.",
+    weatherPermissionDenied: "Se requiere permiso de ubicación para cargar el clima local.",
+    weatherFailed: "No se pudo cargar el clima en este momento.",
 
     // customer kiosk - menu page
     menuTitle: "Elige tus Artículos",

@@ -474,3 +474,14 @@ document.addEventListener("keydown", (event) => {
 
 renderCartSummary();
 loadMenuItems();
+
+if (typeof loadWeatherWidget === "function") {
+  loadWeatherWidget({
+    statusId: "kiosk-weather-heading",
+    tempId: "kiosk-weather-temp",
+    iconWrapId: "kiosk-weather-icon-wrap",
+    iconId: "kiosk-weather-icon",
+    units: "imperial",
+    fallbackCity: "College Station",
+  });
+}
