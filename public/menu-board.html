@@ -71,43 +71,6 @@ Ownership suggestion:
       margin-left: 0.5rem;
       font-size: 0.9rem;
     }
-    .board-weather {
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-      padding: 0.75rem 1rem;
-      background: linear-gradient(135deg, rgba(255, 247, 236, 0.98), rgba(247, 233, 215, 0.95));
-      border-bottom: 2px solid #e2d8c3;
-    }
-    .board-weather-copy {
-      flex: 1;
-    }
-    .board-weather-status {
-      margin: 0;
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #6a3b2d;
-    }
-    .board-weather-temp {
-      margin: 0.15rem 0 0;
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: #b86b48;
-    }
-    .board-weather-icon-wrap {
-      width: 76px;
-      height: 76px;
-      border-radius: 18px;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 255, 255, 0.72);
-      border: 1px solid #e2d8c3;
-      flex-shrink: 0;
-    }
-    .board-weather-icon {
-      font-size: 2.75rem;
-      line-height: 1;
-    }
     .status-banner {
       background-color: #f7f0e6;
       border-bottom: 2px solid #e2d8c3;
@@ -332,18 +295,6 @@ Ownership suggestion:
       color: #fff;
       font-size: 1.2rem;
     }
-    [data-theme="high-contrast"] .board-weather,
-    [data-theme="high-contrast"] .board-weather-icon-wrap {
-      background: #111;
-      border-color: #fff;
-    }
-    [data-theme="high-contrast"] .board-weather-status {
-      color: #ff0;
-      font-size: 1.3rem;
-    }
-    [data-theme="high-contrast"] .board-weather-temp {
-      color: #ff0;
-    }
     [data-theme="high-contrast"] .ticker-wrap {
       background-color: #111;
       border-bottom: 3px solid #fff;
@@ -429,16 +380,6 @@ Ownership suggestion:
     <p id="board-status">Loading menu from database...</p>
   </section>
 
-  <section class="board-weather" aria-labelledby="board-weather-heading">
-    <div class="board-weather-copy">
-      <p id="board-weather-heading" class="board-weather-status" data-i18n="weatherLoading">Loading current weather...</p>
-      <p id="board-weather-temp" class="board-weather-temp"></p>
-    </div>
-    <div id="board-weather-icon-wrap" class="board-weather-icon-wrap" hidden>
-      <span id="board-weather-icon" class="board-weather-icon" aria-hidden="true"></span>
-    </div>
-  </section>
-
   <!-- Scrolling ticker -->
   <div class="ticker-wrap" aria-hidden="true">
     <div class="ticker-track" id="ticker-track">
@@ -515,8 +456,6 @@ Ownership suggestion:
 
  <script src="translations.js"></script>
  <script src="accessibility.js"></script>
- <script src="weather.js"></script>
-
  <!-- add clock time -->
  <script>
   const boardStatus = document.getElementById("board-status");
@@ -683,16 +622,6 @@ Ownership suggestion:
   }
 
   loadMenuBoard();
-  if (typeof loadWeatherWidget === "function") {
-    loadWeatherWidget({
-      statusId: "board-weather-heading",
-      tempId: "board-weather-temp",
-      iconWrapId: "board-weather-icon-wrap",
-      iconId: "board-weather-icon",
-      units: "imperial",
-      fallbackCity: "College Station",
-    });
-  }
  </script>
 
 </body>

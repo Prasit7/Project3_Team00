@@ -1,3 +1,9 @@
+function getTemperatureUnitLabel(units) {
+  if (units === "metric") return "C";
+  if (units === "standard") return "K";
+  return "F";
+}
+
 function setWeatherStatus(config, message) {
   const status = document.getElementById(config.statusId);
   if (status) {
@@ -32,7 +38,7 @@ function updateWeatherCard(config, data) {
     : (typeof t === "function" ? t("weatherTitle") : "Weather");
 
   if (temp && Number.isFinite(data.weather.temperature)) {
-    temp.textContent = `${Math.round(data.weather.temperature)}°`;
+    temp.textContent = `${Math.round(data.weather.temperature)}°${getTemperatureUnitLabel(data.weather.units)}`;
   }
 
   if (data.weather.icon && icon && iconWrap) {

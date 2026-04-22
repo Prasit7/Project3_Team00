@@ -9,9 +9,11 @@
 <body>
   <main class="customer-page">
     <section class="page-header">
-      <h1 data-i18n="menuTitle">Choose Your Items</h1>
-      <p data-i18n="menuStep">Step 1 of 3: Select drinks from the menu.</p>
-      <section class="kiosk-weather" aria-labelledby="kiosk-weather-heading">
+      <div class="page-header-copy">
+        <h1 data-i18n="menuTitle">Choose Your Items</h1>
+        <p data-i18n="menuStep">Step 1 of 3: Select drinks from the menu.</p>
+      </div>
+      <aside class="kiosk-weather" aria-labelledby="kiosk-weather-heading">
         <div class="kiosk-weather-copy">
           <p id="kiosk-weather-heading" class="kiosk-weather-status" data-i18n="weatherLoading">Loading current weather...</p>
           <p id="kiosk-weather-temp" class="kiosk-weather-temp"></p>
@@ -19,7 +21,7 @@
         <div id="kiosk-weather-icon-wrap" class="kiosk-weather-icon-wrap" hidden>
           <span id="kiosk-weather-icon" class="kiosk-weather-icon" aria-hidden="true"></span>
         </div>
-      </section>
+      </aside>
     </section>
 
     <section class="menu-kiosk-layout" aria-label="Customer kiosk menu and cart">
