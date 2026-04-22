@@ -50,7 +50,7 @@ function fillSelectOptions(selectElement, options, defaultValue) {
   options.forEach((option) => {
     const element = document.createElement("option");
     element.value = option.name;
-    element.textContent = option.name;
+    element.textContent = selectElement === sizeSelect ? formatSizeLabel(option.name) : option.name;
     if (option.name === defaultValue) element.selected = true;
     selectElement.appendChild(element);
   });

@@ -60,6 +60,7 @@ export default function CashierShell() {
         const data = await response.json();
         if (!cancelled) {
           const grouped = [
+            { title: "Size", exclusive: true, options: [] },
             { title: "Ice Level", exclusive: true, options: [] },
             { title: "Sugar Level", exclusive: true, options: [] },
             { title: "Topping", exclusive: false, options: [] },
@@ -70,6 +71,10 @@ export default function CashierShell() {
 
             if (group.title === "Sugar Level" && !options.includes("Extra Sugar")) {
               options.push("Extra Sugar");
+            }
+
+            if (group.title === "Size" && options.length === 0) {
+              options.push("Regular", "Large");
             }
 
             return {
@@ -145,9 +150,32 @@ export default function CashierShell() {
     orderItems.length > 0 &&
     (paymentMethod === "card" || (paymentMethod === "cash" && cashReceivedValue >= orderTotal));
 
+  function getSizeOptions() {
+    const sizeGroup = modifierGroups.find((group) => group.title === "Size");
+    if (sizeGroup?.options?.length) return sizeGroup.options;
+    return ["Regular", "Large"];
+  }
+
+  function getDefaultSizeModifier() {
+    const sizeOptions = getSizeOptions();
+    return sizeOptions.find((option) => option.toLowerCase() === "regular") || sizeOptions[0] || null;
+  }
+
+  function hasSizeModifier(modifiersList) {
+    const sizeOptions = getSizeOptions();
+    return sizeOptions.some((sizeOption) => modifiersList.includes(sizeOption));
+  }
+
+  function getOrderItemSizeLabel(orderItem) {
+    const sizeOptions = getSizeOptions();
+    const selectedSize = sizeOptions.find((sizeOption) => orderItem.modifiers.includes(sizeOption));
+    return formatModifierLabel("Size", selectedSize || getDefaultSizeModifier() || "Regular");
+  }
+
   function addItemToOrder(itemToAdd) {
     if (!itemToAdd) return;
     setOrderNotice("");
+    const defaultSizeModifier = getDefaultSizeModifier();
 
     setOrderItems((previousItems) => {
       const existingIndex = previousItems.findIndex((item) => item.id === itemToAdd.id);
@@ -161,13 +189,22 @@ export default function CashierShell() {
             category: itemToAdd.category,
             price: Number(itemToAdd.price || 0),
             quantity: 1,
-            modifiers: [],
+            modifiers: defaultSizeModifier ? [defaultSizeModifier] : [],
           },
         ];
       }
 
       return previousItems.map((item, index) =>
-        index === existingIndex ? { ...item, quantity: item.quantity + 1 } : item
+        index === existingIndex
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+              modifiers:
+                !hasSizeModifier(item.modifiers) && defaultSizeModifier
+                  ? [...item.modifiers, defaultSizeModifier]
+                  : item.modifiers,
+            }
+          : item
       );
     });
     setActiveOrderItemId(itemToAdd.id);
@@ -223,6 +260,13 @@ export default function CashierShell() {
         };
       })
     );
+  }
+
+  function formatModifierLabel(groupTitle, modifierLabel) {
+    if (groupTitle !== "Size") return modifierLabel;
+    if (modifierLabel === "Regular") return "Regular - 16oz";
+    if (modifierLabel === "Large") return "Large - 20oz";
+    return modifierLabel;
   }
 
   function addCustomModifier() {
@@ -418,7 +462,9 @@ export default function CashierShell() {
                     <div className={styles.orderItemTop}>
                       <div>
                         <p className={styles.orderItemName}>{item.name}</p>
-                        <p className={styles.orderItemMeta}>{item.category}</p>
+                        <p className={styles.orderItemMeta}>
+                          {item.category} · {getOrderItemSizeLabel(item)}
+                        </p>
                       </div>
                       <button
                         type="button"
@@ -469,7 +515,8 @@ export default function CashierShell() {
                 <p className={styles.selectedLabel}>Selected Item</p>
                 <p className={styles.selectedName}>{selectedItem.name}</p>
                 <p className={styles.selectedMeta}>
-                  {selectedItem.category} · ${Number(selectedItem.price || 0).toFixed(2)}
+                  {selectedItem.category} · {formatModifierLabel("Size", getDefaultSizeModifier() || "Regular")} · $
+                  {Number(selectedItem.price || 0).toFixed(2)}
                 </p>
               </div>
             ) : (
@@ -506,7 +553,7 @@ export default function CashierShell() {
                           onClick={() => toggleModifier(modifierLabel, group.options, group.exclusive)}
                           disabled={!activeOrderItem}
                         >
-                          {modifierLabel}
+                          {formatModifierLabel(group.title, modifierLabel)}
                         </button>
                       ))}
                     </div>

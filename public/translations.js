@@ -47,8 +47,8 @@ const translations = {
     removeFromCart: "Remove from cart",
     addedToCartStatus: "added to cart.",
     removedFromCartStatus: "removed from cart.",
-    sizeRegular: "Regular",
-    sizeLarge: "Large",
+    sizeRegular: "Regular - 16oz",
+    sizeLarge: "Large - 20oz",
 
     // customer kiosk - customize page
     customizeTitle: "Customize Your Drink",
@@ -141,8 +141,8 @@ const translations = {
     removeFromCart: "Eliminar del carrito",
     addedToCartStatus: "agregado al carrito.",
     removedFromCartStatus: "eliminado del carrito.",
-    sizeRegular: "Regular",
-    sizeLarge: "Grande",
+    sizeRegular: "Regular - 16oz",
+    sizeLarge: "Grande - 20oz",
 
     // customer kiosk - customize page
     customizeTitle: "Personaliza tu Bebida",
