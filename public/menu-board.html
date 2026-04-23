@@ -1,28 +1,4 @@
-<!--
-Menu Board Interface Placeholder
-
-Purpose:
-- This page will later serve as a large non-interactive menu board display.
-- User focus: casual end user
-- Input modality: non-interactive
-- Place setting: publicly viewable large screen of key menu items above the restaurant counter
-
-Requirements reminders:
-- This page should NOT link back to portal.html/index.html once implemented.
-- This page should NOT link to manager, cashier, or customer interfaces.
-- This page should present key menu information clearly at a distance.
-- This page should remain display-oriented and not depend on user interaction.
-
-Suggested future sections:
-- Brand header / restaurant identity
-- Featured categories or promotions
-- Readable menu items and pricing
-- Rotating or scheduled display content if the team chooses
-
-Ownership suggestion:
-- Assign to teammate responsible for public-display readability and layout
--->
-
+<!-- (your comments unchanged above) -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -30,339 +6,18 @@ Ownership suggestion:
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zero Sugar Boba | Menu Board</title>
-  <style>
-    /* === Global Styles === */
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #fdf6ec; /* light beige */
-      color: #333;
-    }
-    h1, h2 {
-      margin: 0;
-    }
 
-    /* === Banner / Header === */
-    .board-header {
-      background-color: #fff8f0;
-      border-bottom: 2px solid #e2d8c3;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-    }
-    .header-brand .eyebrow {
-      font-size: 0.9rem;
-      color: #a08c72;
-    }
-    .header-brand h1 {
-      font-size: 2.5rem;
-      color: #b86b48;
-    }
-    .header-meta {
-      text-align: right;
-    }
-    .meta-pill {
-      display: inline-block;
-      background-color: #f7e9d7;
-      color: #b86b48;
-      padding: 0.3rem 0.7rem;
-      border-radius: 12px;
-      margin-left: 0.5rem;
-      font-size: 0.9rem;
-    }
-    .status-banner {
-      background-color: #f7f0e6;
-      border-bottom: 2px solid #e2d8c3;
-      color: #8c7a6b;
-      padding: 0.7rem 2rem;
-      font-size: 0.95rem;
-    }
-    .status-banner.error {
-      color: #9c4a2d;
-    }
-
-    /* === Scrolling ticker === */
-    .ticker-wrap {
-      overflow: hidden;
-      background-color: #f7f0e6;
-      border-bottom: 2px solid #e2d8c3;
-    }
-    .ticker-track {
-      display: flex;
-      animation: scroll 20s linear infinite;
-    }
-    .ticker-track span {
-      padding: 0.5rem 2rem;
-      white-space: nowrap;
-      font-weight: 600;
-      color: #b86b48;
-    }
-    @keyframes scroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    /* === Main Menu === */
-    .board-main {
-      display: flex;
-      justify-content: space-around;
-      padding: 2rem;
-      gap: 1.5rem;
-    }
-    .menu-column {
-      flex: 1;
-      background-color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      padding: 1rem;
-    }
-    .column-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-    .cat-icon {
-      font-size: 1.8rem;
-      margin-right: 0.5rem;
-    }
-    h2 {
-      font-size: 1.5rem;
-      color: #b86b48;
-    }
-    .item-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .empty-item {
-      color: #8c7a6b;
-      padding: 0.6rem 0;
-    }
-    .menu-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 1rem;
-      border-bottom: 1px dashed #eee;
-      padding-bottom: 0.5rem;
-    }
-    .item-info {
-      max-width: 70%;
-    }
-    .item-name {
-      font-weight: 600;
-      font-size: 1.1rem;
-      color: #6a3b2d;
-    }
-    .item-desc {
-      font-size: 0.9rem;
-      color: #8c7a6b;
-    }
-    .item-tag {
-      background-color: #ffe6c7;
-      color: #b86b48;
-      padding: 0.2rem 0.5rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      margin-top: 0.3rem;
-      display: inline-block;
-    }
-    .tag-pop { background-color: #ffd1a6; }
-    .tag-new { background-color: #cde3d7; color: #3b5d4b; }
-
-    .item-price {
-      font-weight: 600;
-      color: #b86b48;
-      font-size: 1rem;
-      text-align: right;
-    }
-
-    /* === Footer / Customization Options === */
-    .board-footer {
-      background-color: #fff8f0;
-      border-top: 2px solid #e2d8c3;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .opt-group {
-      text-align: center;
-    }
-    .opt-label {
-      font-weight: 600;
-      color: #6a3b2d;
-      margin-bottom: 0.3rem;
-    }
-    .opt-pills {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .opt-pill {
-      background-color: #f7e9d7;
-      color: #b86b48;
-      padding: 0.3rem 0.7rem;
-      border-radius: 12px;
-      font-size: 0.85rem;
-    }
-    .opt-pill.active {
-      background-color: #b86b48;
-      color: #fff;
-    }
-    .opt-pill.subtle {
-      background-color: #fff;
-      border: 1px solid #e2d8c3;
-    }
-
-    /* accessibility toolbar */
-    .a11y-bar {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      padding: 6px 12px;
-      background: #fff8f0;
-      border-bottom: 1px solid #e2d8c3;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size: 0.85rem;
-    }
-    .a11y-bar button {
-      background: none;
-      border: 1px solid #e2d8c3;
-      border-radius: 4px;
-      color: #6a3b2d;
-      cursor: pointer;
-      font-size: 0.85rem;
-      padding: 3px 10px;
-    }
-    .a11y-bar button:hover {
-      border-color: #b86b48;
-      color: #b86b48;
-    }
-    .a11y-bar button:focus-visible {
-      outline: 2px solid #b86b48;
-      outline-offset: 2px;
-    }
-    .a11y-bar .lang-active {
-      font-weight: 700;
-      border-color: #b86b48;
-      color: #b86b48;
-    }
-    [data-theme="high-contrast"] .a11y-bar {
-      background: #000;
-      border-color: #fff;
-    }
-    [data-theme="high-contrast"] .a11y-bar button {
-      border-color: #fff;
-      color: #fff;
-    }
-    [data-theme="high-contrast"] .a11y-bar .lang-active {
-      background: #fff;
-      color: #000;
-    }
-
-    /* === High Contrast Mode === */
-    /* activated when data-theme="high-contrast" is set on <html> */
-    [data-theme="high-contrast"] body {
-      background-color: #000;
-      color: #fff;
-      font-size: 120%;
-    }
-    [data-theme="high-contrast"] .board-header {
-      background-color: #000;
-      border-bottom: 3px solid #fff;
-    }
-    [data-theme="high-contrast"] .header-brand .eyebrow {
-      color: #fff;
-      font-size: 1.2rem;
-    }
-    [data-theme="high-contrast"] .header-brand h1 {
-      color: #ff0;
-      font-size: 3.5rem;
-    }
-    [data-theme="high-contrast"] .meta-pill {
-      background-color: #333;
-      color: #ff0;
-      font-size: 1.2rem;
-      border: 2px solid #fff;
-    }
-    [data-theme="high-contrast"] .status-banner {
-      background-color: #111;
-      border-bottom: 3px solid #fff;
-      color: #fff;
-      font-size: 1.2rem;
-    }
-    [data-theme="high-contrast"] .ticker-wrap {
-      background-color: #111;
-      border-bottom: 3px solid #fff;
-    }
-    [data-theme="high-contrast"] .ticker-track span {
-      color: #ff0;
-      font-size: 1.3rem;
-    }
-    [data-theme="high-contrast"] .board-main {
-      gap: 2rem;
-      padding: 2rem;
-    }
-    [data-theme="high-contrast"] .menu-column {
-      background-color: #111;
-      border: 3px solid #fff;
-      box-shadow: none;
-      border-radius: 8px;
-    }
-    [data-theme="high-contrast"] h2 {
-      color: #ff0;
-      font-size: 2rem;
-    }
-    [data-theme="high-contrast"] .cat-icon {
-      font-size: 2.2rem;
-    }
-    [data-theme="high-contrast"] .item-name {
-      color: #fff;
-      font-size: 1.4rem;
-    }
-    [data-theme="high-contrast"] .item-desc {
-      color: #ccc;
-      font-size: 1.1rem;
-    }
-    [data-theme="high-contrast"] .item-price {
-      color: #ff0;
-      font-size: 1.4rem;
-    }
-    [data-theme="high-contrast"] .menu-item {
-      border-bottom: 1px solid #444;
-      padding-bottom: 0.8rem;
-      margin-bottom: 1.2rem;
-    }
-    [data-theme="high-contrast"] .board-footer {
-      background-color: #000;
-      border-top: 3px solid #fff;
-    }
-    [data-theme="high-contrast"] .opt-label {
-      color: #ff0;
-      font-size: 1.2rem;
-    }
-    [data-theme="high-contrast"] .opt-pill {
-      background-color: #222;
-      color: #fff;
-      border: 2px solid #fff;
-      font-size: 1.1rem;
-    }
-    [data-theme="high-contrast"] .opt-pill.active {
-      background-color: #ff0;
-      color: #000;
-      font-weight: 700;
-    }
-    [data-theme="high-contrast"] .empty-item {
-      color: #ccc;
-      font-size: 1.2rem;
-    }
-  </style>
+ 
+  <link rel="stylesheet" href="menu-board.css" />
 </head>
+
 <body>
+
+  <div class="a11y-bar">
+  <button id="lang-en" class="lang-active">EN</button>
+  <button id="lang-es">ES</button>
+  <button id="toggle-contrast">High Contrast</button>
+</div>
 
   <!-- Banner -->
   <header class="board-header">
@@ -372,257 +27,156 @@ Ownership suggestion:
     </div>
     <div class="header-meta">
       <span class="meta-pill" id="clock">--:--</span>
-      <span class="meta-pill now-serving" data-i18n="nowServing">Now Serving</span>
+      <span class="meta-pill now-serving">Now Serving</span>
     </div>
   </header>
 
-  <section class="status-banner" aria-live="polite">
+  <section class="status-banner">
     <p id="board-status">Loading menu from database...</p>
   </section>
 
-  <!-- Scrolling ticker -->
-  <div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-wrap">
     <div class="ticker-track" id="ticker-track">
       <span>Loading menu...</span>
     </div>
   </div>
 
-  <!-- Main menu columns -->
-  <main class="board-main" aria-label="Menu">
+  <main class="board-main">
 
-    <!-- Milk Teas -->
-    <section class="menu-column" aria-labelledby="cat-milktea">
+    <section class="menu-column">
       <div class="column-header">
         <span class="cat-icon">🧋</span>
-        <h2 id="cat-milktea" data-i18n="milkTeas">Milk Teas</h2>
+        <h2>Milk Teas</h2>
       </div>
-      <ul class="item-list" id="milk-tea-list">
-        <li class="empty-item">Loading items...</li>
-      </ul>
+      <ul class="item-list" id="milk-tea-list"></ul>
     </section>
 
-    <!-- Fruit Teas -->
-    <section class="menu-column" aria-labelledby="cat-fruittea">
+    <section class="menu-column">
       <div class="column-header">
         <span class="cat-icon">🍓</span>
-        <h2 id="cat-fruittea" data-i18n="fruitTeas">Fruit Teas</h2>
+        <h2>Fruit Teas</h2>
       </div>
-      <ul class="item-list" id="fruit-tea-list">
-        <li class="empty-item">Loading items...</li>
-      </ul>
+      <ul class="item-list" id="fruit-tea-list"></ul>
     </section>
 
-    <!-- Tea & Specialty -->
-    <section class="menu-column" aria-labelledby="cat-specialty">
+    <section class="menu-column">
       <div class="column-header">
         <span class="cat-icon">🍵</span>
-        <h2 id="cat-specialty" data-i18n="teaSpecialty">Tea & Specialty</h2>
+        <h2>Tea & Specialty</h2>
       </div>
-      <ul class="item-list" id="specialty-list">
-        <li class="empty-item">Loading items...</li>
-      </ul>
+      <ul class="item-list" id="specialty-list"></ul>
     </section>
 
   </main>
 
-  <!-- Footer / Customization Options -->
-  <footer class="board-footer" aria-label="Customization options">
+  <footer class="board-footer">
     <div class="opt-group">
       <p class="opt-label">Sugar Level</p>
-      <div class="opt-pills" id="sugar-options">
-        <span class="opt-pill">Loading...</span>
-      </div>
+      <div id="sugar-options"></div>
     </div>
     <div class="opt-group">
       <p class="opt-label">Ice Level</p>
-      <div class="opt-pills" id="ice-options">
-        <span class="opt-pill">Loading...</span>
-      </div>
+      <div id="ice-options"></div>
     </div>
     <div class="opt-group">
-      <p class="opt-label">Size</p>
-      <div class="opt-pills">
-        <span class="opt-pill active">Regular</span>
-        <span class="opt-pill">Large +$0.75</span>
-      </div>
-    </div>
-    <div class="opt-group">
-      <p class="opt-label">Toppings +$0.50–$0.75</p>
-      <div class="opt-pills" id="topping-options">
-        <span class="opt-pill">Loading...</span>
-      </div>
+      <p class="opt-label">Toppings</p>
+      <div id="topping-options"></div>
     </div>
   </footer>
 
- <script src="translations.js"></script>
- <script src="accessibility.js"></script>
- <!-- add clock time -->
- <script>
-  const boardStatus = document.getElementById("board-status");
-  const statusBanner = document.querySelector(".status-banner");
-  const tickerTrack = document.getElementById("ticker-track");
-  const sugarOptions = document.getElementById("sugar-options");
-  const iceOptions = document.getElementById("ice-options");
-  const toppingOptions = document.getElementById("topping-options");
+<script src="translations.js"></script>
+<script src="accessibility.js"></script>
 
-  const CATEGORY_TARGETS = [
-    { id: "milk-tea-list", matchers: ["milk"] },
-    { id: "fruit-tea-list", matchers: ["fruit", "green tea", "black tea", "oolong", "tea"] },
-    { id: "specialty-list", matchers: [] },
-  ];
+<script>
+const boardStatus = document.getElementById("board-status");
+const tickerTrack = document.getElementById("ticker-track");
 
-  function updateClock() {
-    const clockEl = document.getElementById('clock');
-    const now = new Date();
-    let hours = now.getHours();
-    let minutes = now.getMinutes();
-    // Optional: pad single digits with 0
-    hours = hours < 10 ? '0' + hours : hours;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    clockEl.textContent = `${hours}:${minutes}`;
+function updateClock() {
+  const now = new Date();
+  let hours = now.getHours();
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12;
+  document.getElementById("clock").textContent = `${hours}:${minutes} ${ampm}`;
+}
+updateClock();
+setInterval(updateClock, 60000);
+
+function formatMoney(v) {
+  return `$${Number(v || 0).toFixed(2)}`;
+}
+
+function renderItems(id, items) {
+  const list = document.getElementById(id);
+  list.innerHTML = items.length
+    ? items.map(i => `
+        <li class="menu-item">
+          <span class="item-name">${i.name}</span>
+          <span class="item-price">${formatMoney(i.price)}</span>
+        </li>
+      `).join("")
+    : "<li>No items</li>";
+}
+
+function categorize(items) {
+  const milk = [], fruit = [], spec = [];
+  items.forEach(i => {
+    const c = (i.category || "").toLowerCase();
+    if (c.includes("milk")) milk.push(i);
+    else if (c.includes("fruit") || c.includes("tea")) fruit.push(i);
+    else spec.push(i);
+  });
+  return { milk, fruit, spec };
+}
+
+async function loadMenu() {
+  try {
+    const res = await fetch("/api/menu-items"); // ✅ YOUR DB
+    const items = await res.json();
+
+    const { milk, fruit, spec } = categorize(items);
+
+    renderItems("milk-tea-list", milk);
+    renderItems("fruit-tea-list", fruit);
+    renderItems("specialty-list", spec);
+
+    tickerTrack.innerHTML = items.slice(0, 8)
+      .map(i => `<span>${i.name}</span>`).join("");
+
+    boardStatus.textContent = "Menu loaded";
+  } catch {
+    boardStatus.textContent = "Error loading menu";
   }
+}
 
-  // update clock immediately and every minute
-  updateClock();
-  setInterval(updateClock, 1000 * 60);
+async function loadModifiers() {
+  try {
+    const res = await fetch("/api/menu-modifiers");
+    const items = await res.json();
 
-  function formatMoney(value) {
-    return `$${Number(value || 0).toFixed(2)}`;
+    const sugar = items.filter(i => i.modifierType === "Sugar Level");
+    const ice = items.filter(i => i.modifierType === "Ice Level");
+    const toppings = items.filter(i => i.modifierType === "Topping");
+
+    document.getElementById("sugar-options").innerHTML =
+      sugar.map(i => `<span class="opt-pill">${i.name}</span>`).join("");
+
+    document.getElementById("ice-options").innerHTML =
+      ice.map(i => `<span class="opt-pill">${i.name}</span>`).join("");
+
+    document.getElementById("topping-options").innerHTML =
+      toppings.map(i => `<span class="opt-pill">${i.name}</span>`).join("");
+
+  } catch {
+    console.log("Modifiers failed to load");
   }
+}
 
-  function itemTag(item, index) {
-    if (index < 2) {
-      return '<span class="item-tag tag-pop">Popular</span>';
-    }
-    if (String(item.name || "").toLowerCase().includes("rose") || String(item.name || "").toLowerCase().includes("lavender")) {
-      return '<span class="item-tag tag-new">New</span>';
-    }
-    return "";
-  }
+loadMenu();
+loadModifiers();
 
-  function buildDescription(item) {
-    const category = String(item.category || "").trim();
-    if (!category) {
-      return "Available now";
-    }
-    return `${category} · Available now`;
-  }
-
-  function renderItems(listId, items) {
-    const list = document.getElementById(listId);
-    if (!items.length) {
-      list.innerHTML = '<li class="empty-item">No items available.</li>';
-      return;
-    }
-
-    list.innerHTML = items
-      .map(
-        (item, index) => `
-          <li class="menu-item">
-            <div class="item-info">
-              <span class="item-name">${item.name}</span>
-              <span class="item-desc">${buildDescription(item)}</span>
-              ${itemTag(item, index)}
-            </div>
-            <span class="item-price">${formatMoney(item.price)}</span>
-          </li>
-        `
-      )
-      .join("");
-  }
-
-  function categorizeItems(items) {
-    const buckets = CATEGORY_TARGETS.map((category) => ({ ...category, items: [] }));
-
-    items.forEach((item) => {
-      const category = String(item.category || "").toLowerCase();
-      const target = buckets.find(
-        (bucket) => bucket.matchers.length > 0 && bucket.matchers.some((matcher) => category.includes(matcher))
-      );
-
-      if (target) {
-        target.items.push(item);
-      } else {
-        buckets[buckets.length - 1].items.push(item);
-      }
-    });
-
-    return buckets;
-  }
-
-  function updateTicker(items) {
-    const featured = items.slice(0, 8).map((item) => `<span>${item.name}</span>`).join("");
-    tickerTrack.innerHTML = featured ? `${featured}${featured}` : "<span>No menu items available</span>";
-  }
-
-  function renderModifierOptions(target, items, defaultLabel = "") {
-    if (!items.length) {
-      target.innerHTML = '<span class="opt-pill subtle">Unavailable</span>';
-      return;
-    }
-
-    target.innerHTML = items
-      .map((item) => {
-        const isActive = item.name === defaultLabel;
-        const priceText = Number(item.priceDelta || 0) > 0 ? ` +${formatMoney(item.priceDelta)}` : "";
-        return `<span class="opt-pill ${isActive ? "active" : ""}">${item.name}${priceText}</span>`;
-      })
-      .join("");
-  }
-
-  async function loadModifierOptions() {
-    const response = await fetch("/api/menu-modifiers");
-    if (!response.ok) {
-      throw new Error(`Modifier request failed with status ${response.status}`);
-    }
-
-    const items = await response.json();
-    const modifiers = Array.isArray(items) ? items : [];
-
-    renderModifierOptions(
-      sugarOptions,
-      modifiers.filter((item) => item.modifierType === "Sugar Level"),
-      "100% Sugar"
-    );
-    renderModifierOptions(
-      iceOptions,
-      modifiers.filter((item) => item.modifierType === "Ice Level"),
-      "Regular Ice"
-    );
-    renderModifierOptions(
-      toppingOptions,
-      modifiers.filter((item) => item.modifierType === "Topping")
-    );
-  }
-
-  async function loadMenuBoard() {
-    try {
-      const [menuResponse] = await Promise.all([fetch("/api/menu-items"), loadModifierOptions()]);
-      if (!menuResponse.ok) {
-        throw new Error(`Request failed with status ${menuResponse.status}`);
-      }
-
-      const items = await menuResponse.json();
-      const menuItems = Array.isArray(items) ? items : [];
-      const categories = categorizeItems(menuItems);
-
-      categories.forEach((category) => renderItems(category.id, category.items));
-      updateTicker(menuItems);
-      boardStatus.textContent = "Menu items loaded from database.";
-      statusBanner.classList.remove("error");
-    } catch (error) {
-      CATEGORY_TARGETS.forEach((category) => renderItems(category.id, []));
-      updateTicker([]);
-      renderModifierOptions(sugarOptions, []);
-      renderModifierOptions(iceOptions, []);
-      renderModifierOptions(toppingOptions, []);
-      boardStatus.textContent = `Could not load menu from database. ${error.message}`;
-      statusBanner.classList.add("error");
-    }
-  }
-
-  loadMenuBoard();
- </script>
+</script>
 
 </body>
+
 </html>

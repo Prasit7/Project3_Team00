@@ -1,0 +1,233 @@
+:root {
+  --bg: #fdf6ec;
+  --surface: #fff8f0;
+  --border: #e2d8c3;
+  --brand: #b86b48;
+  --brand-dark: #6a3b2d;
+  --muted: #8c7a6b;
+
+  --pink-bg: #fde8ef;
+  --peach-bg: #fdeede;
+  --mint-bg: #e4f5ee;
+}
+
+/* RESET */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* FULL SCREEN */
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* HEADER */
+.board-header {
+  flex-shrink: 0;
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2.5rem;
+}
+
+.header-brand .eyebrow {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.header-brand h1 {
+  font-size: clamp(2.8rem, 5vw, 4.5rem); /* 🔥 BIG */
+  font-weight: 800;
+  color: var(--brand);
+}
+
+.meta-pill {
+  background: var(--peach-bg);
+  padding: 0.3rem 0.9rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+/* STATUS */
+.status-banner {
+  flex-shrink: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0.3rem 2rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* ✨ MOVING GRADIENT TICKER */
+.ticker-wrap {
+  flex-shrink: 0;
+  overflow: hidden;
+  background: linear-gradient(90deg, var(--pink-bg), var(--peach-bg), var(--mint-bg), var(--pink-bg));
+  background-size: 300% 100%;
+  animation: bgMove 12s linear infinite;
+  border-bottom: 1px solid var(--border);
+}
+
+@keyframes bgMove {
+  100% { background-position: -300% 0; }
+}
+
+.ticker-track {
+  display: flex;
+  animation: scroll 25s linear infinite;
+}
+
+.ticker-track span {
+  padding: 0.4rem 2rem;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--brand-dark);
+}
+
+@keyframes scroll {
+  100% { transform: translateX(-50%); }
+}
+
+/* MAIN LAYOUT */
+.board-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  padding: 0.5rem 1rem;
+  gap: 1rem;
+}
+
+/* MENU COLUMNS (BOX STYLE 💖) */
+.menu-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-radius: 16px;
+  border: 2px solid var(--border);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+/* pastel splashes per column */
+.menu-column:nth-child(1) {
+  background: linear-gradient(160deg, var(--pink-bg), var(--surface));
+}
+.menu-column:nth-child(2) {
+  background: linear-gradient(160deg, var(--peach-bg), var(--surface));
+}
+.menu-column:nth-child(3) {
+  background: linear-gradient(160deg, var(--mint-bg), var(--surface));
+}
+
+/* COLUMN HEADER */
+.column-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.3rem;
+}
+
+/* 🔥 BIG CATEGORY HEADINGS */
+h2 {
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 800;
+}
+
+h2 {
+  font-size: 2rem;
+  color: #b86b48;
+}
+
+.board-header h1 {
+  font-size: 3.2rem;
+}
+
+/* ITEMS */
+.item-list {
+  flex: 1;
+  overflow: hidden;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+  border-bottom: 1px dashed rgba(0,0,0,0.08);
+}
+
+.item-name {
+  font-size: clamp(0.95rem, 1.2vw, 1.2rem);
+  font-weight: 600;
+  color: var(--brand-dark);
+}
+
+.item-price {
+  font-size: clamp(1rem, 1.3vw, 1.3rem);
+  font-weight: 800;
+  color: var(--brand);
+}
+
+/* FOOTER */
+.board-footer {
+  flex-shrink: 0;
+  background: var(--surface);
+  border-top: 2px solid var(--border);
+  padding: 0.5rem;
+  display: flex;
+  justify-content: space-around;
+}
+
+.opt-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--brand-dark);
+}
+
+/* === OPTION PILLS (MAKE THEM PRETTY) === */
+.opt-group {
+  text-align: center;
+}
+
+.opt-label {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #b86b48;
+  margin-bottom: 0.5rem;
+}
+
+#sugar-options,
+#ice-options,
+#topping-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* ✨ pastel pill style */
+.opt-pill {
+  background: #ffe6c7;
+  color: #6a3b2d;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+/* different pastel vibes */
+#sugar-options .opt-pill { background: #ffd6e0; }
+#ice-options .opt-pill { background: #d6f0ff; }
+#topping-options .opt-pill { background: #e6ffd9; }
