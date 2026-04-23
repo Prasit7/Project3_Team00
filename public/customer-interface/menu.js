@@ -281,6 +281,14 @@ function updatePendingCartItemFromAssistant(updates) {
     sugar: typeof updates.sugar === "string" ? updates.sugar : current.sugar,
     toppings: Array.isArray(updates.toppings) ? updates.toppings : current.toppings,
   };
+
+  if (Array.isArray(updates.removeToppings) && updates.removeToppings.length > 0) {
+    const removeSet = new Set(updates.removeToppings.map((name) => normalizeItemKey(name)));
+    updated.toppings = (Array.isArray(updated.toppings) ? updated.toppings : []).filter(
+      (name) => !removeSet.has(normalizeItemKey(name))
+    );
+  }
+
   updated.totalPrice = recalculateCartItemTotal(updated);
 
   cart[targetIndex] = updated;

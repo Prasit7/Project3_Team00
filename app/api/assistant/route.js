@@ -24,6 +24,26 @@ function normalizeLookup(value) {
     .replace(/[^a-z0-9]/g, "");
 }
 
+const TASTE_NOTES = {
+  passionfruit: "Passion fruit is usually sweet and tangy, with a tropical citrus-like flavor.",
+  mango: "Mango is typically sweet, tropical, and juicy with a smooth fruity taste.",
+  lychee: "Lychee is usually sweet, floral, and lightly citrusy.",
+  peach: "Peach is usually sweet, fragrant, and mellow-fruity.",
+  wintermelon: "Wintermelon tea is usually mild and refreshing with a subtle sweetness.",
+  jasmine: "Jasmine tea is usually light, floral, and aromatic.",
+  taro: "Taro milk tea is usually creamy, nutty, and slightly sweet.",
+  matcha: "Matcha is usually earthy with a gentle bitter-sweet tea flavor.",
+  strawberry: "Strawberry flavor is usually sweet, fruity, and slightly tart.",
+  honeydew: "Honeydew flavor is usually sweet, mellow, and melon-like.",
+  rose: "Rose flavor is usually floral and fragrant with gentle sweetness.",
+  lavender: "Lavender flavor is usually floral and aromatic with a light herbal note.",
+  coffee: "Coffee flavor is usually roasted and slightly bitter with rich aroma.",
+  coconut: "Coconut flavor is usually creamy, sweet, and tropical.",
+  almond: "Almond flavor is usually nutty and mildly sweet.",
+  brownsugar: "Brown sugar flavor is usually caramel-like, rich, and sweet.",
+  oreo: "Oreo flavor is usually chocolate-cookie sweet and creamy.",
+};
+
 function isNoModificationMessage(message) {
   const text = String(message || "").toLowerCase().trim();
   return /^(normal|no|none|no modification|no modifications|default|regular|keep it normal)$/.test(text);
@@ -32,6 +52,56 @@ function isNoModificationMessage(message) {
 function isStartModificationMessage(message) {
   const text = String(message || "").toLowerCase().trim();
   return /^(yes|yeah|yep|sure|customize|modification|modifications|change it|change)$/i.test(text);
+}
+
+function extractTasteTarget(message) {
+  const text = String(message || "").toLowerCase().trim();
+  let match = text.match(/what does (.+?) taste like\??$/i);
+  if (match) return cleanText(match[1], 80);
+  match = text.match(/how does (.+?) taste\??$/i);
+  if (match) return cleanText(match[1], 80);
+  return null;
+}
+
+function findBestByPhrase(phrase, list, getName) {
+  const normalizedPhrase = normalizeLookup(phrase);
+  if (!normalizedPhrase) return null;
+
+  const candidates = list
+    .map((entry) => {
+      const name = getName(entry);
+      return { entry, key: normalizeLookup(name), name };
+    })
+    .filter((entry) => entry.key && (entry.key.includes(normalizedPhrase) || normalizedPhrase.includes(entry.key)))
+    .sort((a, b) => b.key.length - a.key.length);
+
+  return candidates[0]?.entry || null;
+}
+
+function buildTasteReply(phrase, matchedItem, matchedModifier) {
+  const key = normalizeLookup(phrase);
+  const noteKey = Object.keys(TASTE_NOTES).find((token) => key.includes(token));
+
+  if (noteKey) {
+    return TASTE_NOTES[noteKey];
+  }
+
+  if (matchedItem) {
+    const category = String(matchedItem.category || "").toLowerCase();
+    if (category.includes("fruit")) {
+      return `${matchedItem.name} is usually fruity, refreshing, and lightly sweet.`;
+    }
+    if (category.includes("milk")) {
+      return `${matchedItem.name} is usually creamy and sweet with a tea-forward flavor.`;
+    }
+    return `${matchedItem.name} usually has a tea-based flavor profile with balanced sweetness.`;
+  }
+
+  if (matchedModifier) {
+    return `${matchedModifier.name} usually adds extra flavor or texture to the drink.`;
+  }
+
+  return "I do not have that information.";
 }
 
 function findModifierByTokens(modifiers, type, tokenList) {
@@ -47,6 +117,7 @@ function parseModificationRequest(message, modifiers) {
   const normalizedText = normalizeLookup(text);
   const updates = {};
   const applied = [];
+  const removeToppings = [];
 
   if (/\blarge\b/.test(text)) {
     updates.size = "Large";
@@ -113,7 +184,22 @@ function parseModificationRequest(message, modifiers) {
     applied.push(`toppings ${randomTopping.name}`);
   }
 
-  return { updates, applied };
+  if (/\b(remove|take off|without|no)\b/.test(text)) {
+    const toppingsToRemove = toppingOptions
+      .filter((entry) => {
+        const key = normalizeLookup(entry.name);
+        return key && normalizedText.includes(key);
+      })
+      .map((entry) => entry.name);
+
+    if (toppingsToRemove.length > 0) {
+      removeToppings.push(...toppingsToRemove);
+      updates.removeToppings = toppingsToRemove;
+      applied.push(`removed toppings ${toppingsToRemove.join(", ")}`);
+    }
+  }
+
+  return { updates, applied, removeToppings };
 }
 
 function hasAddIntent(message) {
@@ -255,6 +341,16 @@ export async function POST(request) {
     const { items, modifiers } = await loadMenuContext();
     const pendingItem = normalizePendingItem(body.pendingItem, items);
 
+    const tasteTarget = extractTasteTarget(message);
+    if (tasteTarget) {
+      const matchedItem = findBestByPhrase(tasteTarget, items, (entry) => entry.name);
+      const matchedModifier = findBestByPhrase(tasteTarget, modifiers, (entry) => entry.name);
+      return NextResponse.json({
+        ok: true,
+        reply: buildTasteReply(tasteTarget, matchedItem, matchedModifier),
+      });
+    }
+
     if (pendingItem && isNoModificationMessage(message)) {
       return NextResponse.json({
         ok: true,
@@ -281,6 +377,17 @@ export async function POST(request) {
             updates: parsed.updates,
           },
         });
+      }
+
+      if (/\b(remove|take off|without|no)\b/.test(String(message || "").toLowerCase())) {
+        const normalizedMessage = normalizeLookup(message);
+        const normalizedItemName = normalizeLookup(pendingItem.name);
+        if (normalizedItemName && normalizedMessage.includes(normalizedItemName.slice(0, Math.min(normalizedItemName.length, 12)))) {
+          return NextResponse.json({
+            ok: true,
+            reply: `I cannot remove the main flavor from ${pendingItem.name}. You can choose a different drink if you want another flavor.`,
+          });
+        }
       }
     }
 
