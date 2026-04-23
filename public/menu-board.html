@@ -127,7 +127,7 @@ function categorize(items) {
 
 async function loadMenu() {
   try {
-    const res = await fetch("/api/menu-items"); // ✅ YOUR DB
+    const res = await fetch("/api/menu-items"); // DB
     const items = await res.json();
 
     const { milk, fruit, spec } = categorize(items);

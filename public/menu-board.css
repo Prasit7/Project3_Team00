@@ -66,7 +66,7 @@ body {
   color: var(--muted);
 }
 
-/* ✨ MOVING GRADIENT TICKER */
+/* MOVING TICKER */
 .ticker-wrap {
   flex-shrink: 0;
   overflow: hidden;
@@ -106,7 +106,7 @@ body {
   gap: 1rem;
 }
 
-/* MENU COLUMNS (BOX STYLE 💖) */
+/* MENU COLUMNS */
 .menu-column {
   flex: 1;
   display: flex;
@@ -139,7 +139,7 @@ body {
   padding-bottom: 0.3rem;
 }
 
-/* 🔥 BIG CATEGORY HEADINGS */
+/* CATEGORY HEADINGS */
 h2 {
   font-size: clamp(2rem, 3.5vw, 3rem);
   font-weight: 800;
