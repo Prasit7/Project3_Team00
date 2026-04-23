@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // customer-only features — only run on customer-interface pages
   if (window.location.pathname.includes("customer-interface")) {
     injectTextSizeSlider();
-    injectMagnifierButton();
+    injectMagnifier();
     loadWaitTime();
   }
 });
@@ -172,6 +172,36 @@ function injectToolbarStyles() {
     [data-theme="high-contrast"] .a11y-text-size input[type="range"] {
       accent-color: #ff0;
     }
+
+    /* magnifier lens */
+    #kiosk-magnifier-lens {
+      position: fixed;
+      border-radius: 50%;
+      border: 3px solid #ec6f4f;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.4);
+      overflow: hidden;
+      z-index: 9999;
+      display: none;
+      cursor: grab;
+      pointer-events: auto;
+    }
+    #kiosk-magnifier-lens.active {
+      display: block;
+    }
+    #kiosk-magnifier-lens:active {
+      cursor: grabbing;
+    }
+    /* the live zoom layer inside the lens */
+    #kiosk-magnifier-inner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      transform-origin: 0 0;
+    }
+    [data-theme="high-contrast"] #kiosk-magnifier-lens {
+      border-color: #ff0;
+    }
   `;
   document.head.appendChild(style);
 }
@@ -213,21 +243,26 @@ function injectTextSizeSlider() {
   });
 }
 
-// scale is 0.85–1.5, multiply by 16 to get px
 function applyFontSize(scale) {
+  // use px not rem — setting rem on root is circular
   document.documentElement.style.fontSize = (scale * 16) + "px";
 }
 
 // ============================================================
 // magnifier — customer pages only
-// draggable circular lens that uses html2canvas to capture
-// and zoom the page content beneath it
+// draggable circular lens using a live CSS transform of the page
+// no external library needed — works by scaling a cloned fixed
+// overlay of the actual DOM inside the clipped lens circle
 // ============================================================
 
-function injectMagnifierButton() {
+function injectMagnifier() {
   const toolbar = document.querySelector(".a11y-toolbar");
   if (!toolbar) return;
 
+  const LENS_SIZE = 220;
+  const ZOOM = 2.5;
+
+  // toggle button
   const btn = document.createElement("button");
   btn.className = "a11y-btn";
   btn.id = "magnifier-toggle";
@@ -237,66 +272,104 @@ function injectMagnifierButton() {
   btn.textContent = "🔍 Magnifier";
   toolbar.appendChild(btn);
 
-  const LENS_SIZE = 200;
-  const ZOOM = 2.5;
-
-  // lens element — circular, draggable
+  // the circular lens container
   const lens = document.createElement("div");
   lens.id = "kiosk-magnifier-lens";
   lens.setAttribute("aria-hidden", "true");
-  lens.style.cssText = `
-    position: fixed;
-    width: ${LENS_SIZE}px;
-    height: ${LENS_SIZE}px;
-    border-radius: 50%;
-    border: 3px solid #ec6f4f;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.4);
-    overflow: hidden;
-    z-index: 9999;
-    display: none;
-    cursor: grab;
-    top: 120px;
-    left: 120px;
-    background: #fff9f2;
-  `;
-  document.body.appendChild(lens);
+  lens.style.width = LENS_SIZE + "px";
+  lens.style.height = LENS_SIZE + "px";
+  lens.style.top = "140px";
+  lens.style.left = "140px";
 
-  // canvas inside lens that shows the zoomed content
-  const canvas = document.createElement("canvas");
-  canvas.width = LENS_SIZE;
-  canvas.height = LENS_SIZE;
-  canvas.style.cssText = `
+  // the inner div that holds the scaled page snapshot
+  // we use an <iframe> pointing to the same URL to get a live render
+  // that is independent of the main page and can be scaled freely
+  const iframe = document.createElement("iframe");
+  iframe.id = "kiosk-magnifier-inner";
+  iframe.setAttribute("aria-hidden", "true");
+  iframe.setAttribute("tabindex", "-1");
+  iframe.style.cssText = `
     position: absolute;
     top: 0;
     left: 0;
-    width: ${LENS_SIZE}px;
-    height: ${LENS_SIZE}px;
-    border-radius: 50%;
+    border: none;
+    pointer-events: none;
+    transform-origin: 0 0;
+    background: transparent;
   `;
-  lens.appendChild(canvas);
-  const ctx = canvas.getContext("2d");
+
+  lens.appendChild(iframe);
+  document.body.appendChild(lens);
 
   let active = false;
-  let lensX = 120;
-  let lensY = 120;
+  let lensX = 140;
+  let lensY = 140;
   let dragging = false;
   let dragOffsetX = 0;
   let dragOffsetY = 0;
-  let capturing = false;
+  let iframeReady = false;
 
-  // toggle magnifier on/off
+  function initIframe() {
+    if (iframeReady) return;
+    // point iframe at the current page
+    iframe.src = window.location.href;
+    iframe.style.width = window.innerWidth + "px";
+    iframe.style.height = window.innerHeight + "px";
+    iframe.style.transform = `scale(${ZOOM})`;
+    iframe.onload = () => {
+      iframeReady = true;
+      // hide the iframe's own toolbar and magnifier to avoid recursion
+      try {
+        const iDoc = iframe.contentDocument;
+        if (iDoc) {
+          const style = iDoc.createElement("style");
+          style.textContent = ".a11y-toolbar, #kiosk-magnifier-lens { display: none !important; }";
+          iDoc.head.appendChild(style);
+        }
+      } catch (_) {}
+      updateIframeOffset();
+    };
+  }
+
+  function updateIframeOffset() {
+    // we want the area under the lens center to appear centered in the lens
+    // lens center in page coords:
+    const cx = lensX + LENS_SIZE / 2;
+    const cy = lensY + LENS_SIZE / 2;
+
+    // after scaling by ZOOM from origin 0,0:
+    // a point (px, py) maps to (px*ZOOM, py*ZOOM)
+    // we want (cx, cy) on the page to appear at (LENS_SIZE/2, LENS_SIZE/2) in the lens
+    // so: offsetX = LENS_SIZE/2 - cx*ZOOM
+    //     offsetY = LENS_SIZE/2 - cy*ZOOM
+    const offsetX = LENS_SIZE / 2 - cx * ZOOM;
+    const offsetY = LENS_SIZE / 2 - cy * ZOOM;
+
+    iframe.style.transform = `scale(${ZOOM})`;
+    iframe.style.transformOrigin = "0 0";
+    iframe.style.left = (offsetX / ZOOM) + "px";
+    iframe.style.top = (offsetY / ZOOM) + "px";
+
+    // sync iframe scroll to match main page scroll
+    try {
+      iframe.contentWindow.scrollTo(window.scrollX, window.scrollY);
+    } catch (_) {}
+  }
+
   btn.addEventListener("click", () => {
     active = !active;
     btn.setAttribute("aria-pressed", active);
     btn.textContent = active ? "🔍 On" : "🔍 Magnifier";
-    lens.style.display = active ? "block" : "none";
-    if (active) capture();
+    lens.classList.toggle("active", active);
+    if (active) {
+      initIframe();
+      updateIframeOffset();
+    }
   });
 
   // mouse drag
   lens.addEventListener("mousedown", (e) => {
     dragging = true;
-    lens.style.cursor = "grabbing";
     dragOffsetX = e.clientX - lensX;
     dragOffsetY = e.clientY - lensY;
     e.preventDefault();
@@ -308,11 +381,7 @@ function injectMagnifierButton() {
   });
 
   document.addEventListener("mouseup", () => {
-    if (dragging) {
-      dragging = false;
-      lens.style.cursor = "grab";
-      capture();
-    }
+    dragging = false;
   });
 
   // touch drag for kiosk touchscreens
@@ -331,56 +400,20 @@ function injectMagnifierButton() {
     e.preventDefault();
   }, { passive: false });
 
-  document.addEventListener("touchend", () => {
-    if (dragging) {
-      dragging = false;
-      capture();
-    }
-  });
+  document.addEventListener("touchend", () => { dragging = false; });
+
+  // keep iframe scroll synced when main page scrolls
+  window.addEventListener("scroll", () => {
+    if (!active) return;
+    updateIframeOffset();
+  }, { passive: true });
 
   function moveLens(x, y) {
     lensX = Math.max(0, Math.min(window.innerWidth - LENS_SIZE, x));
     lensY = Math.max(0, Math.min(window.innerHeight - LENS_SIZE, y));
     lens.style.left = lensX + "px";
     lens.style.top = lensY + "px";
-  }
-
-  // capture the area under the lens using html2canvas and draw it zoomed into the canvas
-  function capture() {
-    if (!active || capturing || typeof html2canvas === "undefined") return;
-    capturing = true;
-
-    // center of lens in viewport coords
-    const cx = lensX + LENS_SIZE / 2;
-    const cy = lensY + LENS_SIZE / 2;
-
-    // source region: the area that will fill the lens at ZOOM magnification
-    const srcW = LENS_SIZE / ZOOM;
-    const srcH = LENS_SIZE / ZOOM;
-    const srcX = cx - srcW / 2 + window.scrollX;
-    const srcY = cy - srcH / 2 + window.scrollY;
-
-    // hide the lens itself during capture so it doesn't appear in screenshot
-    lens.style.display = "none";
-
-    html2canvas(document.body, {
-      x: srcX,
-      y: srcY,
-      width: srcW,
-      height: srcH,
-      scale: ZOOM,
-      useCORS: true,
-      logging: false,
-      allowTaint: true,
-    }).then((captured) => {
-      ctx.clearRect(0, 0, LENS_SIZE, LENS_SIZE);
-      ctx.drawImage(captured, 0, 0, LENS_SIZE, LENS_SIZE);
-      lens.style.display = active ? "block" : "none";
-      capturing = false;
-    }).catch(() => {
-      lens.style.display = active ? "block" : "none";
-      capturing = false;
-    });
+    updateIframeOffset();
   }
 }
 
@@ -413,7 +446,6 @@ async function loadWaitTime() {
 
       waitEl.textContent = `⏱ Estimated wait: ~${waitMinutes} min`;
     } catch (_) {
-      // fail silently — wait time is non-critical
       waitEl.textContent = "";
     }
   }
