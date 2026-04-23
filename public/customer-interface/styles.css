@@ -1123,3 +1123,39 @@ body.magnifier-active .kiosk-magnifier {
 [data-theme="high-contrast"] .kiosk-magnifier {
   border-color: #ff0;
 }
+/* high contrast — force all remaining colored text to white */
+[data-theme="high-contrast"] .page-header p,
+[data-theme="high-contrast"] .kiosk-weather-temp,
+[data-theme="high-contrast"] .kiosk-weather-status,
+[data-theme="high-contrast"] .status-bar p,
+[data-theme="high-contrast"] .menu-item-hint,
+[data-theme="high-contrast"] .cart-item-remove,
+[data-theme="high-contrast"] .payment-success-modal p,
+[data-theme="high-contrast"] .modal-hero-copy p,
+[data-theme="high-contrast"] .modal-section label,
+[data-theme="high-contrast"] .modal-total,
+[data-theme="high-contrast"] .modal-title,
+[data-theme="high-contrast"] .modal-hint,
+[data-theme="high-contrast"] .assistant-msg--bot,
+[data-theme="high-contrast"] .assistant-msg--user,
+[data-theme="high-contrast"] .menu-item-details h2,
+[data-theme="high-contrast"] .order-box p,
+[data-theme="high-contrast"] .checkout-item-content p,
+[data-theme="high-contrast"] .cart-item-content p,
+[data-theme="high-contrast"] .wait-time-text,
+[data-theme="high-contrast"] h1,
+[data-theme="high-contrast"] h2,
+[data-theme="high-contrast"] h3,
+[data-theme="high-contrast"] p,
+[data-theme="high-contrast"] label,
+[data-theme="high-contrast"] span {
+  color: #fff;
+}
+
+/* keep yellow on prices and totals */
+[data-theme="high-contrast"] .price-text,
+[data-theme="high-contrast"] .total-text,
+[data-theme="high-contrast"] .modal-total,
+[data-theme="high-contrast"] .kiosk-weather-temp {
+  color: #ff0;
+}
