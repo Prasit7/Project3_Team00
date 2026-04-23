@@ -5,7 +5,7 @@ import ManagerShell from "../components/ManagerShell";
 import StatusMessage from "../components/StatusMessage";
 import styles from "../manager.module.css";
 
-const emptyForm = { firstName: "", lastName: "", role: "", isActive: true };
+const emptyForm = { firstName: "", lastName: "", role: "", isActive: true, hourlyRate: 15 };
 
 export default function EmployeesPage() {
   const [items, setItems] = useState([]);
@@ -39,6 +39,7 @@ export default function EmployeesPage() {
       lastName: item.lastName,
       role: item.role,
       isActive: item.isActive,
+      hourlyRate: item.hourlyRate ?? 15,  
     });
   }
 
@@ -56,6 +57,7 @@ export default function EmployeesPage() {
       lastName: form.lastName.trim(),
       role: form.role.trim(),
       isActive: Boolean(form.isActive),
+      hourlyRate: Number(form.hourlyRate),
     };
 
     const url = editingId ? `/api/employees/${editingId}` : "/api/employees";
@@ -127,6 +129,16 @@ export default function EmployeesPage() {
               />
               Active
             </label>
+            <input
+              className={styles.input}
+              type="number"
+              min="0"
+              step="0.01"
+              value={form.hourlyRate}
+              placeholder="Hourly rate"
+              onChange={(e) => setForm((prev) => ({ ...prev, hourlyRate: e.target.value }))}
+              required
+            />
           </div>
           <div className={styles.actions}>
             <button className={`${styles.button} ${styles.buttonPrimary}`} type="submit">
@@ -150,13 +162,14 @@ export default function EmployeesPage() {
                 <th>Last Name</th>
                 <th>Role</th>
                 <th>Active</th>
+                <th>Hourly Rate</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {!loading && items.length === 0 ? (
                 <tr>
-                  <td colSpan={6}>No employees found.</td>
+                  <td colSpan={7}>No employees found.</td>
                 </tr>
               ) : (
                 items.map((item) => (
@@ -166,6 +179,7 @@ export default function EmployeesPage() {
                     <td>{item.lastName}</td>
                     <td>{item.role}</td>
                     <td>{item.isActive ? "Yes" : "No"}</td>
+                    <td>${(item.hourlyRate ?? 15).toFixed(2)}</td>
                     <td>
                       <div className={styles.actions}>
                         <button

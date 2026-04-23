@@ -136,8 +136,10 @@ async function loadMenu() {
     renderItems("fruit-tea-list", fruit);
     renderItems("specialty-list", spec);
 
-    tickerTrack.innerHTML = items.slice(0, 8)
-      .map(i => `<span>${i.name}</span>`).join("");
+    const tickerItems = items.slice(0, 8)
+    .map(i => `<span>${i.name}</span>`).join("");
+    // Duplicate it so the scroll loops seamlessly
+    tickerTrack.innerHTML = tickerItems + tickerItems;
 
     boardStatus.textContent = "Menu loaded";
     
