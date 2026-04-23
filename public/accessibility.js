@@ -405,7 +405,7 @@ function injectMagnifier() {
 // fetches orders_today from /api/xreport
 // wait = (orders per last ~30 min) * avg prep time per order
 // refreshes every 60 seconds
-// shows a fallback message if backend is unavailable
+// only shows when backend returns real data
 // ============================================================
 
 const AVG_MINUTES_PER_ORDER = 3;
@@ -415,8 +415,8 @@ async function loadWaitTime() {
   const waitEl = document.getElementById("wait-time-text");
   if (!waitEl) return;
 
-  // show a default immediately so something is always visible
-  waitEl.textContent = "⏱ Estimated wait: ~5 min";
+
+
 
   async function fetchAndUpdate() {
     try {
@@ -433,8 +433,8 @@ async function loadWaitTime() {
 
       waitEl.textContent = `⏱ Estimated wait: ~${waitMinutes} min`;
     } catch (_) {
-      // backend unavailable — keep the default message visible
-      waitEl.textContent = "⏱ Estimated wait: ~5 min";
+      // backend unavailable — show nothing
+    
     }
   }
 
