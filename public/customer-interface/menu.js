@@ -186,7 +186,9 @@ function appendAssistantMessage(kind, text) {
 }
 
 function buildAssistantCartContext() {
-  return loadCart().map((item) => ({
+  return loadCart().map((item, index) => ({
+    cartIndex: index,
+    itemId: item.itemId,
     itemName: item.itemName,
     size: item.size,
     ice: item.ice,
@@ -213,6 +215,41 @@ function setAssistantPendingItem(item) {
 
 function clearAssistantPendingItem() {
   sessionStorage.removeItem(ASSISTANT_PENDING_ITEM_KEY);
+}
+
+function removeCartItemFromAssistant(action) {
+  const cart = loadCart();
+  if (!Array.isArray(cart) || cart.length === 0) return false;
+
+  let targetIndex = Number.isInteger(action.cartIndex) ? action.cartIndex : -1;
+  if (targetIndex < 0 || targetIndex >= cart.length) {
+    targetIndex = [...cart]
+      .map((entry, index) => ({ entry, index }))
+      .reverse()
+      .find((wrapped) => {
+        if (Number(action.itemId) > 0 && Number(wrapped.entry.itemId) === Number(action.itemId)) return true;
+        return normalizeItemKey(wrapped.entry.itemName) === normalizeItemKey(action.itemName);
+      })?.index;
+  }
+
+  if (targetIndex === undefined || targetIndex < 0 || targetIndex >= cart.length) return false;
+  const [removed] = cart.splice(targetIndex, 1);
+  saveCart(cart);
+  renderCartSummary();
+  if (removed) {
+    statusText.textContent = `${removed.itemName} ${t("removedFromCartStatus")}`;
+  }
+
+  const pending = getAssistantPendingItem();
+  if (pending) {
+    const removedName = normalizeItemKey(removed?.itemName);
+    const pendingName = normalizeItemKey(pending.itemName);
+    if (removedName && pendingName && removedName === pendingName) {
+      clearAssistantPendingItem();
+    }
+  }
+
+  return true;
 }
 
 function addDefaultItemFromAssistant(itemId, itemName) {
@@ -328,6 +365,14 @@ function handleAssistantAction(action) {
     const updated = updatePendingCartItemFromAssistant(action.updates);
     if (!updated) {
       appendAssistantMessage("bot", "I could not apply those modifications automatically. Please use the customize panel.");
+    }
+    return;
+  }
+
+  if (action.type === "REMOVE_CART_ITEM") {
+    const removed = removeCartItemFromAssistant(action);
+    if (!removed) {
+      appendAssistantMessage("bot", "I could not find that item in the cart to remove.");
     }
   }
 }

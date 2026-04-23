@@ -207,6 +207,16 @@ function hasAddIntent(message) {
   return /\b(add|order|get|want|i'll take|ill take|put)\b/.test(text);
 }
 
+function hasRemoveCartIntent(message) {
+  const text = String(message || "").toLowerCase();
+  return /\b(remove|delete|cancel|take out|take off)\b/.test(text);
+}
+
+function hasCartCue(message) {
+  const text = String(message || "").toLowerCase();
+  return /\b(from cart|from my cart|cart|order|item|drink)\b/.test(text);
+}
+
 function findRequestedMenuItem(message, items) {
   const normalizedMessage = normalizeLookup(message);
   if (!normalizedMessage) return null;
@@ -220,6 +230,48 @@ function findRequestedMenuItem(message, items) {
     .sort((a, b) => b.key.length - a.key.length);
 
   return candidates.length > 0 ? candidates[0].item : null;
+}
+
+function findRequestedCartItem(message, cart, pendingItem) {
+  if (!Array.isArray(cart) || cart.length === 0) return null;
+  const text = String(message || "").toLowerCase();
+  const normalizedMessage = normalizeLookup(text);
+
+  const numbered = text.match(/\bitem\s*(\d+)\b/);
+  if (numbered) {
+    const position = Number.parseInt(numbered[1], 10) - 1;
+    if (position >= 0 && position < cart.length) {
+      return cart[position];
+    }
+  }
+
+  if (/\b(last|latest|most recent)\b/.test(text)) {
+    return cart[cart.length - 1];
+  }
+  if (/\b(first)\b/.test(text)) {
+    return cart[0];
+  }
+
+  const byName = cart
+    .map((entry) => ({
+      entry,
+      key: normalizeLookup(entry.itemName),
+    }))
+    .filter((entry) => entry.key && normalizedMessage.includes(entry.key))
+    .sort((a, b) => b.key.length - a.key.length);
+  if (byName.length > 0) {
+    return byName[0].entry;
+  }
+
+  if (/\b(it|that|this)\b/.test(text) && pendingItem) {
+    const pendingName = normalizeLookup(pendingItem.name);
+    const match = [...cart]
+      .reverse()
+      .find((entry) => normalizeLookup(entry.itemName) === pendingName);
+    if (match) return match;
+  }
+
+  return null;
 }
 
 function normalizePendingItem(rawPendingItem, items) {
@@ -241,7 +293,9 @@ function createAssistantActionReplyForAdd(item) {
 function normalizeCart(rawCart) {
   if (!Array.isArray(rawCart)) return [];
 
-  return rawCart.slice(0, 8).map((item) => ({
+  return rawCart.slice(0, 20).map((item, index) => ({
+    cartIndex: Number.isInteger(item.cartIndex) ? item.cartIndex : index,
+    itemId: Number(item.itemId || 0),
     itemName: cleanText(item.itemName, 80),
     size: cleanText(item.size, 40),
     ice: cleanText(item.ice, 40),
@@ -340,6 +394,22 @@ export async function POST(request) {
 
     const { items, modifiers } = await loadMenuContext();
     const pendingItem = normalizePendingItem(body.pendingItem, items);
+
+    if (hasRemoveCartIntent(message) && (hasCartCue(message) || !pendingItem)) {
+      const cartItem = findRequestedCartItem(message, cart, pendingItem);
+      if (cartItem) {
+        return NextResponse.json({
+          ok: true,
+          reply: `Removed ${cartItem.itemName} from your cart.`,
+          action: {
+            type: "REMOVE_CART_ITEM",
+            cartIndex: cartItem.cartIndex,
+            itemId: cartItem.itemId,
+            itemName: cartItem.itemName,
+          },
+        });
+      }
+    }
 
     const tasteTarget = extractTasteTarget(message);
     if (tasteTarget) {
