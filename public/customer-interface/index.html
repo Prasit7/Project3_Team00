@@ -48,6 +48,27 @@
           <p class="total-text" id="selected-item-total">Total: $0.00</p>
         </section>
 
+        <section class="assistant-section" aria-labelledby="assistant-heading">
+          <h2 id="assistant-heading">Personal Assistant</h2>
+          <div class="assistant-box">
+            <div id="assistant-messages" class="assistant-messages" aria-live="polite">
+              <p class="assistant-msg assistant-msg--bot">
+                Hi! I can help with menu choices, toppings, customization, and ordering.
+              </p>
+            </div>
+            <form id="assistant-form" class="assistant-form">
+              <input
+                id="assistant-input"
+                type="text"
+                maxlength="300"
+                placeholder="Ask about drinks, toppings, or your order..."
+                aria-label="Ask the kiosk assistant"
+              />
+              <button type="submit" class="nav-button primary-link">Ask</button>
+            </form>
+          </div>
+        </section>
+
         <section class="page-actions">
           <a class="nav-button primary-link is-disabled" id="next-customize-link" href="checkout.html" aria-disabled="true" data-i18n="nextCheckout">Next: Checkout</a>
         </section>

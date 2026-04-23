@@ -4,6 +4,9 @@ const statusText = document.getElementById("customer-status");
 const selectedItemBox = document.getElementById("selected-item-box");
 const selectedItemTotal = document.getElementById("selected-item-total");
 const nextCustomizeLink = document.getElementById("next-customize-link");
+const assistantForm = document.getElementById("assistant-form");
+const assistantInput = document.getElementById("assistant-input");
+const assistantMessages = document.getElementById("assistant-messages");
 
 const modalOverlay = document.getElementById("customize-modal-overlay");
 const modalCloseButton = document.getElementById("close-customize-modal");
@@ -17,6 +20,7 @@ const modalToppingsList = document.getElementById("modal-toppings-list");
 const modalSpecialInstructions = document.getElementById("modal-special-instructions");
 const modalAddToOrderButton = document.getElementById("modal-add-to-order");
 const modalLiveTotal = document.getElementById("modal-live-total");
+const ASSISTANT_PENDING_ITEM_KEY = "assistantPendingItem";
 
 const SIZE_OPTIONS = [
   { name: "Regular", labelKey: "sizeRegular", priceDelta: 0 },
@@ -161,6 +165,209 @@ function removeCartItemAt(indexToRemove) {
 
 function getModifiersByType(type) {
   return modifiers.filter((modifier) => modifier.modifierType === type);
+}
+
+function escapeHtml(text) {
+  return String(text || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function appendAssistantMessage(kind, text) {
+  if (!assistantMessages) return;
+  const messageNode = document.createElement("p");
+  messageNode.className = `assistant-msg ${kind === "user" ? "assistant-msg--user" : "assistant-msg--bot"}`;
+  messageNode.innerHTML = escapeHtml(text);
+  assistantMessages.appendChild(messageNode);
+  assistantMessages.scrollTop = assistantMessages.scrollHeight;
+}
+
+function buildAssistantCartContext() {
+  return loadCart().map((item) => ({
+    itemName: item.itemName,
+    size: item.size,
+    ice: item.ice,
+    sugar: item.sugar,
+    toppings: item.toppings,
+    totalPrice: item.totalPrice,
+  }));
+}
+
+function getAssistantPendingItem() {
+  const raw = sessionStorage.getItem(ASSISTANT_PENDING_ITEM_KEY);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch (_error) {
+    return null;
+  }
+}
+
+function setAssistantPendingItem(item) {
+  if (!item || typeof item !== "object") return;
+  sessionStorage.setItem(ASSISTANT_PENDING_ITEM_KEY, JSON.stringify(item));
+}
+
+function clearAssistantPendingItem() {
+  sessionStorage.removeItem(ASSISTANT_PENDING_ITEM_KEY);
+}
+
+function addDefaultItemFromAssistant(itemId, itemName) {
+  const normalizedName = normalizeItemKey(itemName);
+  const item =
+    menuItems.find((entry) => Number(entry.id) === Number(itemId)) ||
+    menuItems.find((entry) => normalizeItemKey(entry.name) === normalizedName);
+  if (!item) return -1;
+
+  const iceOptions = getModifiersByType("Ice Level");
+  const sugarOptions = getModifiersByType("Sugar Level");
+  const regularIce = iceOptions.find((option) => option.name === "Regular Ice");
+  const regularSugar = sugarOptions.find((option) => option.name === "100% Sugar");
+
+  const order = {
+    itemId: item.id,
+    itemName: item.name,
+    category: item.category,
+    basePrice: Number(item.price || 0),
+    size: "Regular",
+    ice: regularIce ? regularIce.name : iceOptions[0]?.name || "Regular Ice",
+    sugar: regularSugar ? regularSugar.name : sugarOptions[0]?.name || "100% Sugar",
+    toppings: [],
+    specialInstructions: "",
+    totalPrice: Number(item.price || 0),
+  };
+
+  const cart = loadCart();
+  cart.push(order);
+  saveCart(cart);
+  renderCartSummary();
+  statusText.textContent = `${order.itemName} ${t("addedToCartStatus")}`;
+  return cart.length - 1;
+}
+
+function recalculateCartItemTotal(item) {
+  const sizeDelta = item.size === "Large" ? 0.75 : 0;
+  const toppingTotal = (Array.isArray(item.toppings) ? item.toppings : []).reduce((sum, toppingName) => {
+    const topping = getModifiersByType("Topping").find((option) => option.name === toppingName);
+    return sum + (topping ? Number(topping.priceDelta || 0) : 0);
+  }, 0);
+  return Number(item.basePrice || 0) + sizeDelta + toppingTotal;
+}
+
+function updatePendingCartItemFromAssistant(updates) {
+  const pending = getAssistantPendingItem();
+  if (!pending || !updates || typeof updates !== "object") return false;
+
+  const cart = loadCart();
+  let targetIndex = Number.isInteger(pending.cartIndex) ? pending.cartIndex : -1;
+
+  if (targetIndex < 0 || targetIndex >= cart.length) {
+    targetIndex = [...cart]
+      .map((entry, index) => ({ entry, index }))
+      .reverse()
+      .find((wrapped) => Number(wrapped.entry.itemId) === Number(pending.itemId))?.index;
+  }
+
+  if (targetIndex === undefined || targetIndex < 0 || targetIndex >= cart.length) return false;
+
+  const current = cart[targetIndex];
+  const updated = {
+    ...current,
+    size: typeof updates.size === "string" ? updates.size : current.size,
+    ice: typeof updates.ice === "string" ? updates.ice : current.ice,
+    sugar: typeof updates.sugar === "string" ? updates.sugar : current.sugar,
+    toppings: Array.isArray(updates.toppings) ? updates.toppings : current.toppings,
+  };
+  updated.totalPrice = recalculateCartItemTotal(updated);
+
+  cart[targetIndex] = updated;
+  saveCart(cart);
+  renderCartSummary();
+  statusText.textContent = `${updated.itemName} updated`;
+  setAssistantPendingItem({
+    ...pending,
+    cartIndex: targetIndex,
+  });
+  return true;
+}
+
+function handleAssistantAction(action) {
+  if (!action || typeof action !== "object") return;
+
+  if (action.type === "ADD_DEFAULT_ITEM") {
+    const cartIndex = addDefaultItemFromAssistant(action.itemId, action.itemName);
+    if (cartIndex < 0) {
+      appendAssistantMessage("bot", "I could not add that item automatically. Please select it from the menu.");
+      return;
+    }
+    setAssistantPendingItem({
+      itemId: action.itemId,
+      itemName: action.itemName,
+      cartIndex,
+    });
+    return;
+  }
+
+  if (action.type === "CLEAR_PENDING_ITEM") {
+    clearAssistantPendingItem();
+    return;
+  }
+
+  if (action.type === "UPDATE_PENDING_ITEM") {
+    const updated = updatePendingCartItemFromAssistant(action.updates);
+    if (!updated) {
+      appendAssistantMessage("bot", "I could not apply those modifications automatically. Please use the customize panel.");
+    }
+  }
+}
+
+async function handleAssistantSubmit(event) {
+  event.preventDefault();
+  if (!assistantInput) return;
+
+  const text = assistantInput.value.trim();
+  if (!text) return;
+
+  appendAssistantMessage("user", text);
+  assistantInput.value = "";
+  appendAssistantMessage("bot", "Thinking...");
+
+  try {
+    const response = await fetch("/api/assistant", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: text,
+        cart: buildAssistantCartContext(),
+        pendingItem: getAssistantPendingItem(),
+      }),
+    });
+
+    const payload = await response.json().catch(() => ({}));
+    if (assistantMessages?.lastElementChild) {
+      assistantMessages.lastElementChild.remove();
+    }
+
+    if (!response.ok || !payload.ok) {
+      const detail = payload?.detail ? ` (${payload.detail})` : "";
+      appendAssistantMessage(
+        "bot",
+        `I can help with menu and ordering, but I am temporarily unavailable. Please try again.${detail}`
+      );
+      return;
+    }
+
+    appendAssistantMessage("bot", payload.reply || "How can I help with your order?");
+    handleAssistantAction(payload.action);
+  } catch (_error) {
+    if (assistantMessages?.lastElementChild) {
+      assistantMessages.lastElementChild.remove();
+    }
+    appendAssistantMessage("bot", "Network issue. Please try again.");
+  }
 }
 
 function setNextActionEnabled(enabled) {
@@ -471,6 +678,9 @@ document.addEventListener("keydown", (event) => {
     closeCustomizeModal();
   }
 });
+if (assistantForm) {
+  assistantForm.addEventListener("submit", handleAssistantSubmit);
+}
 
 renderCartSummary();
 loadMenuItems();
