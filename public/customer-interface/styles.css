@@ -130,6 +130,20 @@ body.modal-open {
   color: var(--muted);
 }
 
+.page-wait-time {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 12px;
+  padding: 8px 12px;
+  border: 1px solid #f0ccb8;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--accent-strong);
+  font-size: 0.95rem;
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(128, 87, 60, 0.08);
+}
+
 .kiosk-weather {
   display: grid;
   grid-template-columns: auto auto;
@@ -993,8 +1007,14 @@ a:focus-visible {
 }
 
 [data-theme="high-contrast"] .price-text,
-[data-theme="high-contrast"] .total-text {
+[data-theme="high-contrast"] .total-text,
+[data-theme="high-contrast"] .page-wait-time {
   color: #ff0;
+}
+
+[data-theme="high-contrast"] .page-wait-time {
+  background: #111;
+  border: 2px solid #fff;
 }
 
 [data-theme="high-contrast"] .menu-item-media {

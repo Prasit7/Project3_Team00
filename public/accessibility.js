@@ -30,6 +30,10 @@ document.addEventListener("DOMContentLoaded", () => {
     injectTextSizeSlider();
     injectMagnifier();
   }
+
+  if (window.location.pathname.includes("customer-interface")) {
+    loadWaitTime();
+  }
 });
 
 function shouldEnableCustomerFacingA11y() {
@@ -395,4 +399,34 @@ function injectMagnifier() {
       moveLens(lensX, lensY, targetX, targetY);
     }
   });
+}
+
+function loadWaitTime() {
+  const waitEl = document.getElementById("wait-time-text");
+  if (!waitEl) return;
+
+  const AVG_MINUTES_PER_ORDER = 3;
+  const BUSINESS_OPEN_HOUR = 9;
+
+  async function fetchAndUpdate() {
+    try {
+      const res = await fetch("/api/xreport");
+      if (!res.ok) throw new Error();
+
+      const data = await res.json();
+      const ordersToday = parseInt(data.orders_today, 10) || 0;
+      const hourNow = new Date().getHours();
+      const hoursElapsed = Math.max(1, hourNow - BUSINESS_OPEN_HOUR);
+      const ordersPerHour = ordersToday / hoursElapsed;
+      const recentOrders = ordersPerHour / 2;
+      const waitMinutes = Math.min(25, Math.max(2, Math.round(recentOrders * AVG_MINUTES_PER_ORDER)));
+
+      waitEl.textContent = `Estimated wait: ~${waitMinutes} min`;
+    } catch (_) {
+      waitEl.textContent = "Estimated wait unavailable";
+    }
+  }
+
+  fetchAndUpdate();
+  window.setInterval(fetchAndUpdate, 60000);
 }

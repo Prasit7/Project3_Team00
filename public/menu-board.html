@@ -23,6 +23,7 @@
     </div>
     <div class="header-meta">
       <span class="meta-pill" id="clock">--:--</span>
+      <span class="meta-pill" id="wait-time-text">Wait: --</span>
       <span class="meta-pill now-serving" data-i18n="nowServing">Now Serving</span>
     </div>
   </header>
@@ -86,6 +87,9 @@
 <script>
 const boardStatus = document.getElementById("board-status");
 const tickerTrack = document.getElementById("ticker-track");
+const waitTimeEl = document.getElementById("wait-time-text");
+const AVG_MINUTES_PER_ORDER = 3;
+const BUSINESS_OPEN_HOUR = 9;
 
 function updateClock() {
   const now = new Date();
@@ -172,8 +176,35 @@ async function loadModifiers() {
   
 }
 
+async function loadWaitTime() {
+  if (!waitTimeEl) return;
+
+  async function fetchAndUpdate() {
+    try {
+      const res = await fetch("/api/xreport");
+      if (!res.ok) throw new Error();
+
+      const data = await res.json();
+      const ordersToday = parseInt(data.orders_today, 10) || 0;
+      const hourNow = new Date().getHours();
+      const hoursElapsed = Math.max(1, hourNow - BUSINESS_OPEN_HOUR);
+      const ordersPerHour = ordersToday / hoursElapsed;
+      const recentOrders = ordersPerHour / 2;
+      const waitMinutes = Math.min(25, Math.max(2, Math.round(recentOrders * AVG_MINUTES_PER_ORDER)));
+
+      waitTimeEl.textContent = `Estimated wait: ~${waitMinutes} min`;
+    } catch {
+      waitTimeEl.textContent = "Estimated wait unavailable";
+    }
+  }
+
+  await fetchAndUpdate();
+  setInterval(fetchAndUpdate, 60000);
+}
+
 loadMenu();
 loadModifiers();
+loadWaitTime();
 
 
 </script>
