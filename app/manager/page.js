@@ -6,7 +6,7 @@ import styles from "./manager.module.css";
 
 export default function ManagerPage() {
   return (
-    <ManagerShell title="Manager Tools" subtitle="Operational admin tools (excluding reports)">
+    <ManagerShell title="Manager Tools" subtitle="Operational admin tools and reporting">
       <section className={styles.grid}>
         <article className={styles.card}>
           <h3>Inventory</h3>
@@ -29,6 +29,22 @@ export default function ManagerPage() {
           <p>Create and maintain employee records and statuses.</p>
           <Link href="/manager/employees" className={styles.cardLink}>
             Open Employees
+          </Link>
+        </article>
+
+        <article className={styles.card}>
+          <h3>Order History</h3>
+          <p>Review all created orders with their timestamps and paid amounts.</p>
+          <Link href="/manager/orders" className={styles.cardLink}>
+            Open Order History
+          </Link>
+        </article>
+
+        <article className={styles.card}>
+          <h3>Reports</h3>
+          <p>View product usage, X/Z reports, sales metrics, and seasonal menu reporting.</p>
+          <Link href="/manager/reports" className={styles.cardLink}>
+            Open Reports
           </Link>
         </article>
       </section>

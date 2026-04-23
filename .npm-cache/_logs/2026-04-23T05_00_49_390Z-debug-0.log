@@ -1,0 +1,603 @@
+0 verbose cli /opt/homebrew/Cellar/node/22.9.0_1/bin/node /opt/homebrew/bin/npm
+1 info using npm@11.0.0
+2 info using node@v22.9.0
+3 silly config load:file:/opt/homebrew/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/shaancharolia/Desktop/project3/Project3_Team00/.npmrc
+5 silly config load:file:/Users/shaancharolia/.npmrc
+6 silly config load:file:/opt/homebrew/etc/npmrc
+7 verbose title npm install
+8 verbose argv "install" "--cache" ".npm-cache"
+9 verbose logfile logs-max:10 dir:/Users/shaancharolia/Desktop/project3/Project3_Team00/.npm-cache/_logs/2026-04-23T05_00_49_390Z-
+10 verbose logfile /Users/shaancharolia/Desktop/project3/Project3_Team00/.npm-cache/_logs/2026-04-23T05_00_49_390Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:2197815296 maxSize:549453824 maxEntrySize:274726912
+13 http fetch GET https://registry.npmjs.org/npm attempt 1 failed with ENOTFOUND
+14 silly idealTree buildDeps
+15 silly reify mark retired [
+15 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/aws-ssl-profiles'
+15 silly reify ]
+16 silly reify mark retired [
+16 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/denque'
+16 silly reify ]
+17 silly reify mark retired [
+17 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/generate-function'
+17 silly reify ]
+18 silly reify mark retired [
+18 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/is-property'
+18 silly reify ]
+19 silly reify mark retired [
+19 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/jose'
+19 silly reify ]
+20 silly reify mark retired [
+20 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/long'
+20 silly reify ]
+21 silly reify mark retired [
+21 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/lru.min'
+21 silly reify ]
+22 silly reify mark retired [
+22 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/mysql2'
+22 silly reify ]
+23 silly reify mark retired [
+23 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/named-placeholders'
+23 silly reify ]
+24 silly reify mark retired [
+24 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/next-auth'
+24 silly reify ]
+25 silly reify mark retired [
+25 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/oauth'
+25 silly reify ]
+26 silly reify mark retired [
+26 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/object-hash'
+26 silly reify ]
+27 silly reify mark retired [
+27 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/oidc-token-hash'
+27 silly reify ]
+28 silly reify mark retired [
+28 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/openai'
+28 silly reify ]
+29 silly reify mark retired [
+29 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/openid-client'
+29 silly reify ]
+30 silly reify mark retired [
+30 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/preact-render-to-string'
+30 silly reify ]
+31 silly reify mark retired [
+31 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/pretty-format'
+31 silly reify ]
+32 silly reify mark retired [
+32 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/preact'
+32 silly reify ]
+33 silly reify mark retired [
+33 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/sql-escaper'
+33 silly reify ]
+34 silly reify mark retired [
+34 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/uuid'
+34 silly reify ]
+35 silly reify mark retired [
+35 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@babel/runtime'
+35 silly reify ]
+36 silly reify mark retired [
+36 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-darwin-x64'
+36 silly reify ]
+37 silly reify mark retired [
+37 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-ppc64'
+37 silly reify ]
+38 silly reify mark retired [
+38 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-riscv64'
+38 silly reify ]
+39 silly reify mark retired [
+39 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-s390x'
+39 silly reify ]
+40 silly reify mark retired [
+40 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-arm64'
+40 silly reify ]
+41 silly reify mark retired [
+41 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-x64'
+41 silly reify ]
+42 silly reify mark retired [
+42 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linuxmusl-arm64'
+42 silly reify ]
+43 silly reify mark retired [
+43 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-darwin-x64'
+43 silly reify ]
+44 silly reify mark retired [
+44 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linuxmusl-x64'
+44 silly reify ]
+45 silly reify mark retired [
+45 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-arm'
+45 silly reify ]
+46 silly reify mark retired [
+46 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-ppc64'
+46 silly reify ]
+47 silly reify mark retired [
+47 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-riscv64'
+47 silly reify ]
+48 silly reify mark retired [
+48 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-s390x'
+48 silly reify ]
+49 silly reify mark retired [
+49 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-x64'
+49 silly reify ]
+50 silly reify mark retired [
+50 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linuxmusl-arm64'
+50 silly reify ]
+51 silly reify mark retired [
+51 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-wasm32'
+51 silly reify ]
+52 silly reify mark retired [
+52 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linuxmusl-x64'
+52 silly reify ]
+53 silly reify mark retired [
+53 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-arm64'
+53 silly reify ]
+54 silly reify mark retired [
+54 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-arm'
+54 silly reify ]
+55 silly reify mark retired [
+55 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-win32-ia32'
+55 silly reify ]
+56 silly reify mark retired [
+56 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-win32-arm64'
+56 silly reify ]
+57 silly reify mark retired [
+57 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-win32-x64'
+57 silly reify ]
+58 silly reify mark retired [
+58 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-darwin-x64'
+58 silly reify ]
+59 silly reify mark retired [
+59 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-arm64-gnu'
+59 silly reify ]
+60 silly reify mark retired [
+60 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-arm64-musl'
+60 silly reify ]
+61 silly reify mark retired [
+61 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-x64-gnu'
+61 silly reify ]
+62 silly reify mark retired [
+62 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-x64-musl'
+62 silly reify ]
+63 silly reify mark retired [
+63 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-win32-arm64-msvc'
+63 silly reify ]
+64 silly reify mark retired [
+64 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@panva/hkdf'
+64 silly reify ]
+65 silly reify mark retired [
+65 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-win32-x64-msvc'
+65 silly reify ]
+66 silly reify mark retired [
+66 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/baseline-browser-mapping',
+66 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.bin/baseline-browser-mapping'
+66 silly reify ]
+67 silly reify mark retired [
+67 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/next',
+67 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.bin/next'
+67 silly reify ]
+68 silly reify mark retired [
+68 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/nanoid',
+68 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.bin/nanoid'
+68 silly reify ]
+69 silly reify mark retired [
+69 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/semver',
+69 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.bin/semver'
+69 silly reify ]
+70 silly reify moves {
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/aws-ssl-profiles': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.aws-ssl-profiles-aaxUF8vr',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/denque': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.denque-Y9nOospy',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/generate-function': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.generate-function-pxbmWsVP',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/is-property': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.is-property-2U3ohJ1J',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/jose': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.jose-2gKdjeaN',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/long': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.long-HyXsu5DQ',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/lru.min': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.lru.min-3ZXWDRD8',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/mysql2': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.mysql2-AAcDEuRY',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/named-placeholders': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.named-placeholders-Qjnj8NyN',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/next-auth': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.next-auth-NwSbbA1G',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/oauth': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.oauth-LQggkTLB',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/object-hash': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.object-hash-EQH3U0O8',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/oidc-token-hash': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.oidc-token-hash-tKnjWVfg',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/openai': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.openai-ZqEn4XNd',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/openid-client': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.openid-client-ItlrF6Br',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/preact-render-to-string': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.preact-render-to-string-1ZVy8nFZ',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/pretty-format': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.pretty-format-P1SggA2T',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/preact': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.preact-U7KSRCsZ',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/sql-escaper': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.sql-escaper-A65Ux04P',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/uuid': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.uuid-MVdYcBpD',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@babel/runtime': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@babel/.runtime-KTluAOPh',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-darwin-x64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-darwin-x64-EfTVfapj',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-ppc64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-libvips-linux-ppc64-uUxVEwF6',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-riscv64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-libvips-linux-riscv64-qB2zplpp',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-s390x': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-libvips-linux-s390x-IrXZRpO2',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-arm64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-libvips-linux-arm64-9fIg5kt4',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-x64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-libvips-linux-x64-YdK30Fot',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linuxmusl-arm64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-libvips-linuxmusl-arm64-tK0QAKQI',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-darwin-x64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-libvips-darwin-x64-GyjdjnsI',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linuxmusl-x64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-libvips-linuxmusl-x64-obznc0xV',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-arm': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-linux-arm-97jpxwmJ',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-ppc64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-linux-ppc64-beo8sf8E',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-riscv64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-linux-riscv64-8DB8IWsN',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-s390x': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-linux-s390x-2vhYBmDy',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-x64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-linux-x64-e5uHksOk',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linuxmusl-arm64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-linuxmusl-arm64-owVsoYi5',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-wasm32': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-wasm32-mREdrvWE',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linuxmusl-x64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-linuxmusl-x64-iM6xXqYU',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-arm64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-linux-arm64-bLwyB8Ud',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-arm': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-libvips-linux-arm-OIXz3roG',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-win32-ia32': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-win32-ia32-FyA9GZXl',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-win32-arm64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-win32-arm64-wtgcZ15x',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-win32-x64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/.sharp-win32-x64-AmuOOVDz',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-darwin-x64': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/.swc-darwin-x64-AucT8QQ5',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-arm64-gnu': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/.swc-linux-arm64-gnu-AcYbD9KZ',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-arm64-musl': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/.swc-linux-arm64-musl-AV6UtF4X',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-x64-gnu': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/.swc-linux-x64-gnu-wIP3YKjF',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-x64-musl': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/.swc-linux-x64-musl-ibG2QEX4',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-win32-arm64-msvc': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/.swc-win32-arm64-msvc-UhPVvR0n',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@panva/hkdf': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@panva/.hkdf-yQ7vd2dk',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-win32-x64-msvc': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/.swc-win32-x64-msvc-tvQozMz0',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/baseline-browser-mapping': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.baseline-browser-mapping-u0u9yxC3',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.bin/baseline-browser-mapping': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.bin/.baseline-browser-mapping-HSk0NTdi',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/next': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.next-G9b8ozBU',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.bin/next': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.bin/.next-GZsYLVAf',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/nanoid': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.nanoid-Tl9EQbJl',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.bin/nanoid': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.bin/.nanoid-KgXQNm4E',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/semver': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.semver-4ajRXF2O',
+70 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.bin/semver': '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.bin/.semver-jEf5ogtu'
+70 silly reify }
+71 silly audit bulk request {
+71 silly audit   '@babel/runtime': [ '7.29.2' ],
+71 silly audit   '@emnapi/runtime': [ '1.9.1' ],
+71 silly audit   '@img/colour': [ '1.1.0' ],
+71 silly audit   '@img/sharp-darwin-arm64': [ '0.34.5' ],
+71 silly audit   '@img/sharp-darwin-x64': [ '0.34.5' ],
+71 silly audit   '@img/sharp-libvips-darwin-arm64': [ '1.2.4' ],
+71 silly audit   '@img/sharp-libvips-darwin-x64': [ '1.2.4' ],
+71 silly audit   '@img/sharp-libvips-linux-arm': [ '1.2.4' ],
+71 silly audit   '@img/sharp-libvips-linux-arm64': [ '1.2.4' ],
+71 silly audit   '@img/sharp-libvips-linux-ppc64': [ '1.2.4' ],
+71 silly audit   '@img/sharp-libvips-linux-riscv64': [ '1.2.4' ],
+71 silly audit   '@img/sharp-libvips-linux-s390x': [ '1.2.4' ],
+71 silly audit   '@img/sharp-libvips-linux-x64': [ '1.2.4' ],
+71 silly audit   '@img/sharp-libvips-linuxmusl-arm64': [ '1.2.4' ],
+71 silly audit   '@img/sharp-libvips-linuxmusl-x64': [ '1.2.4' ],
+71 silly audit   '@img/sharp-linux-arm': [ '0.34.5' ],
+71 silly audit   '@img/sharp-linux-arm64': [ '0.34.5' ],
+71 silly audit   '@img/sharp-linux-ppc64': [ '0.34.5' ],
+71 silly audit   '@img/sharp-linux-riscv64': [ '0.34.5' ],
+71 silly audit   '@img/sharp-linux-s390x': [ '0.34.5' ],
+71 silly audit   '@img/sharp-linux-x64': [ '0.34.5' ],
+71 silly audit   '@img/sharp-linuxmusl-arm64': [ '0.34.5' ],
+71 silly audit   '@img/sharp-linuxmusl-x64': [ '0.34.5' ],
+71 silly audit   '@img/sharp-wasm32': [ '0.34.5' ],
+71 silly audit   '@img/sharp-win32-arm64': [ '0.34.5' ],
+71 silly audit   '@img/sharp-win32-ia32': [ '0.34.5' ],
+71 silly audit   '@img/sharp-win32-x64': [ '0.34.5' ],
+71 silly audit   '@next/env': [ '16.2.2' ],
+71 silly audit   '@next/swc-darwin-arm64': [ '16.2.2' ],
+71 silly audit   '@next/swc-darwin-x64': [ '16.2.2' ],
+71 silly audit   '@next/swc-linux-arm64-gnu': [ '16.2.2' ],
+71 silly audit   '@next/swc-linux-arm64-musl': [ '16.2.2' ],
+71 silly audit   '@next/swc-linux-x64-gnu': [ '16.2.2' ],
+71 silly audit   '@next/swc-linux-x64-musl': [ '16.2.2' ],
+71 silly audit   '@next/swc-win32-arm64-msvc': [ '16.2.2' ],
+71 silly audit   '@next/swc-win32-x64-msvc': [ '16.2.2' ],
+71 silly audit   '@panva/hkdf': [ '1.2.1' ],
+71 silly audit   '@swc/helpers': [ '0.5.15' ],
+71 silly audit   '@types/node': [ '25.5.2' ],
+71 silly audit   'aws-ssl-profiles': [ '1.1.2' ],
+71 silly audit   'baseline-browser-mapping': [ '2.10.13' ],
+71 silly audit   'caniuse-lite': [ '1.0.30001784' ],
+71 silly audit   'client-only': [ '0.0.1' ],
+71 silly audit   cookie: [ '0.7.2' ],
+71 silly audit   denque: [ '2.1.0' ],
+71 silly audit   'detect-libc': [ '2.1.2' ],
+71 silly audit   'generate-function': [ '2.3.1' ],
+71 silly audit   'iconv-lite': [ '0.7.2' ],
+71 silly audit   'is-property': [ '1.0.2' ],
+71 silly audit   jose: [ '4.15.9' ],
+71 silly audit   long: [ '5.3.2' ],
+71 silly audit   'lru-cache': [ '6.0.0' ],
+71 silly audit   'lru.min': [ '1.1.4' ],
+71 silly audit   mysql2: [ '3.20.0' ],
+71 silly audit   'named-placeholders': [ '1.1.6' ],
+71 silly audit   nanoid: [ '3.3.11' ],
+71 silly audit   next: [ '16.2.2' ],
+71 silly audit   'next-auth': [ '4.24.14' ],
+71 silly audit   oauth: [ '0.9.15' ],
+71 silly audit   'object-hash': [ '2.2.0' ],
+71 silly audit   'oidc-token-hash': [ '5.2.0' ],
+71 silly audit   openai: [ '6.34.0' ],
+71 silly audit   'openid-client': [ '5.7.1' ],
+71 silly audit   pg: [ '8.20.0' ],
+71 silly audit   'pg-cloudflare': [ '1.3.0' ],
+71 silly audit   'pg-connection-string': [ '2.12.0' ],
+71 silly audit   'pg-int8': [ '1.0.1' ],
+71 silly audit   'pg-pool': [ '3.13.0' ],
+71 silly audit   'pg-protocol': [ '1.13.0' ],
+71 silly audit   'pg-types': [ '2.2.0' ],
+71 silly audit   pgpass: [ '1.0.5' ],
+71 silly audit   picocolors: [ '1.1.1' ],
+71 silly audit   postcss: [ '8.4.31' ],
+71 silly audit   'postgres-array': [ '2.0.0' ],
+71 silly audit   'postgres-bytea': [ '1.0.1' ],
+71 silly audit   'postgres-date': [ '1.0.7' ],
+71 silly audit   'postgres-interval': [ '1.2.0' ],
+71 silly audit   preact: [ '10.29.1' ],
+71 silly audit   'preact-render-to-string': [ '5.2.6' ],
+71 silly audit   'pretty-format': [ '3.8.0' ],
+71 silly audit   react: [ '19.2.4' ],
+71 silly audit   'react-dom': [ '19.2.4' ],
+71 silly audit   'safer-buffer': [ '2.1.2' ],
+71 silly audit   scheduler: [ '0.27.0' ],
+71 silly audit   semver: [ '7.7.4' ],
+71 silly audit   sharp: [ '0.34.5' ],
+71 silly audit   'source-map-js': [ '1.2.1' ],
+71 silly audit   split2: [ '4.2.0' ],
+71 silly audit   'sql-escaper': [ '1.3.3' ],
+71 silly audit   'styled-jsx': [ '5.1.6' ],
+71 silly audit   tslib: [ '2.8.1' ],
+71 silly audit   'undici-types': [ '7.18.2' ],
+71 silly audit   uuid: [ '8.3.2' ],
+71 silly audit   xtend: [ '4.0.2' ],
+71 silly audit   yallist: [ '4.0.0' ]
+71 silly audit }
+72 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-win32-x64-msvc
+73 silly reify mark deleted [
+73 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-win32-x64-msvc'
+73 silly reify ]
+74 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-win32-arm64-msvc
+75 silly reify mark deleted [
+75 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-win32-arm64-msvc'
+75 silly reify ]
+76 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-x64-musl
+77 silly reify mark deleted [
+77 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-x64-musl'
+77 silly reify ]
+78 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-x64-gnu
+79 silly reify mark deleted [
+79 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-x64-gnu'
+79 silly reify ]
+80 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-arm64-musl
+81 silly reify mark deleted [
+81 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-arm64-musl'
+81 silly reify ]
+82 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-arm64-gnu
+83 silly reify mark deleted [
+83 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-linux-arm64-gnu'
+83 silly reify ]
+84 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-darwin-x64
+85 silly reify mark deleted [
+85 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@next/swc-darwin-x64'
+85 silly reify ]
+86 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-win32-x64
+87 silly reify mark deleted [
+87 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-win32-x64'
+87 silly reify ]
+88 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-win32-arm64
+89 silly reify mark deleted [
+89 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-win32-arm64'
+89 silly reify ]
+90 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-win32-ia32
+91 silly reify mark deleted [
+91 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-win32-ia32'
+91 silly reify ]
+92 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-arm
+93 silly reify mark deleted [
+93 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-arm'
+93 silly reify ]
+94 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-arm64
+95 silly reify mark deleted [
+95 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-arm64'
+95 silly reify ]
+96 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linuxmusl-x64
+97 silly reify mark deleted [
+97 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linuxmusl-x64'
+97 silly reify ]
+98 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-wasm32
+99 silly reify mark deleted [
+99 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-wasm32'
+99 silly reify ]
+100 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@emnapi/runtime
+101 silly reify mark deleted [
+101 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@emnapi/runtime'
+101 silly reify ]
+102 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linuxmusl-arm64
+103 silly reify mark deleted [
+103 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linuxmusl-arm64'
+103 silly reify ]
+104 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-x64
+105 silly reify mark deleted [
+105 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-x64'
+105 silly reify ]
+106 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-s390x
+107 silly reify mark deleted [
+107 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-s390x'
+107 silly reify ]
+108 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-riscv64
+109 silly reify mark deleted [
+109 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-riscv64'
+109 silly reify ]
+110 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-ppc64
+111 silly reify mark deleted [
+111 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-ppc64'
+111 silly reify ]
+112 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-arm
+113 silly reify mark deleted [
+113 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-linux-arm'
+113 silly reify ]
+114 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linuxmusl-x64
+115 silly reify mark deleted [
+115 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linuxmusl-x64'
+115 silly reify ]
+116 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-darwin-x64
+117 silly reify mark deleted [
+117 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-darwin-x64'
+117 silly reify ]
+118 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linuxmusl-arm64
+119 silly reify mark deleted [
+119 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linuxmusl-arm64'
+119 silly reify ]
+120 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-x64
+121 silly reify mark deleted [
+121 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-x64'
+121 silly reify ]
+122 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-arm64
+123 silly reify mark deleted [
+123 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-arm64'
+123 silly reify ]
+124 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-s390x
+125 silly reify mark deleted [
+125 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-s390x'
+125 silly reify ]
+126 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-riscv64
+127 silly reify mark deleted [
+127 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-riscv64'
+127 silly reify ]
+128 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-ppc64
+129 silly reify mark deleted [
+129 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-libvips-linux-ppc64'
+129 silly reify ]
+130 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-darwin-x64
+131 silly reify mark deleted [
+131 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/sharp-darwin-x64'
+131 silly reify ]
+132 verbose audit error FetchError: request to https://registry.npmjs.org/-/npm/v1/security/advisories/bulk failed, reason: getaddrinfo ENOTFOUND registry.npmjs.org
+132 verbose audit error     at ClientRequest.<anonymous> (/opt/homebrew/lib/node_modules/npm/node_modules/minipass-fetch/lib/index.js:130:14)
+132 verbose audit error     at ClientRequest.emit (node:events:519:28)
+132 verbose audit error     at emitErrorEvent (node:_http_client:103:11)
+132 verbose audit error     at _destroy (node:_http_client:886:9)
+132 verbose audit error     at onSocketNT (node:_http_client:906:5)
+132 verbose audit error     at process.processTicksAndRejections (node:internal/process/task_queues:91:21) {
+132 verbose audit error   code: 'ENOTFOUND',
+132 verbose audit error   errno: 'ENOTFOUND',
+132 verbose audit error   syscall: 'getaddrinfo',
+132 verbose audit error   hostname: 'registry.npmjs.org',
+132 verbose audit error   type: 'system'
+132 verbose audit error }
+133 silly audit error undefined
+134 silly audit report null
+135 http cache nanoid@https://registry.npmjs.org/nanoid/-/nanoid-3.3.11.tgz 0ms (cache hit)
+136 http cache next@https://registry.npmjs.org/next/-/next-16.2.2.tgz 0ms (cache hit)
+137 http cache baseline-browser-mapping@https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.10.13.tgz 0ms (cache hit)
+138 http cache semver@https://registry.npmjs.org/semver/-/semver-7.7.4.tgz 0ms (cache hit)
+139 http cache @babel/runtime@https://registry.npmjs.org/@babel/runtime/-/runtime-7.29.2.tgz 0ms (cache hit)
+140 http cache sql-escaper@https://registry.npmjs.org/sql-escaper/-/sql-escaper-1.3.3.tgz 0ms (cache hit)
+141 http cache uuid@https://registry.npmjs.org/uuid/-/uuid-8.3.2.tgz 0ms (cache hit)
+142 http cache preact@https://registry.npmjs.org/preact/-/preact-10.29.1.tgz 0ms (cache hit)
+143 http cache preact-render-to-string@https://registry.npmjs.org/preact-render-to-string/-/preact-render-to-string-5.2.6.tgz 0ms (cache hit)
+144 http cache @panva/hkdf@https://registry.npmjs.org/@panva/hkdf/-/hkdf-1.2.1.tgz 0ms (cache hit)
+145 http cache openai@https://registry.npmjs.org/openai/-/openai-6.34.0.tgz 0ms (cache hit)
+146 http cache oidc-token-hash@https://registry.npmjs.org/oidc-token-hash/-/oidc-token-hash-5.2.0.tgz 0ms (cache hit)
+147 http cache object-hash@https://registry.npmjs.org/object-hash/-/object-hash-2.2.0.tgz 0ms (cache hit)
+148 http cache oauth@https://registry.npmjs.org/oauth/-/oauth-0.9.15.tgz 0ms (cache hit)
+149 http cache next-auth@https://registry.npmjs.org/next-auth/-/next-auth-4.24.14.tgz 0ms (cache hit)
+150 http cache named-placeholders@https://registry.npmjs.org/named-placeholders/-/named-placeholders-1.1.6.tgz 0ms (cache hit)
+151 http cache pretty-format@https://registry.npmjs.org/pretty-format/-/pretty-format-3.8.0.tgz 0ms (cache hit)
+152 http cache jose@https://registry.npmjs.org/jose/-/jose-4.15.9.tgz 0ms (cache hit)
+153 http cache lru.min@https://registry.npmjs.org/lru.min/-/lru.min-1.1.4.tgz 0ms (cache hit)
+154 http cache long@https://registry.npmjs.org/long/-/long-5.3.2.tgz 0ms (cache hit)
+155 http cache generate-function@https://registry.npmjs.org/generate-function/-/generate-function-2.3.1.tgz 0ms (cache hit)
+156 http cache mysql2@https://registry.npmjs.org/mysql2/-/mysql2-3.20.0.tgz 0ms (cache hit)
+157 http cache denque@https://registry.npmjs.org/denque/-/denque-2.1.0.tgz 0ms (cache hit)
+158 http cache is-property@https://registry.npmjs.org/is-property/-/is-property-1.0.2.tgz 0ms (cache hit)
+159 http cache openid-client@https://registry.npmjs.org/openid-client/-/openid-client-5.7.1.tgz 0ms (cache hit)
+160 http cache aws-ssl-profiles@https://registry.npmjs.org/aws-ssl-profiles/-/aws-ssl-profiles-1.1.2.tgz 0ms (cache hit)
+161 silly tarball no local data for nanoid@https://registry.npmjs.org/nanoid/-/nanoid-3.3.11.tgz. Extracting by manifest.
+162 silly tarball no local data for next@https://registry.npmjs.org/next/-/next-16.2.2.tgz. Extracting by manifest.
+163 silly tarball no local data for baseline-browser-mapping@https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.10.13.tgz. Extracting by manifest.
+164 silly tarball no local data for semver@https://registry.npmjs.org/semver/-/semver-7.7.4.tgz. Extracting by manifest.
+165 silly tarball no local data for @babel/runtime@https://registry.npmjs.org/@babel/runtime/-/runtime-7.29.2.tgz. Extracting by manifest.
+166 silly tarball no local data for sql-escaper@https://registry.npmjs.org/sql-escaper/-/sql-escaper-1.3.3.tgz. Extracting by manifest.
+167 silly tarball no local data for uuid@https://registry.npmjs.org/uuid/-/uuid-8.3.2.tgz. Extracting by manifest.
+168 silly tarball no local data for preact@https://registry.npmjs.org/preact/-/preact-10.29.1.tgz. Extracting by manifest.
+169 silly tarball no local data for preact-render-to-string@https://registry.npmjs.org/preact-render-to-string/-/preact-render-to-string-5.2.6.tgz. Extracting by manifest.
+170 silly tarball no local data for @panva/hkdf@https://registry.npmjs.org/@panva/hkdf/-/hkdf-1.2.1.tgz. Extracting by manifest.
+171 silly tarball no local data for openai@https://registry.npmjs.org/openai/-/openai-6.34.0.tgz. Extracting by manifest.
+172 silly tarball no local data for oidc-token-hash@https://registry.npmjs.org/oidc-token-hash/-/oidc-token-hash-5.2.0.tgz. Extracting by manifest.
+173 silly tarball no local data for object-hash@https://registry.npmjs.org/object-hash/-/object-hash-2.2.0.tgz. Extracting by manifest.
+174 silly tarball no local data for oauth@https://registry.npmjs.org/oauth/-/oauth-0.9.15.tgz. Extracting by manifest.
+175 silly tarball no local data for next-auth@https://registry.npmjs.org/next-auth/-/next-auth-4.24.14.tgz. Extracting by manifest.
+176 silly tarball no local data for named-placeholders@https://registry.npmjs.org/named-placeholders/-/named-placeholders-1.1.6.tgz. Extracting by manifest.
+177 silly tarball no local data for pretty-format@https://registry.npmjs.org/pretty-format/-/pretty-format-3.8.0.tgz. Extracting by manifest.
+178 silly tarball no local data for jose@https://registry.npmjs.org/jose/-/jose-4.15.9.tgz. Extracting by manifest.
+179 silly tarball no local data for lru.min@https://registry.npmjs.org/lru.min/-/lru.min-1.1.4.tgz. Extracting by manifest.
+180 silly tarball no local data for long@https://registry.npmjs.org/long/-/long-5.3.2.tgz. Extracting by manifest.
+181 silly tarball no local data for generate-function@https://registry.npmjs.org/generate-function/-/generate-function-2.3.1.tgz. Extracting by manifest.
+182 silly tarball no local data for mysql2@https://registry.npmjs.org/mysql2/-/mysql2-3.20.0.tgz. Extracting by manifest.
+183 silly tarball no local data for denque@https://registry.npmjs.org/denque/-/denque-2.1.0.tgz. Extracting by manifest.
+184 silly tarball no local data for is-property@https://registry.npmjs.org/is-property/-/is-property-1.0.2.tgz. Extracting by manifest.
+185 silly tarball no local data for openid-client@https://registry.npmjs.org/openid-client/-/openid-client-5.7.1.tgz. Extracting by manifest.
+186 silly tarball no local data for aws-ssl-profiles@https://registry.npmjs.org/aws-ssl-profiles/-/aws-ssl-profiles-1.1.2.tgz. Extracting by manifest.
+187 http fetch GET https://registry.npmjs.org/nanoid/-/nanoid-3.3.11.tgz attempt 1 failed with ENOTFOUND
+188 http fetch GET https://registry.npmjs.org/next/-/next-16.2.2.tgz attempt 1 failed with ENOTFOUND
+189 http fetch GET https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.10.13.tgz attempt 1 failed with ENOTFOUND
+190 http fetch GET https://registry.npmjs.org/semver/-/semver-7.7.4.tgz attempt 1 failed with ENOTFOUND
+191 http fetch GET https://registry.npmjs.org/@babel/runtime/-/runtime-7.29.2.tgz attempt 1 failed with ENOTFOUND
+192 http fetch GET https://registry.npmjs.org/sql-escaper/-/sql-escaper-1.3.3.tgz attempt 1 failed with ENOTFOUND
+193 http fetch GET https://registry.npmjs.org/uuid/-/uuid-8.3.2.tgz attempt 1 failed with ENOTFOUND
+194 http fetch GET https://registry.npmjs.org/preact/-/preact-10.29.1.tgz attempt 1 failed with ENOTFOUND
+195 http fetch GET https://registry.npmjs.org/preact-render-to-string/-/preact-render-to-string-5.2.6.tgz attempt 1 failed with ENOTFOUND
+196 http fetch GET https://registry.npmjs.org/@panva/hkdf/-/hkdf-1.2.1.tgz attempt 1 failed with ENOTFOUND
+197 http fetch GET https://registry.npmjs.org/openai/-/openai-6.34.0.tgz attempt 1 failed with ENOTFOUND
+198 http fetch GET https://registry.npmjs.org/oidc-token-hash/-/oidc-token-hash-5.2.0.tgz attempt 1 failed with ENOTFOUND
+199 http fetch GET https://registry.npmjs.org/object-hash/-/object-hash-2.2.0.tgz attempt 1 failed with ENOTFOUND
+200 http fetch GET https://registry.npmjs.org/oauth/-/oauth-0.9.15.tgz attempt 1 failed with ENOTFOUND
+201 http fetch GET https://registry.npmjs.org/next-auth/-/next-auth-4.24.14.tgz attempt 1 failed with ENOTFOUND
+202 http fetch GET https://registry.npmjs.org/npm attempt 2 failed with ENOTFOUND
+203 http fetch GET https://registry.npmjs.org/nanoid/-/nanoid-3.3.11.tgz attempt 2 failed with ENOTFOUND
+204 http fetch GET https://registry.npmjs.org/next/-/next-16.2.2.tgz attempt 2 failed with ENOTFOUND
+205 http fetch GET https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.10.13.tgz attempt 2 failed with ENOTFOUND
+206 http fetch GET https://registry.npmjs.org/semver/-/semver-7.7.4.tgz attempt 2 failed with ENOTFOUND
+207 http fetch GET https://registry.npmjs.org/@babel/runtime/-/runtime-7.29.2.tgz attempt 2 failed with ENOTFOUND
+208 http fetch GET https://registry.npmjs.org/sql-escaper/-/sql-escaper-1.3.3.tgz attempt 2 failed with ENOTFOUND
+209 http fetch GET https://registry.npmjs.org/uuid/-/uuid-8.3.2.tgz attempt 2 failed with ENOTFOUND
+210 http fetch GET https://registry.npmjs.org/preact/-/preact-10.29.1.tgz attempt 2 failed with ENOTFOUND
+211 http fetch GET https://registry.npmjs.org/preact-render-to-string/-/preact-render-to-string-5.2.6.tgz attempt 2 failed with ENOTFOUND
+212 http fetch GET https://registry.npmjs.org/@panva/hkdf/-/hkdf-1.2.1.tgz attempt 2 failed with ENOTFOUND
+213 http fetch GET https://registry.npmjs.org/openai/-/openai-6.34.0.tgz attempt 2 failed with ENOTFOUND
+214 http fetch GET https://registry.npmjs.org/oidc-token-hash/-/oidc-token-hash-5.2.0.tgz attempt 2 failed with ENOTFOUND
+215 http fetch GET https://registry.npmjs.org/object-hash/-/object-hash-2.2.0.tgz attempt 2 failed with ENOTFOUND
+216 http fetch GET https://registry.npmjs.org/oauth/-/oauth-0.9.15.tgz attempt 2 failed with ENOTFOUND
+217 http fetch GET https://registry.npmjs.org/next-auth/-/next-auth-4.24.14.tgz attempt 2 failed with ENOTFOUND
+218 http fetch GET https://registry.npmjs.org/npm attempt 3 failed with ENOTFOUND
+219 http fetch GET https://registry.npmjs.org/nanoid/-/nanoid-3.3.11.tgz attempt 3 failed with ENOTFOUND
+220 http fetch GET https://registry.npmjs.org/next/-/next-16.2.2.tgz attempt 3 failed with ENOTFOUND
+221 http fetch GET https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.10.13.tgz attempt 3 failed with ENOTFOUND
+222 http fetch GET https://registry.npmjs.org/semver/-/semver-7.7.4.tgz attempt 3 failed with ENOTFOUND
+223 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/semver
+224 silly reify mark deleted [
+224 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/semver',
+224 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/.bin/semver'
+224 silly reify ]
+225 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/sharp
+226 silly reify mark deleted [
+226 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/sharp'
+226 silly reify ]
+227 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/colour
+228 silly reify mark deleted [
+228 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/@img/colour'
+228 silly reify ]
+229 verbose reify failed optional dependency /Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/detect-libc
+230 silly reify mark deleted [
+230 silly reify   '/Users/shaancharolia/Desktop/project3/Project3_Team00/node_modules/detect-libc'
+230 silly reify ]
+231 http fetch GET https://registry.npmjs.org/@babel/runtime/-/runtime-7.29.2.tgz attempt 3 failed with ENOTFOUND
+232 http fetch GET https://registry.npmjs.org/sql-escaper/-/sql-escaper-1.3.3.tgz attempt 3 failed with ENOTFOUND
+233 http fetch GET https://registry.npmjs.org/uuid/-/uuid-8.3.2.tgz attempt 3 failed with ENOTFOUND
+234 http fetch GET https://registry.npmjs.org/preact/-/preact-10.29.1.tgz attempt 3 failed with ENOTFOUND
+235 http fetch GET https://registry.npmjs.org/preact-render-to-string/-/preact-render-to-string-5.2.6.tgz attempt 3 failed with ENOTFOUND
+236 http fetch GET https://registry.npmjs.org/@panva/hkdf/-/hkdf-1.2.1.tgz attempt 3 failed with ENOTFOUND
+237 http fetch GET https://registry.npmjs.org/openai/-/openai-6.34.0.tgz attempt 3 failed with ENOTFOUND
+238 http fetch GET https://registry.npmjs.org/oidc-token-hash/-/oidc-token-hash-5.2.0.tgz attempt 3 failed with ENOTFOUND
+239 http fetch GET https://registry.npmjs.org/object-hash/-/object-hash-2.2.0.tgz attempt 3 failed with ENOTFOUND
+240 http fetch GET https://registry.npmjs.org/oauth/-/oauth-0.9.15.tgz attempt 3 failed with ENOTFOUND
+241 http fetch GET https://registry.npmjs.org/next-auth/-/next-auth-4.24.14.tgz attempt 3 failed with ENOTFOUND
+242 verbose cwd /Users/shaancharolia/Desktop/project3/Project3_Team00
+243 verbose os Darwin 25.3.0
+244 verbose node v22.9.0
+245 verbose npm  v11.0.0
+246 error Exit handler never called!
+247 error This is an error with npm itself. Please report this error at:
+248 error   <https://github.com/npm/cli/issues>
+249 verbose exit 1
+250 verbose code 1
+251 error A complete log of this run can be found in: /Users/shaancharolia/Desktop/project3/Project3_Team00/.npm-cache/_logs/2026-04-23T05_00_49_390Z-debug-0.log

@@ -1,26 +1,62 @@
-import { NextResponse } from 'next/server'
-import { getPool } from '../../../lib/db'
+import { NextResponse } from "next/server";
+import { getPool } from "../../../lib/db";
 
-export const runtime = 'nodejs'
+export const runtime = "nodejs";
+
+function toHourLabel(hour) {
+  const normalizedHour = Number(hour);
+  const padded = String(normalizedHour).padStart(2, "0");
+  return `${padded}:00 - ${padded}:59`;
+}
 
 export async function GET() {
   try {
-    // get the most recent date in the Order table and count how many orders happened that day
-    const result = await getPool().query(`
-      SELECT 
-        DATE(order_time) AS report_date,
-        COUNT(*) AS orders_today
-      FROM "Order"
-      WHERE DATE(order_time) = (
-        SELECT MAX(DATE(order_time))
+    const pool = getPool();
+
+    const businessDateResult = await pool.query(`
+      SELECT COALESCE(MAX(DATE(order_time)), CURRENT_DATE)::date AS business_date
+      FROM "Order";
+    `);
+
+    const businessDate = businessDateResult.rows[0]?.business_date;
+
+    const hourlyResult = await pool.query(
+      `
+        SELECT
+          EXTRACT(HOUR FROM order_time)::int AS hour,
+          COUNT(*)::int AS orders,
+          COALESCE(SUM(subtotal), 0)::numeric(12, 2) AS total_sales
         FROM "Order"
-      )
-      GROUP BY DATE(order_time);
-    `)
-     // return the result as JSON, or send a 500 error if something breaks
-    return NextResponse.json(result.rows[0])
-  } catch (err) {
-    console.error('XReport failed:', err.message)
-    return NextResponse.json({ error: 'XReport failed' }, { status: 500 })
+        WHERE DATE(order_time) = $1::date
+        GROUP BY EXTRACT(HOUR FROM order_time)
+        ORDER BY hour
+      `,
+      [businessDate]
+    );
+
+    const rows = hourlyResult.rows.map((row) => ({
+      hour: Number(row.hour),
+      hourLabel: toHourLabel(row.hour),
+      orders: Number(row.orders),
+      totalSales: Number(row.total_sales),
+    }));
+
+    const totals = rows.reduce(
+      (accumulator, row) => ({
+        totalOrders: accumulator.totalOrders + row.orders,
+        totalSales: accumulator.totalSales + row.totalSales,
+      }),
+      { totalOrders: 0, totalSales: 0 }
+    );
+
+    return NextResponse.json({
+      businessDate,
+      rows,
+      totalOrders: totals.totalOrders,
+      totalSales: Number(totals.totalSales.toFixed(2)),
+    });
+  } catch (error) {
+    console.error("XReport failed:", error.message);
+    return NextResponse.json({ error: "XReport failed" }, { status: 500 });
   }
 }

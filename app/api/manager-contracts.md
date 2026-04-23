@@ -112,3 +112,20 @@ DB mapping:
 
 - `Menu_Item`: `menu_item_id`, `name`, `category`, `base_price`, `is_available`
 - `Menu_Inventory`: `menu_item_id`, `inventory_item_id`, `quantity_required`
+
+## Orders
+
+- `GET /api/manager/orders`
+
+Response item shape:
+
+```json
+{
+  "id": 101,
+  "orderTime": "2026-04-23T22:13:11.123Z",
+  "amountPaid": 14.5,
+  "status": "completed"
+}
+```
+
+DB mapping: `order_id`, `order_time`, `subtotal`, `status`.
