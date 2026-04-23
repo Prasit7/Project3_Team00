@@ -1061,3 +1061,65 @@ a:focus-visible {
   height: 22px;
   accent-color: #ff0;
 }
+
+/* text size slider in the a11y bar */
+.a11y-text-size {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.a11y-text-size label {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.a11y-text-size input[type="range"] {
+  width: 80px;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+/* wait time in the status bar */
+.wait-time-text {
+  margin: 6px 0 0;
+  color: var(--secondary-accent-strong);
+  font-weight: 700;
+}
+
+/* magnifier lens that follows the cursor */
+.kiosk-magnifier {
+  position: fixed;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 3px solid var(--accent);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 9999;
+  display: none;
+}
+
+body.magnifier-active .kiosk-magnifier {
+  display: block;
+}
+
+/* high contrast adjustments for new features */
+[data-theme="high-contrast"] .a11y-text-size {
+  color: #fff;
+}
+
+[data-theme="high-contrast"] .a11y-text-size input[type="range"] {
+  accent-color: #ff0;
+}
+
+[data-theme="high-contrast"] .wait-time-text {
+  color: #ff0;
+}
+
+[data-theme="high-contrast"] .kiosk-magnifier {
+  border-color: #ff0;
+}
