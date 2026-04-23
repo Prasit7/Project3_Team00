@@ -9,15 +9,11 @@
 
  
   <link rel="stylesheet" href="menu-board.css" />
+  
 </head>
 
 <body>
 
-  <div class="a11y-bar">
-  <button id="lang-en" class="lang-active">EN</button>
-  <button id="lang-es">ES</button>
-  <button id="toggle-contrast">High Contrast</button>
-</div>
 
   <!-- Banner -->
   <header class="board-header">
@@ -27,7 +23,7 @@
     </div>
     <div class="header-meta">
       <span class="meta-pill" id="clock">--:--</span>
-      <span class="meta-pill now-serving">Now Serving</span>
+      <span class="meta-pill now-serving" data-i18n="nowServing">Now Serving</span>
     </div>
   </header>
 
@@ -46,7 +42,7 @@
     <section class="menu-column">
       <div class="column-header">
         <span class="cat-icon">🧋</span>
-        <h2>Milk Teas</h2>
+        <h2 data-i18n="milkTeas">Milk Teas</h2>
       </div>
       <ul class="item-list" id="milk-tea-list"></ul>
     </section>
@@ -54,7 +50,7 @@
     <section class="menu-column">
       <div class="column-header">
         <span class="cat-icon">🍓</span>
-        <h2>Fruit Teas</h2>
+        <h2 data-i18n="fruitTeas">Fruit Teas</h2>
       </div>
       <ul class="item-list" id="fruit-tea-list"></ul>
     </section>
@@ -62,7 +58,7 @@
     <section class="menu-column">
       <div class="column-header">
         <span class="cat-icon">🍵</span>
-        <h2>Tea & Specialty</h2>
+        <h2 data-i18n="teaSpecialty">Tea & Specialty</h2>
       </div>
       <ul class="item-list" id="specialty-list"></ul>
     </section>
@@ -84,8 +80,8 @@
     </div>
   </footer>
 
-<script src="translations.js"></script>
-<script src="accessibility.js"></script>
+<script src="translations.js" defer></script>
+<script src="accessibility.js" defer></script>
 
 <script>
 const boardStatus = document.getElementById("board-status");
@@ -144,6 +140,7 @@ async function loadMenu() {
       .map(i => `<span>${i.name}</span>`).join("");
 
     boardStatus.textContent = "Menu loaded";
+    
   } catch {
     boardStatus.textContent = "Error loading menu";
   }
@@ -170,10 +167,12 @@ async function loadModifiers() {
   } catch {
     console.log("Modifiers failed to load");
   }
+  
 }
 
 loadMenu();
 loadModifiers();
+
 
 </script>
 

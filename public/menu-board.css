@@ -231,3 +231,33 @@ h2 {
 #sugar-options .opt-pill { background: #ffd6e0; }
 #ice-options .opt-pill { background: #d6f0ff; }
 #topping-options .opt-pill { background: #e6ffd9; }
+
+
+
+/* ACTIVE LANGUAGE */
+.lang-active {
+  font-weight: 700;
+  border: 2px solid var(--brand);
+}
+
+[data-theme="high-contrast"] body {
+  background: #000;
+  color: #fff;
+}
+
+[data-theme="high-contrast"] .board-header,
+[data-theme="high-contrast"] .menu-column,
+[data-theme="high-contrast"] .board-footer,
+[data-theme="high-contrast"] .status-banner,
+[data-theme="high-contrast"] .ticker-wrap {
+  background: #000;
+  border-color: #fff;
+}
+
+[data-theme="high-contrast"] .item-name,
+[data-theme="high-contrast"] .item-price,
+[data-theme="high-contrast"] h1,
+[data-theme="high-contrast"] h2 {
+  color: #fff;
+}
+
