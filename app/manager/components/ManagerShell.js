@@ -11,6 +11,8 @@ const navItems = [
   { href: "/manager/inventory", label: "Inventory" },
   { href: "/manager/menu", label: "Menu" },
   { href: "/manager/employees", label: "Employees" },
+  // added payroll
+  { href: "/manager/payroll", label: "Payroll" },
 ];
 
 export default function ManagerShell({ title, subtitle, children }) {

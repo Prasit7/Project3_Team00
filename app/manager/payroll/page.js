@@ -8,7 +8,7 @@ const hourlyRates = {
   Cashier: 12,
 };
 
-// fake hours since DB doesn't have it
+// FAKE HOURS (since your DB does NOT have time tracking)
 const employeeHours = [
   { employee_id: 1, hours: 40 },
   { employee_id: 2, hours: 32 },
@@ -54,29 +54,31 @@ export default function PayrollPage() {
 
   return (
     <ManagerShell title="Payroll" subtitle="Employee hours and earnings">
-      <table style={{ width: "100%", marginTop: 20 }}>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Hours</th>
-            <th>Rate</th>
-            <th>Total Pay</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {data.map((e, i) => (
-            <tr key={i}>
-              <td>{e.name}</td>
-              <td>{e.role}</td>
-              <td>{e.hours}</td>
-              <td>${e.rate}</td>
-              <td>${e.total.toFixed(2)}</td>
+      <div style={{ padding: "20px" }}>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Hours</th>
+              <th>Rate</th>
+              <th>Total Pay</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {data.map((emp, i) => (
+              <tr key={i}>
+                <td>{emp.name}</td>
+                <td>{emp.role}</td>
+                <td>{emp.hours}</td>
+                <td>${emp.rate}</td>
+                <td>${emp.total.toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </ManagerShell>
   );
 }
