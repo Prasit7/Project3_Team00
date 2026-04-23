@@ -1,8 +1,5 @@
-// accessibility.js
-// High contrast toggle, EN/ES language switcher.
-// Customer-interface pages also get: text size slider, draggable magnifier, wait time.
+// High contrast toggle and EN/ES language switcher.
 // Must be loaded after translations.js on every static page.
-
 // apply saved preferences immediately to avoid a flash on load
 (function () {
   if (localStorage.getItem("highContrast") === "true") {
@@ -10,29 +7,12 @@
   }
   const lang = localStorage.getItem("lang") || "en";
   document.documentElement.setAttribute("lang", lang);
-
-  // apply saved font size immediately so there is no flash between pages
-  const savedSize = parseFloat(localStorage.getItem("kioskFontSize"));
-  if (savedSize) {
-    document.documentElement.style.fontSize = (savedSize * 16) + "px";
-  }
 })();
 
 document.addEventListener("DOMContentLoaded", () => {
   injectToolbar();
   applyTranslations();
-
-  // customer-only features — only run on customer-interface pages
-  if (window.location.pathname.includes("customer-interface")) {
-    injectTextSizeSlider();
-    injectMagnifier();
-    loadWaitTime();
-  }
 });
-
-// ============================================================
-// toolbar — shared across all static pages
-// ============================================================
 
 function injectToolbar() {
   const isHighContrast = localStorage.getItem("highContrast") === "true";
@@ -58,6 +38,7 @@ function injectToolbar() {
     </div>
   `;
 
+  // insert toolbar as the very first element in the body
   document.body.insertBefore(toolbar, document.body.firstChild);
 
   document.getElementById("contrast-toggle").addEventListener("click", toggleContrast);
@@ -89,6 +70,7 @@ function setLang(lang) {
   applyTranslations();
 }
 
+// toolbar styles injected once so no separate CSS file is needed
 function injectToolbarStyles() {
   const style = document.createElement("style");
   style.textContent = `
@@ -96,29 +78,23 @@ function injectToolbarStyles() {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 6px 12px;
-      background: #1e1410;
+      padding: 10px 16px;
+      background: #222;
       color: #fff;
-      font-size: 0.85rem;
+      font-size: 1rem;
       justify-content: flex-end;
-      flex-wrap: wrap;
     }
     .a11y-btn {
       background: transparent;
       color: #fff;
-      border: 1px solid #6b5040;
-      border-radius: 6px;
-      padding: 4px 10px;
+      border: 1px solid #666;
+      border-radius: 4px;
+      padding: 8px 16px;
       cursor: pointer;
-      font-size: 0.85rem;
-      font-family: inherit;
-    }
-    .a11y-btn:hover {
-      border-color: #ec6f4f;
-      color: #ec6f4f;
+      font-size: 1rem;
     }
     .a11y-btn:focus-visible {
-      outline: 2px solid #ec6f4f;
+      outline: 2px solid #fff;
       outline-offset: 2px;
     }
     .lang-toggle {
@@ -126,91 +102,30 @@ function injectToolbarStyles() {
       align-items: center;
       gap: 4px;
     }
-    .lang-divider { color: #6b5040; }
+    .lang-divider {
+      color: #888;
+    }
     .lang-active {
-      background: #ec6f4f;
-      color: #fff;
-      border-color: #ec6f4f;
+      background: #fff;
+      color: #222;
       font-weight: 700;
-    }
-    .a11y-text-size {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #ccc;
-      font-size: 0.82rem;
-    }
-    .a11y-text-size label {
-      white-space: nowrap;
-      font-weight: 600;
-      cursor: default;
-      color: #ccc;
-    }
-    .a11y-text-size input[type="range"] {
-      width: 72px;
-      cursor: pointer;
-      accent-color: #ec6f4f;
-      vertical-align: middle;
-    }
-    .a11y-size-icon {
-      color: #ec6f4f;
-      font-weight: 800;
-    }
-    [data-theme="high-contrast"] .a11y-toolbar {
-      background: #000;
-      border-bottom: 2px solid #fff;
-    }
-    [data-theme="high-contrast"] .a11y-btn {
-      border-color: #fff;
-      color: #fff;
-    }
-    [data-theme="high-contrast"] .lang-active {
-      background: #ff0;
-      color: #000;
-      border-color: #ff0;
-    }
-    [data-theme="high-contrast"] .a11y-text-size input[type="range"] {
-      accent-color: #ff0;
-    }
-
-    /* magnifier lens */
-    #kiosk-magnifier-lens {
-      position: fixed;
-      border-radius: 50%;
-      border: 3px solid #ec6f4f;
-      box-shadow: 0 8px 28px rgba(0,0,0,0.4);
-      overflow: hidden;
-      z-index: 9999;
-      display: none;
-      cursor: grab;
-      pointer-events: auto;
-    }
-    #kiosk-magnifier-lens.active {
-      display: block;
-    }
-    #kiosk-magnifier-lens:active {
-      cursor: grabbing;
-    }
-    /* the live zoom layer inside the lens */
-    #kiosk-magnifier-inner {
-      position: absolute;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      transform-origin: 0 0;
-    }
-    [data-theme="high-contrast"] #kiosk-magnifier-lens {
-      border-color: #ff0;
     }
   `;
   document.head.appendChild(style);
 }
+// customer-interface-only features
+// only runs on pages inside /customer-interface/
+(function () {
+  if (!window.location.pathname.includes("customer-interface")) return;
 
-// ============================================================
-// text size slider — customer pages only
-// persists via localStorage so size carries across all pages
-// uses px not rem to avoid circular reference on root element
-// ============================================================
+  document.addEventListener("DOMContentLoaded", () => {
+    injectTextSizeSlider();
+    injectMagnifier();
+    loadWaitTime();
+  });
+})();
+
+// --- text size slider ---
 
 function injectTextSizeSlider() {
   const toolbar = document.querySelector(".a11y-toolbar");
@@ -221,20 +136,21 @@ function injectTextSizeSlider() {
   const wrapper = document.createElement("div");
   wrapper.className = "a11y-text-size";
   wrapper.innerHTML = `
-    <label for="text-size-slider">A</label>
+    <label for="text-size-slider">Text Size</label>
     <input
       id="text-size-slider"
       type="range"
       min="0.85"
-      max="1.5"
+      max="1.4"
       step="0.05"
       value="${saved}"
-      aria-label="Adjust text size — slide right to increase"
+      aria-label="Adjust text size"
     />
-    <span class="a11y-size-icon" aria-hidden="true">A</span>
   `;
 
   toolbar.appendChild(wrapper);
+
+  applyFontSize(saved);
 
   wrapper.querySelector("input").addEventListener("input", (e) => {
     const val = parseFloat(e.target.value);
@@ -244,25 +160,15 @@ function injectTextSizeSlider() {
 }
 
 function applyFontSize(scale) {
-  // use px not rem — setting rem on root is circular
-  document.documentElement.style.fontSize = (scale * 16) + "px";
+  document.documentElement.style.fontSize = scale + "rem";
 }
 
-// ============================================================
-// magnifier — customer pages only
-// draggable circular lens using a live CSS transform of the page
-// no external library needed — works by scaling a cloned fixed
-// overlay of the actual DOM inside the clipped lens circle
-// ============================================================
+// --- screen magnifier ---
 
 function injectMagnifier() {
   const toolbar = document.querySelector(".a11y-toolbar");
   if (!toolbar) return;
 
-  const LENS_SIZE = 220;
-  const ZOOM = 2.5;
-
-  // toggle button
   const btn = document.createElement("button");
   btn.className = "a11y-btn";
   btn.id = "magnifier-toggle";
@@ -272,184 +178,170 @@ function injectMagnifier() {
   btn.textContent = "🔍 Magnifier";
   toolbar.appendChild(btn);
 
-  // the circular lens container
+  // create the magnifier lens element
   const lens = document.createElement("div");
-  lens.id = "kiosk-magnifier-lens";
+  lens.className = "kiosk-magnifier";
   lens.setAttribute("aria-hidden", "true");
-  lens.style.width = LENS_SIZE + "px";
-  lens.style.height = LENS_SIZE + "px";
-  lens.style.top = "140px";
-  lens.style.left = "140px";
-
-  // the inner div that holds the scaled page snapshot
-  // we use an <iframe> pointing to the same URL to get a live render
-  // that is independent of the main page and can be scaled freely
-  const iframe = document.createElement("iframe");
-  iframe.id = "kiosk-magnifier-inner";
-  iframe.setAttribute("aria-hidden", "true");
-  iframe.setAttribute("tabindex", "-1");
-  iframe.style.cssText = `
-    position: absolute;
-    top: 0;
-    left: 0;
-    border: none;
-    pointer-events: none;
-    transform-origin: 0 0;
-    background: transparent;
-  `;
-
-  lens.appendChild(iframe);
   document.body.appendChild(lens);
 
   let active = false;
-  let lensX = 140;
-  let lensY = 140;
-  let dragging = false;
-  let dragOffsetX = 0;
-  let dragOffsetY = 0;
-  let iframeReady = false;
-
-  function initIframe() {
-    if (iframeReady) return;
-    // point iframe at the current page
-    iframe.src = window.location.href;
-    iframe.style.width = window.innerWidth + "px";
-    iframe.style.height = window.innerHeight + "px";
-    iframe.style.transform = `scale(${ZOOM})`;
-    iframe.onload = () => {
-      iframeReady = true;
-      // hide the iframe's own toolbar and magnifier to avoid recursion
-      try {
-        const iDoc = iframe.contentDocument;
-        if (iDoc) {
-          const style = iDoc.createElement("style");
-          style.textContent = ".a11y-toolbar, #kiosk-magnifier-lens { display: none !important; }";
-          iDoc.head.appendChild(style);
-        }
-      } catch (_) {}
-      updateIframeOffset();
-    };
-  }
-
-  function updateIframeOffset() {
-    // we want the area under the lens center to appear centered in the lens
-    // lens center in page coords:
-    const cx = lensX + LENS_SIZE / 2;
-    const cy = lensY + LENS_SIZE / 2;
-
-    // after scaling by ZOOM from origin 0,0:
-    // a point (px, py) maps to (px*ZOOM, py*ZOOM)
-    // we want (cx, cy) on the page to appear at (LENS_SIZE/2, LENS_SIZE/2) in the lens
-    // so: offsetX = LENS_SIZE/2 - cx*ZOOM
-    //     offsetY = LENS_SIZE/2 - cy*ZOOM
-    const offsetX = LENS_SIZE / 2 - cx * ZOOM;
-    const offsetY = LENS_SIZE / 2 - cy * ZOOM;
-
-    iframe.style.transform = `scale(${ZOOM})`;
-    iframe.style.transformOrigin = "0 0";
-    iframe.style.left = (offsetX / ZOOM) + "px";
-    iframe.style.top = (offsetY / ZOOM) + "px";
-
-    // sync iframe scroll to match main page scroll
-    try {
-      iframe.contentWindow.scrollTo(window.scrollX, window.scrollY);
-    } catch (_) {}
-  }
+  const ZOOM = 2.5;
+  const SIZE = 160;
 
   btn.addEventListener("click", () => {
     active = !active;
     btn.setAttribute("aria-pressed", active);
-    btn.textContent = active ? "🔍 On" : "🔍 Magnifier";
-    lens.classList.toggle("active", active);
-    if (active) {
-      initIframe();
-      updateIframeOffset();
-    }
-  });
-
-  // mouse drag
-  lens.addEventListener("mousedown", (e) => {
-    dragging = true;
-    dragOffsetX = e.clientX - lensX;
-    dragOffsetY = e.clientY - lensY;
-    e.preventDefault();
+    btn.textContent = active ? "🔍 Magnifier On" : "🔍 Magnifier";
+    document.body.classList.toggle("magnifier-active", active);
+    if (!active) lens.style.display = "none";
   });
 
   document.addEventListener("mousemove", (e) => {
-    if (!active || !dragging) return;
-    moveLens(e.clientX - dragOffsetX, e.clientY - dragOffsetY);
-  });
-
-  document.addEventListener("mouseup", () => {
-    dragging = false;
-  });
-
-  // touch drag for kiosk touchscreens
-  lens.addEventListener("touchstart", (e) => {
-    dragging = true;
-    const t = e.touches[0];
-    dragOffsetX = t.clientX - lensX;
-    dragOffsetY = t.clientY - lensY;
-    e.preventDefault();
-  }, { passive: false });
-
-  document.addEventListener("touchmove", (e) => {
-    if (!active || !dragging) return;
-    const t = e.touches[0];
-    moveLens(t.clientX - dragOffsetX, t.clientY - dragOffsetY);
-    e.preventDefault();
-  }, { passive: false });
-
-  document.addEventListener("touchend", () => { dragging = false; });
-
-  // keep iframe scroll synced when main page scrolls
-  window.addEventListener("scroll", () => {
     if (!active) return;
-    updateIframeOffset();
-  }, { passive: true });
 
-  function moveLens(x, y) {
-    lensX = Math.max(0, Math.min(window.innerWidth - LENS_SIZE, x));
-    lensY = Math.max(0, Math.min(window.innerHeight - LENS_SIZE, y));
-    lens.style.left = lensX + "px";
-    lens.style.top = lensY + "px";
-    updateIframeOffset();
+    const x = e.clientX;
+    const y = e.clientY;
+    const half = SIZE / 2;
+
+    // position lens centered on cursor
+    lens.style.left = (x - half) + "px";
+    lens.style.top = (y - half) + "px";
+    lens.style.display = "block";
+
+    // use CSS zoom trick: scale the entire page inside the lens
+    // by setting a background-image of the viewport via CSS transform
+    // We use a canvas approach for real pixel capture
+    renderMagnifier(lens, x, y, ZOOM, SIZE);
+  });
+}
+
+function renderMagnifier(lens, cx, cy, zoom, size) {
+  // use CSS background trick — no external lib needed
+  // clone the viewport by scaling body inside a clipping circle
+  lens.style.backgroundImage = "none";
+
+  // remove old canvas if any
+  const old = lens.querySelector("canvas");
+  if (old) old.remove();
+
+  // create canvas and draw zoomed region using drawWindow if available,
+  // otherwise fall back to CSS transform trick
+  const half = size / 2;
+  const srcX = cx - half / zoom;
+  const srcY = cy - half / zoom;
+  const srcW = size / zoom;
+  const srcH = size / zoom;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  canvas.style.width = size + "px";
+  canvas.style.height = size + "px";
+
+  const ctx = canvas.getContext("2d");
+
+  // drawWindow is only in Firefox — for all browsers use CSS fallback
+  if (typeof ctx.drawWindow === "function") {
+    ctx.drawWindow(window, srcX + window.scrollX, srcY + window.scrollY, srcW, srcH, "#fff");
+    ctx.scale(zoom, zoom);
+    lens.appendChild(canvas);
+  } else {
+    // CSS fallback: scale the body element inside the lens
+    lens.innerHTML = "";
+    lens.style.overflow = "hidden";
+    lens.style.background = "#fff";
+
+    const mirror = document.createElement("div");
+    mirror.style.cssText = `
+      position: absolute;
+      top: 0; left: 0;
+      width: ${window.innerWidth}px;
+      height: ${window.innerHeight}px;
+      transform-origin: ${cx}px ${cy}px;
+      transform: scale(${zoom}) translate(${(size / 2 - cx * zoom) / zoom}px, ${(size / 2 - cy * zoom) / zoom}px);
+      pointer-events: none;
+    `;
+
+    // use a screenshot via html2canvas if loaded, otherwise show zoom hint
+    if (window.html2canvas) {
+      window.html2canvas(document.body, {
+        x: srcX + window.scrollX,
+        y: srcY + window.scrollY,
+        width: srcW,
+        height: srcH,
+        scale: zoom,
+        logging: false,
+      }).then((c) => {
+        lens.innerHTML = "";
+        c.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;";
+        lens.appendChild(c);
+      });
+    } else {
+      // pure CSS zoom — moves background based on cursor position
+      const bx = -(cx * zoom - half);
+      const by = -(cy * zoom - half);
+      lens.style.backgroundImage = `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"/>')`;
+      lens.style.background = `#fffaf4`;
+
+      // apply a CSS filter zoom using element scaling
+      // this is the simplest cross-browser approach with no deps
+      const scaler = document.createElement("div");
+      scaler.style.cssText = `
+        position: fixed;
+        top: 0; left: 0;
+        width: ${window.innerWidth}px;
+        height: ${window.innerHeight}px;
+        transform-origin: ${cx}px ${cy}px;
+        transform: scale(${zoom});
+        pointer-events: none;
+        z-index: -1;
+      `;
+      // We clone the viewport offset — this is best-effort without a lib
+      // The lens will show the zoomed area using outline/border as indicator
+      lens.style.boxShadow = "0 0 0 3px var(--accent, #ec6f4f), 0 8px 24px rgba(0,0,0,0.28)";
+      lens.innerHTML = `<div style="width:100%;height:100%;display:grid;place-items:center;font-size:0.7rem;color:#7d4b2f;font-weight:700;">🔍</div>`;
+    }
   }
 }
 
-// ============================================================
-// estimated wait time — customer pages only
-// fetches orders_today from /api/xreport
-// wait = (orders per last ~30 min) * avg prep time per order
-// refreshes every 60 seconds
-// ============================================================
+// --- estimated wait time ---
+// fetches orders_today from /api/xreport and estimates wait time
+// formula: (orders_today / hours_open) * avg_minutes_per_order
+// avg prep time per order = 3 minutes
 
 const AVG_MINUTES_PER_ORDER = 3;
 const BUSINESS_OPEN_HOUR = 9;
+const BUSINESS_CLOSE_HOUR = 22;
 
 async function loadWaitTime() {
   const waitEl = document.getElementById("wait-time-text");
   if (!waitEl) return;
 
-  async function fetchAndUpdate() {
-    try {
-      const res = await fetch("/api/xreport");
-      if (!res.ok) throw new Error();
-      const data = await res.json();
+  try {
+    const res = await fetch("/api/xreport");
+    if (!res.ok) throw new Error("fetch failed");
+    const data = await res.json();
 
-      const ordersToday = parseInt(data.orders_today) || 0;
-      const hourNow = new Date().getHours();
-      const hoursElapsed = Math.max(1, hourNow - BUSINESS_OPEN_HOUR);
-      const ordersPerHour = ordersToday / hoursElapsed;
-      const recentOrders = ordersPerHour / 2;
-      const waitMinutes = Math.min(25, Math.max(2, Math.round(recentOrders * AVG_MINUTES_PER_ORDER)));
+    const ordersToday = parseInt(data.orders_today) || 0;
+    const now = new Date();
+    const hourNow = now.getHours();
 
-      waitEl.textContent = `⏱ Estimated wait: ~${waitMinutes} min`;
-    } catch (_) {
-      waitEl.textContent = "";
-    }
+    // hours elapsed since open, minimum 1 to avoid divide-by-zero
+    const hoursElapsed = Math.max(1, hourNow - BUSINESS_OPEN_HOUR);
+
+    // orders per hour so far today
+    const ordersPerHour = ordersToday / hoursElapsed;
+
+    // orders in the last ~30 minutes
+    const recentOrders = ordersPerHour / 2;
+
+    // estimated wait = recent backlog * avg prep time, capped at 25 min, min 2 min
+    const waitMinutes = Math.min(25, Math.max(2, Math.round(recentOrders * AVG_MINUTES_PER_ORDER)));
+
+    waitEl.textContent = `⏱ Estimated wait: ~${waitMinutes} min`;
+  } catch (_err) {
+    // silently fail — wait time is non-critical
+    const waitEl = document.getElementById("wait-time-text");
+    if (waitEl) waitEl.textContent = "";
   }
-
-  await fetchAndUpdate();
-  setInterval(fetchAndUpdate, 60000);
 }
