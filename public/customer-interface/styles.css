@@ -313,212 +313,24 @@ h2 {
 .opt-pill.active { background: var(--brand); color: #fff; font-weight: 700; border-color: var(--brand); }
 .opt-pill.subtle { background: #fff; border: 1px solid var(--border); }
 
-/* high contrast overrides */
-[data-theme="high-contrast"] body {
-  background: #000;
-  color: #fff;
-}
-
-[data-theme="high-contrast"] .a11y-bar,
-[data-theme="high-contrast"] .page-header,
-[data-theme="high-contrast"] .kiosk-weather,
-[data-theme="high-contrast"] .status-bar,
-[data-theme="high-contrast"] .menu-section,
-[data-theme="high-contrast"] .customization-section,
-[data-theme="high-contrast"] .order-section,
-[data-theme="high-contrast"] .checkout-section,
-[data-theme="high-contrast"] .assistant-section,
-[data-theme="high-contrast"] .order-box,
-[data-theme="high-contrast"] .text-box,
-[data-theme="high-contrast"] .menu-item-box,
-[data-theme="high-contrast"] .action-choice-box {
-  background: #111;
-  border: 2px solid #fff;
-  color: #fff;
-}
-
-[data-theme="high-contrast"] .a11y-bar button,
-[data-theme="high-contrast"] .category-button,
-[data-theme="high-contrast"] .item-button,
-[data-theme="high-contrast"] .nav-button,
-[data-theme="high-contrast"] .text-box input,
-[data-theme="high-contrast"] .text-box select {
-  background: #000;
-  color: #fff;
-  border: 2px solid #fff;
-}
-
-[data-theme="high-contrast"] .category-button.active,
-[data-theme="high-contrast"] .primary-link {
-  background: #ff0;
-  color: #000;
-  border-color: #ff0;
-}
-
-[data-theme="high-contrast"] .price-text,
-[data-theme="high-contrast"] .total-text {
-  color: #ff0;
-}
-
-[data-theme="high-contrast"] .menu-item-media {
-  border: 2px solid #fff;
-  background: #222;
-  color: #fff;
-}
-
-[data-theme="high-contrast"] .checkout-item-media,
-[data-theme="high-contrast"] .checkout-item-row {
-  border-color: #fff;
-}
-
-[data-theme="high-contrast"] .cart-item-thumb {
-  border: 2px solid #fff;
-  background: #222;
-  color: #fff;
-}
-
-[data-theme="high-contrast"] .kiosk-weather-icon-wrap {
-  border: 2px solid #fff;
-  background: #222;
-}
-
-[data-theme="high-contrast"] .cart-item-row {
-  border-bottom: 2px solid #fff;
-}
-
-[data-theme="high-contrast"] .cart-item-remove {
-  background: #000;
-  color: #fff;
-  border: 2px solid #fff;
-}
-
-[data-theme="high-contrast"] .kiosk-modal,
-[data-theme="high-contrast"] .modal-section {
-  background: #111;
-  border: 2px solid #fff;
-  color: #fff;
-}
-
-[data-theme="high-contrast"] .payment-success-modal {
-  background: #111;
-  border: 2px solid #fff;
-  color: #fff;
-}
-
-[data-theme="high-contrast"] .modal-close {
-  background: #ff0;
-  color: #000;
-  border-color: #ff0;
-}
-
-[data-theme="high-contrast"] button:focus-visible,
-[data-theme="high-contrast"] input:focus-visible,
-[data-theme="high-contrast"] select:focus-visible,
-[data-theme="high-contrast"] a:focus-visible {
-  outline: 3px solid #ff0;
-  outline-offset: 2px;
-}
-
-[data-theme="high-contrast"] .checkbox-option input {
-  width: 22px;
-  height: 22px;
-  accent-color: #ff0;
-}
-
-/* text size slider in the a11y bar */
-.a11y-text-size {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.85rem;
-  color: var(--text);
-}
-
-.a11y-text-size label {
-  white-space: nowrap;
-  font-weight: 600;
-}
-
-.a11y-text-size input[type="range"] {
-  width: 80px;
-  cursor: pointer;
-  accent-color: var(--accent);
-}
-
-/* wait time in the status bar */
-.wait-time-text {
-  margin: 6px 0 0;
-  color: var(--secondary-accent-strong);
-  font-weight: 700;
-}
-
-/* magnifier lens that follows the cursor */
-.kiosk-magnifier {
-  position: fixed;
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  border: 3px solid var(--accent);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.28);
-  pointer-events: none;
-  overflow: hidden;
-  z-index: 9999;
-  display: none;
-}
-
-body.magnifier-active .kiosk-magnifier {
-  display: block;
-}
-
-/* high contrast adjustments for new features */
-[data-theme="high-contrast"] .a11y-text-size {
-  color: #fff;
-}
-
-[data-theme="high-contrast"] .a11y-text-size input[type="range"] {
-  accent-color: #ff0;
-}
-
-[data-theme="high-contrast"] .wait-time-text {
-  color: #ff0;
-}
-
-[data-theme="high-contrast"] .kiosk-magnifier {
-  border-color: #ff0;
-}
-/* high contrast — force all remaining colored text to white */
-[data-theme="high-contrast"] .page-header p,
-[data-theme="high-contrast"] .kiosk-weather-temp,
-[data-theme="high-contrast"] .kiosk-weather-status,
-[data-theme="high-contrast"] .status-bar p,
-[data-theme="high-contrast"] .menu-item-hint,
-[data-theme="high-contrast"] .cart-item-remove,
-[data-theme="high-contrast"] .payment-success-modal p,
-[data-theme="high-contrast"] .modal-hero-copy p,
-[data-theme="high-contrast"] .modal-section label,
-[data-theme="high-contrast"] .modal-total,
-[data-theme="high-contrast"] .modal-title,
-[data-theme="high-contrast"] .modal-hint,
-[data-theme="high-contrast"] .assistant-msg--bot,
-[data-theme="high-contrast"] .assistant-msg--user,
-[data-theme="high-contrast"] .menu-item-details h2,
-[data-theme="high-contrast"] .order-box p,
-[data-theme="high-contrast"] .checkout-item-content p,
-[data-theme="high-contrast"] .cart-item-content p,
-[data-theme="high-contrast"] .wait-time-text,
-[data-theme="high-contrast"] h1,
-[data-theme="high-contrast"] h2,
-[data-theme="high-contrast"] h3,
-[data-theme="high-contrast"] p,
-[data-theme="high-contrast"] label,
-[data-theme="high-contrast"] span {
-  color: #fff;
-}
-
-/* keep yellow on prices and totals */
-[data-theme="high-contrast"] .price-text,
-[data-theme="high-contrast"] .total-text,
-[data-theme="high-contrast"] .modal-total,
-[data-theme="high-contrast"] .kiosk-weather-temp {
-  color: #ff0;
-}
+/* ── High Contrast overrides ── */
+[data-theme="high-contrast"] body           { background: #000; color: #fff; font-size: 120%; }
+[data-theme="high-contrast"] .board-header  { background: #000; border-color: #fff; }
+[data-theme="high-contrast"] .header-brand .eyebrow { color: #fff; font-size: 1.1rem; }
+[data-theme="high-contrast"] .header-brand h1 { color: #ff0; }
+[data-theme="high-contrast"] .meta-pill     { background: #333; color: #ff0; border: 2px solid #fff; font-size: 1.1rem; }
+[data-theme="high-contrast"] .status-banner { background: #111; border-color: #fff; color: #fff; font-size: 1.1rem; }
+[data-theme="high-contrast"] .ticker-wrap   { background: #111; border-color: #fff; }
+[data-theme="high-contrast"] .ticker-track span { color: #ff0; font-size: 1.1rem; }
+[data-theme="high-contrast"] .board-main    { background: #000; gap: 1rem; padding: 1rem; }
+[data-theme="high-contrast"] .menu-column   { background: #111; border: 3px solid #fff; border-radius: 8px; }
+[data-theme="high-contrast"] h2             { color: #ff0; }
+[data-theme="high-contrast"] .cat-icon      { font-size: 2.2rem; }
+[data-theme="high-contrast"] .item-name     { color: #fff; font-size: clamp(0.95rem, 1.4vw, 1.2rem); }
+[data-theme="high-contrast"] .item-desc     { color: #ccc; font-size: 1rem; }
+[data-theme="high-contrast"] .item-price    { color: #ff0; font-size: clamp(0.95rem, 1.4vw, 1.2rem); }
+[data-theme="high-contrast"] .menu-item     { border-color: #444; }
+[data-theme="high-contrast"] .board-footer  { background: #000; border-color: #fff; }
+[data-theme="high-contrast"] .opt-label     { color: #ff0; font-size: 1.1rem; }
+[data-theme="high-contrast"] .opt-pill      { background: #222; color: #fff; border: 2px solid #fff; font-size: 1rem; }
+[data-theme="high-contrast"] .opt-pill.active { background: #ff0; color: #000; }
