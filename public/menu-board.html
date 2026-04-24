@@ -1,214 +1,639 @@
-<!-- (your comments unchanged above) -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zero Sugar Boba | Menu Board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --wall-top: #6e5241;
+      --wall-bottom: #3b2a1f;
+      --board-bg: #f7f5ef;
+      --board-border: #2d3a39;
+      --text: #22292a;
+      --muted: #64605d;
+      --accent-box: #ede7d7;
+      --sea-nymph: #6f9f9c;
+      font-size: 15px;
+      --board-scale: 0.67;
+      --type-scale: 1.25;
+    }
 
- 
-  <link rel="stylesheet" href="menu-board.css" />
-  
+    * { box-sizing: border-box; }
+
+    html {
+      margin: 0;
+      min-height: 100%;
+      background: var(--board-bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Poppins", "Segoe UI", sans-serif;
+      color: var(--text);
+      zoom: var(--board-scale);
+      background: var(--board-bg);
+    }
+
+    .board-shell {
+      width: 100%;
+      display: grid;
+      gap: 6px;
+      min-height: 100vh;
+    }
+
+    @supports not (zoom: 1) {
+      .board-shell {
+        transform: scale(var(--board-scale));
+        transform-origin: top left;
+        width: calc(100% / var(--board-scale));
+      }
+    }
+
+    .meta-chip {
+      border: 1px solid #cdc7b8;
+      background: #f2eee4;
+      color: #2b3434;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: calc(1.05rem * var(--type-scale));
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .menu-stage {
+      position: relative;
+      border: 3px solid var(--board-border);
+      background: var(--board-bg);
+      box-shadow: none;
+      overflow: hidden;
+      width: 100%;
+      min-height: calc(100vh - 8px);
+    }
+
+    .menu-canvas { min-height: 860px; padding: 28px 40px 24px; }
+
+    .board-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+
+    .brand-title {
+      margin: 0 0 14px;
+      color: var(--sea-nymph);
+      font-family: "Cormorant Garamond", serif;
+      font-size: calc(clamp(2.2rem, 4.1vw, 4.2rem) * var(--type-scale));
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+
+    .head-right {
+      display: grid;
+      justify-items: end;
+      gap: 12px;
+      padding-top: 2px;
+    }
+
+    .legend-row {
+      color: #465352;
+      font-size: calc(1.2rem * var(--type-scale));
+      font-weight: 700;
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 0.95fr;
+      gap: 54px;
+      align-items: start;
+    }
+
+    .menu-column { display: grid; gap: 26px; }
+
+    .block-title {
+      margin: 0 0 10px;
+      font-family: "Cormorant Garamond", serif;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--sea-nymph);
+      font-size: calc(clamp(2rem, 2.7vw, 3rem) * var(--type-scale));
+      line-height: 0.98;
+    }
+
+    .item-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+
+    .menu-item {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      width: 100%;
+      max-width: 40rem;
+    }
+
+    .item-marker { width: 1.2rem; text-align: center; }
+    .item-marker.rec {
+      background: #b57826;
+      color: #fff;
+      border-radius: 999px;
+      width: 1.05rem;
+      height: 1.05rem;
+      display: inline-grid;
+      place-items: center;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .item-name { flex: 1; font-size: calc(clamp(1rem, 1.25vw, 1.65rem) * var(--type-scale)); font-weight: 500; color: #273131; }
+    .item-price { margin-left: 24px; white-space: nowrap; font-size: calc(clamp(1rem, 1.25vw, 1.55rem) * var(--type-scale)); font-weight: 600; color: #2d3636; }
+
+    .feature-card {
+      background: #f2eee4;
+      border: 1px solid #d7d3c8;
+      padding: 18px 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .feature-block { display: grid; justify-items: center; text-align: center; gap: 6px; }
+    .feature-label { margin: 0; color: #5e8784; font-family: "Cormorant Garamond", serif; font-style: italic; font-size: calc(clamp(1.3rem, 1.7vw, 2rem) * var(--type-scale)); }
+    .feature-img { width: 100%; max-width: 140px; aspect-ratio: 1/1; object-fit: cover; border: 1px solid #cdbd9f; border-radius: 10px; }
+    .feature-line { margin: 0; font-size: calc(0.96rem * var(--type-scale)); color: #404b4a; }
+    .feature-drink { margin: 0; font-size: calc(1.18rem * var(--type-scale)); font-weight: 600; color: #2e3838; }
+
+    .option-card {
+      background: var(--accent-box);
+      border: 1px solid #d6d2c8;
+      padding: 24px 30px 22px;
+      margin-top: 34px;
+      display: grid;
+      grid-template-columns: minmax(230px, 1fr) minmax(280px, 1.25fr) minmax(160px, 0.75fr) minmax(280px, 1fr);
+      gap: 38px;
+      align-items: start;
+    }
+
+    .option-group { display: grid; gap: 14px; align-content: start; width: 100%; }
+    .ice-group { justify-self: center; max-width: 380px; }
+    .sugar-group { justify-self: center; max-width: 620px; }
+    .size-group { justify-self: center; max-width: 170px; }
+    .topping-group { justify-self: center; max-width: 460px; }
+    .option-title {
+      margin: 0;
+      font-family: "Cormorant Garamond", serif;
+      font-style: italic;
+      font-weight: 700;
+      color: #5e8784;
+      font-size: calc(clamp(2rem, 2.4vw, 3rem) * var(--type-scale));
+      line-height: 1;
+    }
+
+    .ice-row { display: grid; grid-template-columns: repeat(3, minmax(98px, 1fr)); gap: 22px; justify-items: center; }
+    .ice-item, .sweet-item { text-align: center; min-width: 98px; }
+    .cup-icon { width: 74px; height: 102px; display: block; margin: 0 auto 2px; }
+    .ice-label, .sweet-label { font-size: calc(0.98rem * var(--type-scale)); font-weight: 700; color: #1f1d1a; white-space: nowrap; }
+
+    .sweet-row { display: grid; grid-template-columns: repeat(5, minmax(92px, 1fr)); gap: 20px; justify-items: center; }
+    .sweet-circle { width: 72px; height: 72px; border-radius: 50%; border: 2px solid #2d3a39; margin: 0 auto 6px; background: #f6f1e4; position: relative; overflow: hidden; }
+    .sweet-fill { position: absolute; right: 0; top: 0; bottom: 0; background: #101010; }
+
+    .size-row { display: flex; align-items: end; gap: 18px; }
+    .size-visual { display: grid; justify-items: center; gap: 8px; color: #2f3f3e; font-weight: 700; font-size: calc(0.96rem * var(--type-scale)); }
+    .size-cup-sm { width: 72px; height: 82px; }
+    .size-cup-lg { width: 92px; height: 102px; }
+
+    .topping-group { padding: 0; }
+    .topping-head { margin-bottom: 8px; }
+    .topping-grid {
+      display: grid;
+      grid-template-columns: max-content max-content;
+      justify-content: space-between;
+      column-gap: 54px;
+      row-gap: 10px;
+      align-items: start;
+      width: 100%;
+    }
+    .topping-col-wrap { display: grid; gap: 8px; align-content: start; }
+    .topping-price-tag {
+      display: inline-block;
+      width: fit-content;
+      border: 1px solid #bcae8e;
+      border-radius: 999px;
+      background: #f5efdf;
+      color: #5e5a4e;
+      padding: 4px 10px;
+      font-size: calc(0.88rem * var(--type-scale));
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1;
+    }
+    .topping-col { list-style: none; margin: 0; padding: 0 0 0 2px; display: grid; gap: 4px; }
+    .topping-col li { font-size: calc(0.98rem * var(--type-scale)); font-weight: 600; color: #29261f; line-height: 1.25; white-space: nowrap; }
+
+    .status-line { display: none; }
+    .empty-item { color: var(--muted); font-size: 0.96rem; font-weight: 600; }
+
+    @media (max-width: 1300px) {
+      .menu-grid { grid-template-columns: 1fr 1fr; }
+      .menu-column.third { grid-column: 1 / -1; }
+    }
+    @media (max-width: 960px) {
+      .menu-canvas { padding: 24px 22px 20px; }
+      .board-head { margin-bottom: 20px; }
+      .menu-grid { grid-template-columns: 1fr; }
+      .feature-card { grid-template-columns: 1fr; }
+      .option-card { grid-template-columns: 1fr 1fr; gap: 24px 22px; padding: 20px 18px; }
+      .ice-group, .sugar-group, .size-group, .topping-group { max-width: none; justify-self: stretch; }
+    }
+
+    [data-theme="high-contrast"] body,
+    [data-theme="high-contrast"] .menu-stage,
+    [data-theme="high-contrast"] .feature-card,
+    [data-theme="high-contrast"] .option-card,
+    [data-theme="high-contrast"] .meta-chip,
+    [data-theme="high-contrast"] .menu-stage { background: #000; color: #fff; border-color: #fff; }
+    [data-theme="high-contrast"] .menu-stage { background: #000; color: #fff; border-color: #fff; }
+    [data-theme="high-contrast"] .item-marker.rec { background: #fff; color: #000; }
+    [data-theme="high-contrast"] .brand-title,
+    [data-theme="high-contrast"] .block-title,
+    [data-theme="high-contrast"] .option-title,
+    [data-theme="high-contrast"] .item-name,
+    [data-theme="high-contrast"] .item-price,
+    [data-theme="high-contrast"] .ice-label,
+    [data-theme="high-contrast"] .sweet-label,
+    [data-theme="high-contrast"] .topping-col li,
+    [data-theme="high-contrast"] .feature-label,
+    [data-theme="high-contrast"] .feature-line,
+    [data-theme="high-contrast"] .feature-drink,
+    [data-theme="high-contrast"] .size-visual,
+    [data-theme="high-contrast"] .status-line,
+    [data-theme="high-contrast"] .legend-row { color: #fff; }
+    [data-theme="high-contrast"] .sweet-circle { border-color: #fff; background: #000; }
+    [data-theme="high-contrast"] .sweet-fill { background: #fff; }
+    [data-theme="high-contrast"] .feature-img { border-color: #fff; background: #000; }
+  </style>
 </head>
-
 <body>
+  <div class="board-shell">
+    <main class="menu-stage" aria-label="Large menu board display">
+      <section class="menu-canvas">
+        <div class="board-head">
+          <h1 class="brand-title">ZeroSugar Boba</h1>
+          <div class="head-right">
+            <span class="meta-chip" id="clock">--:--</span>
+            <div class="legend-row" aria-label="Legend">
+              <span><strong style="color:#b57826;">★</strong> Recommended</span>
+            </div>
+          </div>
+        </div>
 
+        <div class="menu-grid">
+          <section class="menu-column">
+            <article class="menu-block" aria-labelledby="milk-tea-heading">
+              <h2 class="block-title" id="milk-tea-heading" data-i18n="milkTeas">Milk Teas</h2>
+              <ul class="item-list" id="milk-tea-list"><li class="empty-item">Loading items...</li></ul>
+            </article>
+          </section>
 
-  <!-- Banner -->
-  <header class="board-header">
-    <div class="header-brand">
-      <p class="eyebrow">Artisan Bubble Tea</p>
-      <h1>Zero Sugar Boba</h1>
-    </div>
-    <div class="header-meta">
-      <span class="meta-pill" id="clock">--:--</span>
-      <span class="meta-pill" id="wait-time-text">Wait: --</span>
-      <span class="meta-pill now-serving" data-i18n="nowServing">Now Serving</span>
-    </div>
-  </header>
+          <section class="menu-column">
+            <article class="menu-block" aria-labelledby="fruit-tea-heading">
+              <h2 class="block-title" id="fruit-tea-heading" data-i18n="fruitTeas">Fruit Teas</h2>
+              <ul class="item-list" id="fruit-tea-list"><li class="empty-item">Loading items...</li></ul>
+            </article>
+          </section>
 
-  <section class="status-banner">
-    <p id="board-status">Loading menu from database...</p>
-  </section>
+          <section class="menu-column third">
+            <article class="menu-block" aria-labelledby="specialty-heading">
+              <h2 class="block-title" id="specialty-heading">Specialty</h2>
+              <ul class="item-list" id="specialty-list"><li class="empty-item">Loading items...</li></ul>
+            </article>
 
-  <div class="ticker-wrap">
-    <div class="ticker-track" id="ticker-track">
-      <span>Loading menu...</span>
-    </div>
+            <article class="feature-card" aria-label="Daily featured drinks">
+              <section class="feature-block" aria-labelledby="staff-pick-label">
+                <h3 class="feature-label" id="staff-pick-label">Staff Pick</h3>
+                <img class="feature-img" id="staff-pick-img" src="/customer-interface/images/classicmilktea.jpg" alt="Staff pick drink image" />
+                <p class="feature-line" id="staff-pick-line">Loading today's pick...</p>
+                <p class="feature-drink" id="staff-pick-drink">...</p>
+              </section>
+              <section class="feature-block" aria-labelledby="flavor-day-label">
+                <h3 class="feature-label" id="flavor-day-label">Flavor of the Day</h3>
+                <img class="feature-img" id="flavor-day-img" src="/customer-interface/images/fruittea.jpg" alt="Flavor of the day drink image" />
+                <p class="feature-line" id="flavor-day-line">Loading flavor...</p>
+                <p class="feature-drink" id="flavor-day-drink">...</p>
+              </section>
+            </article>
+          </section>
+        </div>
+
+        <article class="option-card option-card-wide" aria-label="Customization options">
+          <section class="option-group ice-group" aria-labelledby="ice-label">
+            <h3 class="option-title" id="ice-label">Ice Level</h3>
+            <div class="ice-row" id="ice-options">
+              <div class="ice-item">
+                <svg class="cup-icon" viewBox="0 0 72 100" aria-hidden="true">
+                  <path d="M12 12 H60 L54 90 H18 Z" fill="none" stroke="#1f1f1f" stroke-width="3" />
+                  <line x1="15" y1="30" x2="57" y2="30" stroke="#1f1f1f" stroke-width="2.5" />
+                  <rect x="22" y="42" width="11" height="11" rx="2" fill="none" stroke="#1f1f1f" stroke-width="2" transform="rotate(15 28 48)" />
+                  <rect x="36" y="50" width="11" height="11" rx="2" fill="none" stroke="#1f1f1f" stroke-width="2" transform="rotate(-12 42 56)" />
+                  <rect x="30" y="62" width="11" height="11" rx="2" fill="none" stroke="#1f1f1f" stroke-width="2" transform="rotate(8 36 68)" />
+                </svg>
+                <div class="ice-label">Regular Ice</div>
+              </div>
+              <div class="ice-item">
+                <svg class="cup-icon" viewBox="0 0 72 100" aria-hidden="true">
+                  <path d="M12 12 H60 L54 90 H18 Z" fill="none" stroke="#1f1f1f" stroke-width="3" />
+                  <line x1="15" y1="30" x2="57" y2="30" stroke="#1f1f1f" stroke-width="2.5" />
+                  <rect x="28" y="45" width="11" height="11" rx="2" fill="none" stroke="#1f1f1f" stroke-width="2" transform="rotate(12 34 51)" />
+                  <rect x="40" y="56" width="11" height="11" rx="2" fill="none" stroke="#1f1f1f" stroke-width="2" transform="rotate(-9 46 62)" />
+                </svg>
+                <div class="ice-label">Less Ice</div>
+              </div>
+              <div class="ice-item">
+                <svg class="cup-icon" viewBox="0 0 72 100" aria-hidden="true">
+                  <path d="M12 12 H60 L54 90 H18 Z" fill="none" stroke="#1f1f1f" stroke-width="3" />
+                  <line x1="15" y1="30" x2="57" y2="30" stroke="#1f1f1f" stroke-width="2.5" />
+                </svg>
+                <div class="ice-label">No Ice</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="option-group sugar-group" aria-labelledby="sugar-label">
+            <h3 class="option-title" id="sugar-label">Sweetness Level</h3>
+            <div class="sweet-row" id="sugar-options">
+              <div class="sweet-item"><div class="sweet-circle"><span class="sweet-fill" style="width:100%;"></span></div><div class="sweet-label">100%<br />Normal</div></div>
+              <div class="sweet-item"><div class="sweet-circle"><span class="sweet-fill" style="width:80%;"></span></div><div class="sweet-label">80%<br />Less</div></div>
+              <div class="sweet-item"><div class="sweet-circle"><span class="sweet-fill" style="width:50%;"></span></div><div class="sweet-label">50%<br />Half</div></div>
+              <div class="sweet-item"><div class="sweet-circle"><span class="sweet-fill" style="width:30%;"></span></div><div class="sweet-label">30%<br />Light</div></div>
+              <div class="sweet-item"><div class="sweet-circle"><span class="sweet-fill" style="width:0%;"></span></div><div class="sweet-label">0%<br />No Sugar</div></div>
+            </div>
+          </section>
+
+          <section class="option-group size-group" aria-labelledby="size-label">
+            <h3 class="option-title" id="size-label">Size</h3>
+            <div class="size-row">
+              <div class="size-visual">
+                <svg class="size-cup-sm" viewBox="0 0 100 100" aria-hidden="true">
+                  <path d="M25 18 H75 L71 89 H29 Z" fill="none" stroke="#1f1f1f" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" />
+                  <line x1="28" y1="38" x2="72" y2="38" stroke="#1f1f1f" stroke-width="3.8" stroke-linecap="round" />
+                </svg>
+                <span>16 oz</span>
+              </div>
+              <div class="size-visual">
+                <svg class="size-cup-lg" viewBox="0 0 110 116" aria-hidden="true">
+                  <path d="M20 16 H90 L83 108 H27 Z" fill="none" stroke="#1f1f1f" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round" />
+                  <line x1="24" y1="42" x2="86" y2="42" stroke="#1f1f1f" stroke-width="4" stroke-linecap="round" />
+                </svg>
+                <span>20 oz</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="option-group topping-group" aria-labelledby="topping-label">
+            <div class="topping-head">
+              <h3 class="option-title" id="topping-label">Topping</h3>
+            </div>
+            <div class="topping-grid" id="topping-options">
+              <section class="topping-col-wrap" aria-label="Standard toppings">
+                <span class="topping-price-tag">+$0.50 each</span>
+                <ul class="topping-col" id="topping-list-left"><li>Loading...</li></ul>
+              </section>
+              <section class="topping-col-wrap" aria-label="Premium toppings">
+                <span class="topping-price-tag">+$0.75 each</span>
+                <ul class="topping-col" id="topping-list-right"><li>Loading...</li></ul>
+              </section>
+            </div>
+          </section>
+        </article>
+
+        <p class="status-line" id="board-status" aria-live="polite">Loading menu from database...</p>
+      </section>
+    </main>
   </div>
 
-  <main class="board-main">
+  <script src="translations.js"></script>
+  <script>
+    const root = document.documentElement;
+    const boardStatus = document.getElementById("board-status");
+    const staffPickImg = document.getElementById("staff-pick-img");
+    const flavorDayImg = document.getElementById("flavor-day-img");
+    const staffPickLine = document.getElementById("staff-pick-line");
+    const staffPickDrinkEl = document.getElementById("staff-pick-drink");
+    const flavorDayLine = document.getElementById("flavor-day-line");
+    const flavorDayDrinkEl = document.getElementById("flavor-day-drink");
+    const toppingListLeft = document.getElementById("topping-list-left");
+    const toppingListRight = document.getElementById("topping-list-right");
 
-    <section class="menu-column">
-      <div class="column-header">
-        <span class="cat-icon">🧋</span>
-        <h2 data-i18n="milkTeas">Milk Teas</h2>
-      </div>
-      <ul class="item-list" id="milk-tea-list"></ul>
-    </section>
+    const SECTION_TARGETS = [
+      { id: "milk-tea-list", matchers: ["milk", "latte"] },
+      { id: "fruit-tea-list", matchers: ["fruit", "passion", "lemon", "lychee", "peach", "mango", "jasmine"] },
+      { id: "specialty-list", matchers: ["special", "mojito", "creama", "cream", "foam", "blended", "slush", "fresh milk"] }
+    ];
 
-    <section class="menu-column">
-      <div class="column-header">
-        <span class="cat-icon">🍓</span>
-        <h2 data-i18n="fruitTeas">Fruit Teas</h2>
-      </div>
-      <ul class="item-list" id="fruit-tea-list"></ul>
-    </section>
+    const TOPPING_CATALOG = [
+      { label: "Tapioca Pearls", price: 0.5, matchers: ["tapioca pearl", "pearl"] },
+      { label: "Mini Pearls", price: 0.5, matchers: ["mini pearl"] },
+      { label: "Grass Jelly", price: 0.5, matchers: ["grass jelly", "herb jelly"] },
+      { label: "Aloe Vera", price: 0.5, matchers: ["aloe"] },
+      { label: "Popping Boba", price: 0.75, matchers: ["popping boba", "boba"] },
+      { label: "Pudding", price: 0.75, matchers: ["pudding"] }
+    ];
 
-    <section class="menu-column">
-      <div class="column-header">
-        <span class="cat-icon">🍵</span>
-        <h2 data-i18n="teaSpecialty">Tea & Specialty</h2>
-      </div>
-      <ul class="item-list" id="specialty-list"></ul>
-    </section>
+    const EMPLOYEE_FIRST_NAMES = ["Alex", "Jordan", "Sam", "Taylor", "Morgan", "Casey", "Jamie", "Riley", "Avery", "Cameron", "Drew", "Quinn"];
+    const FLAVOR_POOL = ["Mango", "Strawberry", "Lychee", "Peach", "Passion Fruit", "Honeydew", "Coconut", "Taro", "Matcha", "Coffee", "Rose", "Lavender", "Brown Sugar", "Wintermelon"];
+    const RECOMMENDED_SPECIALTY_NAMES = new Set([
+      "brown sugar brulee milk tea",
+      "ube coconut cloud",
+      "thai tea creme brulee",
+      "strawberry matcha fusion",
+      "mango pomelo sago",
+      "tiramisu coffee milk tea",
+      "dirty matcha latte (boba optional)",
+      "black sesame milk tea",
+    ]);
 
-  </main>
-
-  <footer class="board-footer">
-    <div class="opt-group">
-      <p class="opt-label">Sugar Level</p>
-      <div id="sugar-options"></div>
-    </div>
-    <div class="opt-group">
-      <p class="opt-label">Ice Level</p>
-      <div id="ice-options"></div>
-    </div>
-    <div class="opt-group">
-      <p class="opt-label">Toppings</p>
-      <div id="topping-options"></div>
-    </div>
-  </footer>
-
-<script src="translations.js" defer></script>
-<script src="accessibility.js" defer></script>
-
-<script>
-const boardStatus = document.getElementById("board-status");
-const tickerTrack = document.getElementById("ticker-track");
-const waitTimeEl = document.getElementById("wait-time-text");
-const AVG_MINUTES_PER_ORDER = 3;
-const BUSINESS_OPEN_HOUR = 9;
-
-function updateClock() {
-  const now = new Date();
-  let hours = now.getHours();
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-  const ampm = hours >= 12 ? "PM" : "AM";
-  hours = hours % 12 || 12;
-  document.getElementById("clock").textContent = `${hours}:${minutes} ${ampm}`;
-}
-updateClock();
-setInterval(updateClock, 60000);
-
-function formatMoney(v) {
-  return `$${Number(v || 0).toFixed(2)}`;
-}
-
-function renderItems(id, items) {
-  const list = document.getElementById(id);
-  list.innerHTML = items.length
-    ? items.map(i => `
-        <li class="menu-item">
-          <span class="item-name">${i.name}</span>
-          <span class="item-price">${formatMoney(i.price)}</span>
-        </li>
-      `).join("")
-    : "<li>No items</li>";
-}
-
-function categorize(items) {
-  const milk = [], fruit = [], spec = [];
-  items.forEach(i => {
-    const c = (i.category || "").toLowerCase();
-    if (c.includes("milk")) milk.push(i);
-    else if (c.includes("fruit") || c.includes("tea")) fruit.push(i);
-    else spec.push(i);
-  });
-  return { milk, fruit, spec };
-}
-
-async function loadMenu() {
-  try {
-    const res = await fetch("/api/menu-items"); // DB
-    const items = await res.json();
-
-    const { milk, fruit, spec } = categorize(items);
-
-    renderItems("milk-tea-list", milk);
-    renderItems("fruit-tea-list", fruit);
-    renderItems("specialty-list", spec);
-
-    const tickerItems = items.slice(0, 8)
-    .map(i => `<span>${i.name}</span>`).join("");
-    // Duplicate it so the scroll loops seamlessly
-    tickerTrack.innerHTML = tickerItems + tickerItems;
-
-    boardStatus.textContent = "Menu loaded";
-    
-  } catch {
-    boardStatus.textContent = "Error loading menu";
-  }
-}
-
-async function loadModifiers() {
-  try {
-    const res = await fetch("/api/menu-modifiers");
-    const items = await res.json();
-
-    const sugar = items.filter(i => i.modifierType === "Sugar Level");
-    const ice = items.filter(i => i.modifierType === "Ice Level");
-    const toppings = items.filter(i => i.modifierType === "Topping");
-
-    document.getElementById("sugar-options").innerHTML =
-      sugar.map(i => `<span class="opt-pill">${i.name}</span>`).join("");
-
-    document.getElementById("ice-options").innerHTML =
-      ice.map(i => `<span class="opt-pill">${i.name}</span>`).join("");
-
-    document.getElementById("topping-options").innerHTML =
-      toppings.map(i => `<span class="opt-pill">${i.name}</span>`).join("");
-
-  } catch {
-    console.log("Modifiers failed to load");
-  }
-  
-}
-
-async function loadWaitTime() {
-  if (!waitTimeEl) return;
-
-  async function fetchAndUpdate() {
-    try {
-      const res = await fetch("/api/xreport");
-      if (!res.ok) throw new Error();
-
-      const data = await res.json();
-      const ordersToday = parseInt(data.orders_today, 10) || 0;
-      const hourNow = new Date().getHours();
-      const hoursElapsed = Math.max(1, hourNow - BUSINESS_OPEN_HOUR);
-      const ordersPerHour = ordersToday / hoursElapsed;
-      const recentOrders = ordersPerHour / 2;
-      const waitMinutes = Math.min(25, Math.max(2, Math.round(recentOrders * AVG_MINUTES_PER_ORDER)));
-
-      waitTimeEl.textContent = `Estimated wait: ~${waitMinutes} min`;
-    } catch {
-      waitTimeEl.textContent = "Estimated wait unavailable";
+    function imageForDrink(name) {
+      const value = String(name || "").toLowerCase();
+      const map = [
+        ["brown sugar", "/customer-interface/images/brownsugar.jpg"],
+        ["classic milk", "/customer-interface/images/classicmilktea.jpg"],
+        ["thai", "/customer-interface/images/thaitea.jpg"],
+        ["taro", "/customer-interface/images/tarotea.jpg"],
+        ["matcha", "/customer-interface/images/matchamilk.jpg"],
+        ["strawberry", "/customer-interface/images/strawberrymilk.jpg"],
+        ["honeydew", "/customer-interface/images/honeydew.jpg"],
+        ["peach", "/customer-interface/images/peachoolong.jpg"],
+        ["lychee", "/customer-interface/images/lycheeblack.jpg"],
+        ["mango", "/customer-interface/images/mangogreen.jpg"],
+        ["jasmine", "/customer-interface/images/jasminegreen.jpg"],
+        ["coffee", "/customer-interface/images/coffeemilk.jpg"],
+        ["rose", "/customer-interface/images/rosemilk.jpg"],
+        ["lavender", "/customer-interface/images/lavendermilk.jpg"],
+        ["oreo", "/customer-interface/images/oreomilk.jpg"],
+        ["fruit", "/customer-interface/images/fruittea.jpg"]
+      ];
+      const found = map.find(([m]) => value.includes(m));
+      return found ? found[1] : "/customer-interface/images/fruittea.jpg";
     }
-  }
 
-  await fetchAndUpdate();
-  setInterval(fetchAndUpdate, 60000);
-}
+    function updateClock() {
+      const clockEl = document.getElementById("clock");
+      const now = new Date();
+      const hrs = now.getHours();
+      const mins = String(now.getMinutes()).padStart(2, "0");
+      const mer = hrs >= 12 ? "PM" : "AM";
+      clockEl.textContent = `${hrs % 12 || 12}:${mins} ${mer}`;
+    }
 
-loadMenu();
-loadModifiers();
-loadWaitTime();
+    const formatMoney = (v) => `$${Number(v || 0).toFixed(2)}`;
+    const seededChoice = (arr, s) => arr[Math.abs(s) % arr.length];
+    const dateSeed = () => {
+      const n = new Date();
+      return Number(`${n.getFullYear()}${String(n.getMonth() + 1).padStart(2, "0")}${String(n.getDate()).padStart(2, "0")}`);
+    };
 
+    function renderDailyFeatures(menuItems) {
+      const drinks = (menuItems || []).map((i) => String(i?.name || "").trim()).filter(Boolean);
+      if (!drinks.length) {
+        staffPickLine.textContent = "Unavailable today.";
+        staffPickDrinkEl.textContent = "";
+        flavorDayLine.textContent = "Unavailable today.";
+        flavorDayDrinkEl.textContent = "";
+        return;
+      }
+      const seed = dateSeed();
+      const key = `menuFeature:${seed}`;
+      try {
+        const parsed = JSON.parse(localStorage.getItem(key) || "null");
+        if (parsed?.staff && parsed?.drink && parsed?.flavor) {
+          staffPickLine.innerHTML = `<strong>${parsed.staff}</strong> recommends:`;
+          staffPickDrinkEl.innerHTML = `<strong>${parsed.drink}</strong>`;
+          flavorDayLine.innerHTML = "";
+          flavorDayDrinkEl.innerHTML = `<strong>${parsed.flavor}</strong>`;
+          staffPickImg.src = imageForDrink(parsed.drink);
+          flavorDayImg.src = imageForDrink(parsed.flavor);
+          return;
+        }
+      } catch (_e) {}
 
-</script>
+      const staff = seededChoice(EMPLOYEE_FIRST_NAMES, seed * 7 + 11);
+      const drink = seededChoice(drinks, seed * 13 + 5);
+      const blocked = FLAVOR_POOL.filter((f) => drink.toLowerCase().includes(f.toLowerCase()));
+      const flavorPool = FLAVOR_POOL.filter((f) => !blocked.includes(f));
+      const flavor = seededChoice(flavorPool.length ? flavorPool : FLAVOR_POOL, seed * 17 + 3);
 
+      staffPickLine.innerHTML = `<strong>${staff}</strong> recommends:`;
+      staffPickDrinkEl.innerHTML = `<strong>${drink}</strong>`;
+      flavorDayLine.innerHTML = "";
+      flavorDayDrinkEl.innerHTML = `<strong>${flavor}</strong>`;
+      staffPickImg.src = imageForDrink(drink);
+      flavorDayImg.src = imageForDrink(flavor);
+      localStorage.setItem(key, JSON.stringify({ staff, drink, flavor }));
+    }
+
+    const isRecommended = (item, i) => {
+      const n = String(item?.name || "").toLowerCase();
+      return i === 0 || n.includes("signature") || n.includes("classic") || n.includes("special") || RECOMMENDED_SPECIALTY_NAMES.has(n);
+    };
+
+    function renderItems(listId, items) {
+      const list = document.getElementById(listId);
+      if (!list) return;
+      if (!items.length) return (list.innerHTML = '<li class="empty-item">No items available.</li>');
+      list.innerHTML = items.map((item, i) => `
+        <li class="menu-item">
+          ${isRecommended(item, i) ? '<span class="item-marker rec" title="Recommended" aria-label="Recommended">★</span>' : '<span class="item-marker" aria-hidden="true">•</span>'}
+          <span class="item-name">${item.name}</span>
+          <span class="item-price">${formatMoney(item.price)}</span>
+        </li>
+      `).join("");
+    }
+
+    function categorizeItems(items) {
+      const buckets = SECTION_TARGETS.map((t) => ({ ...t, items: [] }));
+      const bucketById = Object.fromEntries(buckets.map((b) => [b.id, b]));
+      items.forEach((item) => {
+        const c = String(item.category || "").toLowerCase();
+        const n = String(item.name || "").toLowerCase();
+        if (c.includes("milk tea")) {
+          bucketById["milk-tea-list"]?.items.push(item);
+          return;
+        }
+        if (c.includes("fruit tea")) {
+          bucketById["fruit-tea-list"]?.items.push(item);
+          return;
+        }
+        if (c.includes("specialty")) {
+          bucketById["specialty-list"]?.items.push(item);
+          return;
+        }
+        const target = buckets.find((b) => b.matchers.some((m) => c.includes(m) || n.includes(m)));
+        if (target) target.items.push(item);
+        else (buckets[0] || target).items.push(item);
+      });
+      return buckets;
+    }
+
+    function renderToppingColumns(items) {
+      const names = (items || []).map((i) => String(i?.name || "").toLowerCase());
+      const resolved = TOPPING_CATALOG.filter((t) => names.some((n) => t.matchers.some((m) => n.includes(m))));
+      const show = resolved.length ? resolved : TOPPING_CATALOG;
+      const cheap = show.filter((t) => t.price === 0.5).map((t) => t.label);
+      const premium = show.filter((t) => t.price === 0.75).map((t) => t.label);
+      toppingListLeft.innerHTML = (cheap.length ? cheap : ["Unavailable"]).map((n) => `<li>${n}</li>`).join("");
+      toppingListRight.innerHTML = (premium.length ? premium : ["Unavailable"]).map((n) => `<li>${n}</li>`).join("");
+    }
+
+    async function loadModifierOptions() {
+      const response = await fetch("/api/menu-modifiers");
+      if (!response.ok) throw new Error(`Modifier request failed with status ${response.status}`);
+      const items = await response.json();
+      const modifiers = Array.isArray(items) ? items : [];
+      renderToppingColumns(modifiers.filter((item) => item.modifierType === "Topping"));
+    }
+
+    async function loadMenuBoard() {
+      try {
+        updateClock();
+        const [menuRes] = await Promise.all([fetch("/api/menu-items"), loadModifierOptions()]);
+        if (!menuRes.ok) throw new Error(`Menu request failed with status ${menuRes.status}`);
+        const data = await menuRes.json();
+        const menuItems = Array.isArray(data) ? data.filter((i) => i && i.isAvailable !== false) : [];
+        categorizeItems(menuItems).forEach((b) => renderItems(b.id, b.items));
+        renderDailyFeatures(menuItems);
+        if (boardStatus) {
+          boardStatus.textContent = "";
+          boardStatus.classList.remove("error");
+        }
+      } catch (error) {
+        SECTION_TARGETS.forEach((t) => renderItems(t.id, []));
+        renderToppingColumns([]);
+        renderDailyFeatures([]);
+        if (boardStatus) {
+          boardStatus.textContent = `Could not load menu from database. ${error.message}`;
+          boardStatus.classList.add("error");
+        }
+      }
+    }
+
+    (function initBoardDefaults() {
+      root.setAttribute("data-theme", "");
+      root.setAttribute("lang", localStorage.getItem("lang") || "en");
+      root.style.fontSize = `${Number(localStorage.getItem("textSize") || 100)}%`;
+      if (typeof applyTranslations === "function") applyTranslations();
+    })();
+
+    updateClock();
+    setInterval(updateClock, 1000 * 30);
+    loadMenuBoard();
+  </script>
 </body>
-
 </html>
