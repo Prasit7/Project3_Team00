@@ -1,628 +1,639 @@
-<!--
-Menu Board Interface Placeholder
-
-Purpose:
-- This page will later serve as a large non-interactive menu board display.
-- User focus: casual end user
-- Input modality: non-interactive
-- Place setting: publicly viewable large screen of key menu items above the restaurant counter
-
-Requirements reminders:
-- This page should NOT link back to portal.html/index.html once implemented.
-- This page should NOT link to manager, cashier, or customer interfaces.
-- This page should present key menu information clearly at a distance.
-- This page should remain display-oriented and not depend on user interaction.
-
-Suggested future sections:
-- Brand header / restaurant identity
-- Featured categories or promotions
-- Readable menu items and pricing
-- Rotating or scheduled display content if the team chooses
-
-Ownership suggestion:
-- Assign to teammate responsible for public-display readability and layout
--->
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Zero Sugar Boba | Menu Board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* === Global Styles === */
+    :root {
+      --wall-top: #6e5241;
+      --wall-bottom: #3b2a1f;
+      --board-bg: #f7f5ef;
+      --board-border: #2d3a39;
+      --text: #22292a;
+      --muted: #64605d;
+      --accent-box: #ede7d7;
+      --sea-nymph: #6f9f9c;
+      font-size: 15px;
+      --board-scale: 0.67;
+      --type-scale: 1.25;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      margin: 0;
+      min-height: 100%;
+      background: var(--board-bg);
+    }
+
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #fdf6ec; /* light beige */
-      color: #333;
-    }
-    h1, h2 {
-      margin: 0;
-    }
-
-    /* === Banner / Header === */
-    .board-header {
-      background-color: #fff8f0;
-      border-bottom: 2px solid #e2d8c3;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-    }
-    .header-brand .eyebrow {
-      font-size: 0.9rem;
-      color: #a08c72;
-    }
-    .header-brand h1 {
-      font-size: 2.5rem;
-      color: #b86b48;
-    }
-    .header-meta {
-      text-align: right;
-    }
-    .meta-pill {
-      display: inline-block;
-      background-color: #f7e9d7;
-      color: #b86b48;
-      padding: 0.3rem 0.7rem;
-      border-radius: 12px;
-      margin-left: 0.5rem;
-      font-size: 0.9rem;
-    }
-    .status-banner {
-      background-color: #f7f0e6;
-      border-bottom: 2px solid #e2d8c3;
-      color: #8c7a6b;
-      padding: 0.7rem 2rem;
-      font-size: 0.95rem;
-    }
-    .status-banner.error {
-      color: #9c4a2d;
+      min-height: 100vh;
+      font-family: "Poppins", "Segoe UI", sans-serif;
+      color: var(--text);
+      zoom: var(--board-scale);
+      background: var(--board-bg);
     }
 
-    /* === Scrolling ticker === */
-    .ticker-wrap {
+    .board-shell {
+      width: 100%;
+      display: grid;
+      gap: 6px;
+      min-height: 100vh;
+    }
+
+    @supports not (zoom: 1) {
+      .board-shell {
+        transform: scale(var(--board-scale));
+        transform-origin: top left;
+        width: calc(100% / var(--board-scale));
+      }
+    }
+
+    .meta-chip {
+      border: 1px solid #cdc7b8;
+      background: #f2eee4;
+      color: #2b3434;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: calc(1.05rem * var(--type-scale));
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .menu-stage {
+      position: relative;
+      border: 3px solid var(--board-border);
+      background: var(--board-bg);
+      box-shadow: none;
       overflow: hidden;
-      background-color: #f7f0e6;
-      border-bottom: 2px solid #e2d8c3;
-    }
-    .ticker-track {
-      display: flex;
-      animation: scroll 20s linear infinite;
-    }
-    .ticker-track span {
-      padding: 0.5rem 2rem;
-      white-space: nowrap;
-      font-weight: 600;
-      color: #b86b48;
-    }
-    @keyframes scroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
+      width: 100%;
+      min-height: calc(100vh - 8px);
     }
 
-    /* === Main Menu === */
-    .board-main {
-      display: flex;
-      justify-content: space-around;
-      padding: 2rem;
-      gap: 1.5rem;
-    }
-    .menu-column {
-      flex: 1;
-      background-color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      padding: 1rem;
-    }
-    .column-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-    .cat-icon {
-      font-size: 1.8rem;
-      margin-right: 0.5rem;
-    }
-    h2 {
-      font-size: 1.5rem;
-      color: #b86b48;
-    }
-    .item-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .empty-item {
-      color: #8c7a6b;
-      padding: 0.6rem 0;
-    }
-    .menu-item {
+    .menu-canvas { min-height: 860px; padding: 28px 40px 24px; }
+
+    .board-head {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 1rem;
-      border-bottom: 1px dashed #eee;
-      padding-bottom: 0.5rem;
+      gap: 24px;
+      margin-bottom: 30px;
     }
-    .item-info {
-      max-width: 70%;
+
+    .brand-title {
+      margin: 0 0 14px;
+      color: var(--sea-nymph);
+      font-family: "Cormorant Garamond", serif;
+      font-size: calc(clamp(2.2rem, 4.1vw, 4.2rem) * var(--type-scale));
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.02em;
     }
-    .item-name {
-      font-weight: 600;
-      font-size: 1.1rem;
-      color: #6a3b2d;
+
+    .head-right {
+      display: grid;
+      justify-items: end;
+      gap: 12px;
+      padding-top: 2px;
     }
-    .item-desc {
-      font-size: 0.9rem;
-      color: #8c7a6b;
+
+    .legend-row {
+      color: #465352;
+      font-size: calc(1.2rem * var(--type-scale));
+      font-weight: 700;
+      margin: 0;
+      line-height: 1.1;
     }
-    .item-tag {
-      background-color: #ffe6c7;
-      color: #b86b48;
-      padding: 0.2rem 0.5rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      margin-top: 0.3rem;
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 0.95fr;
+      gap: 54px;
+      align-items: start;
+    }
+
+    .menu-column { display: grid; gap: 26px; }
+
+    .block-title {
+      margin: 0 0 10px;
+      font-family: "Cormorant Garamond", serif;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--sea-nymph);
+      font-size: calc(clamp(2rem, 2.7vw, 3rem) * var(--type-scale));
+      line-height: 0.98;
+    }
+
+    .item-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+
+    .menu-item {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      width: 100%;
+      max-width: 40rem;
+    }
+
+    .item-marker { width: 1.2rem; text-align: center; }
+    .item-marker.rec {
+      background: #b57826;
+      color: #fff;
+      border-radius: 999px;
+      width: 1.05rem;
+      height: 1.05rem;
+      display: inline-grid;
+      place-items: center;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+
+    .item-name { flex: 1; font-size: calc(clamp(1rem, 1.25vw, 1.65rem) * var(--type-scale)); font-weight: 500; color: #273131; }
+    .item-price { margin-left: 24px; white-space: nowrap; font-size: calc(clamp(1rem, 1.25vw, 1.55rem) * var(--type-scale)); font-weight: 600; color: #2d3636; }
+
+    .feature-card {
+      background: #f2eee4;
+      border: 1px solid #d7d3c8;
+      padding: 18px 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .feature-block { display: grid; justify-items: center; text-align: center; gap: 6px; }
+    .feature-label { margin: 0; color: #5e8784; font-family: "Cormorant Garamond", serif; font-style: italic; font-size: calc(clamp(1.3rem, 1.7vw, 2rem) * var(--type-scale)); }
+    .feature-img { width: 100%; max-width: 140px; aspect-ratio: 1/1; object-fit: cover; border: 1px solid #cdbd9f; border-radius: 10px; }
+    .feature-line { margin: 0; font-size: calc(0.96rem * var(--type-scale)); color: #404b4a; }
+    .feature-drink { margin: 0; font-size: calc(1.18rem * var(--type-scale)); font-weight: 600; color: #2e3838; }
+
+    .option-card {
+      background: var(--accent-box);
+      border: 1px solid #d6d2c8;
+      padding: 24px 30px 22px;
+      margin-top: 34px;
+      display: grid;
+      grid-template-columns: minmax(230px, 1fr) minmax(280px, 1.25fr) minmax(160px, 0.75fr) minmax(280px, 1fr);
+      gap: 38px;
+      align-items: start;
+    }
+
+    .option-group { display: grid; gap: 14px; align-content: start; width: 100%; }
+    .ice-group { justify-self: center; max-width: 380px; }
+    .sugar-group { justify-self: center; max-width: 620px; }
+    .size-group { justify-self: center; max-width: 170px; }
+    .topping-group { justify-self: center; max-width: 460px; }
+    .option-title {
+      margin: 0;
+      font-family: "Cormorant Garamond", serif;
+      font-style: italic;
+      font-weight: 700;
+      color: #5e8784;
+      font-size: calc(clamp(2rem, 2.4vw, 3rem) * var(--type-scale));
+      line-height: 1;
+    }
+
+    .ice-row { display: grid; grid-template-columns: repeat(3, minmax(98px, 1fr)); gap: 22px; justify-items: center; }
+    .ice-item, .sweet-item { text-align: center; min-width: 98px; }
+    .cup-icon { width: 74px; height: 102px; display: block; margin: 0 auto 2px; }
+    .ice-label, .sweet-label { font-size: calc(0.98rem * var(--type-scale)); font-weight: 700; color: #1f1d1a; white-space: nowrap; }
+
+    .sweet-row { display: grid; grid-template-columns: repeat(5, minmax(92px, 1fr)); gap: 20px; justify-items: center; }
+    .sweet-circle { width: 72px; height: 72px; border-radius: 50%; border: 2px solid #2d3a39; margin: 0 auto 6px; background: #f6f1e4; position: relative; overflow: hidden; }
+    .sweet-fill { position: absolute; right: 0; top: 0; bottom: 0; background: #101010; }
+
+    .size-row { display: flex; align-items: end; gap: 18px; }
+    .size-visual { display: grid; justify-items: center; gap: 8px; color: #2f3f3e; font-weight: 700; font-size: calc(0.96rem * var(--type-scale)); }
+    .size-cup-sm { width: 72px; height: 82px; }
+    .size-cup-lg { width: 92px; height: 102px; }
+
+    .topping-group { padding: 0; }
+    .topping-head { margin-bottom: 8px; }
+    .topping-grid {
+      display: grid;
+      grid-template-columns: max-content max-content;
+      justify-content: space-between;
+      column-gap: 54px;
+      row-gap: 10px;
+      align-items: start;
+      width: 100%;
+    }
+    .topping-col-wrap { display: grid; gap: 8px; align-content: start; }
+    .topping-price-tag {
       display: inline-block;
-    }
-    .tag-pop { background-color: #ffd1a6; }
-    .tag-new { background-color: #cde3d7; color: #3b5d4b; }
-
-    .item-price {
-      font-weight: 600;
-      color: #b86b48;
-      font-size: 1rem;
-      text-align: right;
-    }
-
-    /* === Footer / Customization Options === */
-    .board-footer {
-      background-color: #fff8f0;
-      border-top: 2px solid #e2d8c3;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .opt-group {
-      text-align: center;
-    }
-    .opt-label {
-      font-weight: 600;
-      color: #6a3b2d;
-      margin-bottom: 0.3rem;
-    }
-    .opt-pills {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .opt-pill {
-      background-color: #f7e9d7;
-      color: #b86b48;
-      padding: 0.3rem 0.7rem;
-      border-radius: 12px;
-      font-size: 0.85rem;
-    }
-    .opt-pill.active {
-      background-color: #b86b48;
-      color: #fff;
-    }
-    .opt-pill.subtle {
-      background-color: #fff;
-      border: 1px solid #e2d8c3;
-    }
-
-    /* accessibility toolbar */
-    .a11y-bar {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      padding: 6px 12px;
-      background: #fff8f0;
-      border-bottom: 1px solid #e2d8c3;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      font-size: 0.85rem;
-    }
-    .a11y-bar button {
-      background: none;
-      border: 1px solid #e2d8c3;
-      border-radius: 4px;
-      color: #6a3b2d;
-      cursor: pointer;
-      font-size: 0.85rem;
-      padding: 3px 10px;
-    }
-    .a11y-bar button:hover {
-      border-color: #b86b48;
-      color: #b86b48;
-    }
-    .a11y-bar button:focus-visible {
-      outline: 2px solid #b86b48;
-      outline-offset: 2px;
-    }
-    .a11y-bar .lang-active {
+      width: fit-content;
+      border: 1px solid #bcae8e;
+      border-radius: 999px;
+      background: #f5efdf;
+      color: #5e5a4e;
+      padding: 4px 10px;
+      font-size: calc(0.88rem * var(--type-scale));
       font-weight: 700;
-      border-color: #b86b48;
-      color: #b86b48;
+      letter-spacing: 0.01em;
+      line-height: 1;
     }
-    [data-theme="high-contrast"] .a11y-bar {
-      background: #000;
-      border-color: #fff;
+    .topping-col { list-style: none; margin: 0; padding: 0 0 0 2px; display: grid; gap: 4px; }
+    .topping-col li { font-size: calc(0.98rem * var(--type-scale)); font-weight: 600; color: #29261f; line-height: 1.25; white-space: nowrap; }
+
+    .status-line { display: none; }
+    .empty-item { color: var(--muted); font-size: 0.96rem; font-weight: 600; }
+
+    @media (max-width: 1300px) {
+      .menu-grid { grid-template-columns: 1fr 1fr; }
+      .menu-column.third { grid-column: 1 / -1; }
     }
-    [data-theme="high-contrast"] .a11y-bar button {
-      border-color: #fff;
-      color: #fff;
-    }
-    [data-theme="high-contrast"] .a11y-bar .lang-active {
-      background: #fff;
-      color: #000;
+    @media (max-width: 960px) {
+      .menu-canvas { padding: 24px 22px 20px; }
+      .board-head { margin-bottom: 20px; }
+      .menu-grid { grid-template-columns: 1fr; }
+      .feature-card { grid-template-columns: 1fr; }
+      .option-card { grid-template-columns: 1fr 1fr; gap: 24px 22px; padding: 20px 18px; }
+      .ice-group, .sugar-group, .size-group, .topping-group { max-width: none; justify-self: stretch; }
     }
 
-    /* === High Contrast Mode === */
-    /* activated when data-theme="high-contrast" is set on <html> */
-    [data-theme="high-contrast"] body {
-      background-color: #000;
-      color: #fff;
-      font-size: 120%;
-    }
-    [data-theme="high-contrast"] .board-header {
-      background-color: #000;
-      border-bottom: 3px solid #fff;
-    }
-    [data-theme="high-contrast"] .header-brand .eyebrow {
-      color: #fff;
-      font-size: 1.2rem;
-    }
-    [data-theme="high-contrast"] .header-brand h1 {
-      color: #ff0;
-      font-size: 3.5rem;
-    }
-    [data-theme="high-contrast"] .meta-pill {
-      background-color: #333;
-      color: #ff0;
-      font-size: 1.2rem;
-      border: 2px solid #fff;
-    }
-    [data-theme="high-contrast"] .status-banner {
-      background-color: #111;
-      border-bottom: 3px solid #fff;
-      color: #fff;
-      font-size: 1.2rem;
-    }
-    [data-theme="high-contrast"] .ticker-wrap {
-      background-color: #111;
-      border-bottom: 3px solid #fff;
-    }
-    [data-theme="high-contrast"] .ticker-track span {
-      color: #ff0;
-      font-size: 1.3rem;
-    }
-    [data-theme="high-contrast"] .board-main {
-      gap: 2rem;
-      padding: 2rem;
-    }
-    [data-theme="high-contrast"] .menu-column {
-      background-color: #111;
-      border: 3px solid #fff;
-      box-shadow: none;
-      border-radius: 8px;
-    }
-    [data-theme="high-contrast"] h2 {
-      color: #ff0;
-      font-size: 2rem;
-    }
-    [data-theme="high-contrast"] .cat-icon {
-      font-size: 2.2rem;
-    }
-    [data-theme="high-contrast"] .item-name {
-      color: #fff;
-      font-size: 1.4rem;
-    }
-    [data-theme="high-contrast"] .item-desc {
-      color: #ccc;
-      font-size: 1.1rem;
-    }
-    [data-theme="high-contrast"] .item-price {
-      color: #ff0;
-      font-size: 1.4rem;
-    }
-    [data-theme="high-contrast"] .menu-item {
-      border-bottom: 1px solid #444;
-      padding-bottom: 0.8rem;
-      margin-bottom: 1.2rem;
-    }
-    [data-theme="high-contrast"] .board-footer {
-      background-color: #000;
-      border-top: 3px solid #fff;
-    }
-    [data-theme="high-contrast"] .opt-label {
-      color: #ff0;
-      font-size: 1.2rem;
-    }
-    [data-theme="high-contrast"] .opt-pill {
-      background-color: #222;
-      color: #fff;
-      border: 2px solid #fff;
-      font-size: 1.1rem;
-    }
-    [data-theme="high-contrast"] .opt-pill.active {
-      background-color: #ff0;
-      color: #000;
-      font-weight: 700;
-    }
-    [data-theme="high-contrast"] .empty-item {
-      color: #ccc;
-      font-size: 1.2rem;
-    }
+    [data-theme="high-contrast"] body,
+    [data-theme="high-contrast"] .menu-stage,
+    [data-theme="high-contrast"] .feature-card,
+    [data-theme="high-contrast"] .option-card,
+    [data-theme="high-contrast"] .meta-chip,
+    [data-theme="high-contrast"] .menu-stage { background: #000; color: #fff; border-color: #fff; }
+    [data-theme="high-contrast"] .menu-stage { background: #000; color: #fff; border-color: #fff; }
+    [data-theme="high-contrast"] .item-marker.rec { background: #fff; color: #000; }
+    [data-theme="high-contrast"] .brand-title,
+    [data-theme="high-contrast"] .block-title,
+    [data-theme="high-contrast"] .option-title,
+    [data-theme="high-contrast"] .item-name,
+    [data-theme="high-contrast"] .item-price,
+    [data-theme="high-contrast"] .ice-label,
+    [data-theme="high-contrast"] .sweet-label,
+    [data-theme="high-contrast"] .topping-col li,
+    [data-theme="high-contrast"] .feature-label,
+    [data-theme="high-contrast"] .feature-line,
+    [data-theme="high-contrast"] .feature-drink,
+    [data-theme="high-contrast"] .size-visual,
+    [data-theme="high-contrast"] .status-line,
+    [data-theme="high-contrast"] .legend-row { color: #fff; }
+    [data-theme="high-contrast"] .sweet-circle { border-color: #fff; background: #000; }
+    [data-theme="high-contrast"] .sweet-fill { background: #fff; }
+    [data-theme="high-contrast"] .feature-img { border-color: #fff; background: #000; }
   </style>
 </head>
 <body>
+  <div class="board-shell">
+    <main class="menu-stage" aria-label="Large menu board display">
+      <section class="menu-canvas">
+        <div class="board-head">
+          <h1 class="brand-title">ZeroSugar Boba</h1>
+          <div class="head-right">
+            <span class="meta-chip" id="clock">--:--</span>
+            <div class="legend-row" aria-label="Legend">
+              <span><strong style="color:#b57826;">★</strong> Recommended</span>
+            </div>
+          </div>
+        </div>
 
-  <!-- Banner -->
-  <header class="board-header">
-    <div class="header-brand">
-      <p class="eyebrow">Artisan Bubble Tea</p>
-      <h1>Zero Sugar Boba</h1>
-    </div>
-    <div class="header-meta">
-      <span class="meta-pill" id="clock">--:--</span>
-      <span class="meta-pill now-serving" data-i18n="nowServing">Now Serving</span>
-    </div>
-  </header>
+        <div class="menu-grid">
+          <section class="menu-column">
+            <article class="menu-block" aria-labelledby="milk-tea-heading">
+              <h2 class="block-title" id="milk-tea-heading" data-i18n="milkTeas">Milk Teas</h2>
+              <ul class="item-list" id="milk-tea-list"><li class="empty-item">Loading items...</li></ul>
+            </article>
+          </section>
 
-  <section class="status-banner" aria-live="polite">
-    <p id="board-status">Loading menu from database...</p>
-  </section>
+          <section class="menu-column">
+            <article class="menu-block" aria-labelledby="fruit-tea-heading">
+              <h2 class="block-title" id="fruit-tea-heading" data-i18n="fruitTeas">Fruit Teas</h2>
+              <ul class="item-list" id="fruit-tea-list"><li class="empty-item">Loading items...</li></ul>
+            </article>
+          </section>
 
-  <!-- Scrolling ticker -->
-  <div class="ticker-wrap" aria-hidden="true">
-    <div class="ticker-track" id="ticker-track">
-      <span>Loading menu...</span>
-    </div>
+          <section class="menu-column third">
+            <article class="menu-block" aria-labelledby="specialty-heading">
+              <h2 class="block-title" id="specialty-heading">Specialty</h2>
+              <ul class="item-list" id="specialty-list"><li class="empty-item">Loading items...</li></ul>
+            </article>
+
+            <article class="feature-card" aria-label="Daily featured drinks">
+              <section class="feature-block" aria-labelledby="staff-pick-label">
+                <h3 class="feature-label" id="staff-pick-label">Staff Pick</h3>
+                <img class="feature-img" id="staff-pick-img" src="/customer-interface/images/classicmilktea.jpg" alt="Staff pick drink image" />
+                <p class="feature-line" id="staff-pick-line">Loading today's pick...</p>
+                <p class="feature-drink" id="staff-pick-drink">...</p>
+              </section>
+              <section class="feature-block" aria-labelledby="flavor-day-label">
+                <h3 class="feature-label" id="flavor-day-label">Flavor of the Day</h3>
+                <img class="feature-img" id="flavor-day-img" src="/customer-interface/images/fruittea.jpg" alt="Flavor of the day drink image" />
+                <p class="feature-line" id="flavor-day-line">Loading flavor...</p>
+                <p class="feature-drink" id="flavor-day-drink">...</p>
+              </section>
+            </article>
+          </section>
+        </div>
+
+        <article class="option-card option-card-wide" aria-label="Customization options">
+          <section class="option-group ice-group" aria-labelledby="ice-label">
+            <h3 class="option-title" id="ice-label">Ice Level</h3>
+            <div class="ice-row" id="ice-options">
+              <div class="ice-item">
+                <svg class="cup-icon" viewBox="0 0 72 100" aria-hidden="true">
+                  <path d="M12 12 H60 L54 90 H18 Z" fill="none" stroke="#1f1f1f" stroke-width="3" />
+                  <line x1="15" y1="30" x2="57" y2="30" stroke="#1f1f1f" stroke-width="2.5" />
+                  <rect x="22" y="42" width="11" height="11" rx="2" fill="none" stroke="#1f1f1f" stroke-width="2" transform="rotate(15 28 48)" />
+                  <rect x="36" y="50" width="11" height="11" rx="2" fill="none" stroke="#1f1f1f" stroke-width="2" transform="rotate(-12 42 56)" />
+                  <rect x="30" y="62" width="11" height="11" rx="2" fill="none" stroke="#1f1f1f" stroke-width="2" transform="rotate(8 36 68)" />
+                </svg>
+                <div class="ice-label">Regular Ice</div>
+              </div>
+              <div class="ice-item">
+                <svg class="cup-icon" viewBox="0 0 72 100" aria-hidden="true">
+                  <path d="M12 12 H60 L54 90 H18 Z" fill="none" stroke="#1f1f1f" stroke-width="3" />
+                  <line x1="15" y1="30" x2="57" y2="30" stroke="#1f1f1f" stroke-width="2.5" />
+                  <rect x="28" y="45" width="11" height="11" rx="2" fill="none" stroke="#1f1f1f" stroke-width="2" transform="rotate(12 34 51)" />
+                  <rect x="40" y="56" width="11" height="11" rx="2" fill="none" stroke="#1f1f1f" stroke-width="2" transform="rotate(-9 46 62)" />
+                </svg>
+                <div class="ice-label">Less Ice</div>
+              </div>
+              <div class="ice-item">
+                <svg class="cup-icon" viewBox="0 0 72 100" aria-hidden="true">
+                  <path d="M12 12 H60 L54 90 H18 Z" fill="none" stroke="#1f1f1f" stroke-width="3" />
+                  <line x1="15" y1="30" x2="57" y2="30" stroke="#1f1f1f" stroke-width="2.5" />
+                </svg>
+                <div class="ice-label">No Ice</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="option-group sugar-group" aria-labelledby="sugar-label">
+            <h3 class="option-title" id="sugar-label">Sweetness Level</h3>
+            <div class="sweet-row" id="sugar-options">
+              <div class="sweet-item"><div class="sweet-circle"><span class="sweet-fill" style="width:100%;"></span></div><div class="sweet-label">100%<br />Normal</div></div>
+              <div class="sweet-item"><div class="sweet-circle"><span class="sweet-fill" style="width:80%;"></span></div><div class="sweet-label">80%<br />Less</div></div>
+              <div class="sweet-item"><div class="sweet-circle"><span class="sweet-fill" style="width:50%;"></span></div><div class="sweet-label">50%<br />Half</div></div>
+              <div class="sweet-item"><div class="sweet-circle"><span class="sweet-fill" style="width:30%;"></span></div><div class="sweet-label">30%<br />Light</div></div>
+              <div class="sweet-item"><div class="sweet-circle"><span class="sweet-fill" style="width:0%;"></span></div><div class="sweet-label">0%<br />No Sugar</div></div>
+            </div>
+          </section>
+
+          <section class="option-group size-group" aria-labelledby="size-label">
+            <h3 class="option-title" id="size-label">Size</h3>
+            <div class="size-row">
+              <div class="size-visual">
+                <svg class="size-cup-sm" viewBox="0 0 100 100" aria-hidden="true">
+                  <path d="M25 18 H75 L71 89 H29 Z" fill="none" stroke="#1f1f1f" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round" />
+                  <line x1="28" y1="38" x2="72" y2="38" stroke="#1f1f1f" stroke-width="3.8" stroke-linecap="round" />
+                </svg>
+                <span>16 oz</span>
+              </div>
+              <div class="size-visual">
+                <svg class="size-cup-lg" viewBox="0 0 110 116" aria-hidden="true">
+                  <path d="M20 16 H90 L83 108 H27 Z" fill="none" stroke="#1f1f1f" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round" />
+                  <line x1="24" y1="42" x2="86" y2="42" stroke="#1f1f1f" stroke-width="4" stroke-linecap="round" />
+                </svg>
+                <span>20 oz</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="option-group topping-group" aria-labelledby="topping-label">
+            <div class="topping-head">
+              <h3 class="option-title" id="topping-label">Topping</h3>
+            </div>
+            <div class="topping-grid" id="topping-options">
+              <section class="topping-col-wrap" aria-label="Standard toppings">
+                <span class="topping-price-tag">+$0.50 each</span>
+                <ul class="topping-col" id="topping-list-left"><li>Loading...</li></ul>
+              </section>
+              <section class="topping-col-wrap" aria-label="Premium toppings">
+                <span class="topping-price-tag">+$0.75 each</span>
+                <ul class="topping-col" id="topping-list-right"><li>Loading...</li></ul>
+              </section>
+            </div>
+          </section>
+        </article>
+
+        <p class="status-line" id="board-status" aria-live="polite">Loading menu from database...</p>
+      </section>
+    </main>
   </div>
 
-  <!-- Main menu columns -->
-  <main class="board-main" aria-label="Menu">
+  <script src="translations.js"></script>
+  <script>
+    const root = document.documentElement;
+    const boardStatus = document.getElementById("board-status");
+    const staffPickImg = document.getElementById("staff-pick-img");
+    const flavorDayImg = document.getElementById("flavor-day-img");
+    const staffPickLine = document.getElementById("staff-pick-line");
+    const staffPickDrinkEl = document.getElementById("staff-pick-drink");
+    const flavorDayLine = document.getElementById("flavor-day-line");
+    const flavorDayDrinkEl = document.getElementById("flavor-day-drink");
+    const toppingListLeft = document.getElementById("topping-list-left");
+    const toppingListRight = document.getElementById("topping-list-right");
 
-    <!-- Milk Teas -->
-    <section class="menu-column" aria-labelledby="cat-milktea">
-      <div class="column-header">
-        <span class="cat-icon">🧋</span>
-        <h2 id="cat-milktea" data-i18n="milkTeas">Milk Teas</h2>
-      </div>
-      <ul class="item-list" id="milk-tea-list">
-        <li class="empty-item">Loading items...</li>
-      </ul>
-    </section>
+    const SECTION_TARGETS = [
+      { id: "milk-tea-list", matchers: ["milk", "latte"] },
+      { id: "fruit-tea-list", matchers: ["fruit", "passion", "lemon", "lychee", "peach", "mango", "jasmine"] },
+      { id: "specialty-list", matchers: ["special", "mojito", "creama", "cream", "foam", "blended", "slush", "fresh milk"] }
+    ];
 
-    <!-- Fruit Teas -->
-    <section class="menu-column" aria-labelledby="cat-fruittea">
-      <div class="column-header">
-        <span class="cat-icon">🍓</span>
-        <h2 id="cat-fruittea" data-i18n="fruitTeas">Fruit Teas</h2>
-      </div>
-      <ul class="item-list" id="fruit-tea-list">
-        <li class="empty-item">Loading items...</li>
-      </ul>
-    </section>
+    const TOPPING_CATALOG = [
+      { label: "Tapioca Pearls", price: 0.5, matchers: ["tapioca pearl", "pearl"] },
+      { label: "Mini Pearls", price: 0.5, matchers: ["mini pearl"] },
+      { label: "Grass Jelly", price: 0.5, matchers: ["grass jelly", "herb jelly"] },
+      { label: "Aloe Vera", price: 0.5, matchers: ["aloe"] },
+      { label: "Popping Boba", price: 0.75, matchers: ["popping boba", "boba"] },
+      { label: "Pudding", price: 0.75, matchers: ["pudding"] }
+    ];
 
-    <!-- Tea & Specialty -->
-    <section class="menu-column" aria-labelledby="cat-specialty">
-      <div class="column-header">
-        <span class="cat-icon">🍵</span>
-        <h2 id="cat-specialty" data-i18n="teaSpecialty">Tea & Specialty</h2>
-      </div>
-      <ul class="item-list" id="specialty-list">
-        <li class="empty-item">Loading items...</li>
-      </ul>
-    </section>
+    const EMPLOYEE_FIRST_NAMES = ["Alex", "Jordan", "Sam", "Taylor", "Morgan", "Casey", "Jamie", "Riley", "Avery", "Cameron", "Drew", "Quinn"];
+    const FLAVOR_POOL = ["Mango", "Strawberry", "Lychee", "Peach", "Passion Fruit", "Honeydew", "Coconut", "Taro", "Matcha", "Coffee", "Rose", "Lavender", "Brown Sugar", "Wintermelon"];
+    const RECOMMENDED_SPECIALTY_NAMES = new Set([
+      "brown sugar brulee milk tea",
+      "ube coconut cloud",
+      "thai tea creme brulee",
+      "strawberry matcha fusion",
+      "mango pomelo sago",
+      "tiramisu coffee milk tea",
+      "dirty matcha latte (boba optional)",
+      "black sesame milk tea",
+    ]);
 
-  </main>
-
-  <!-- Footer / Customization Options -->
-  <footer class="board-footer" aria-label="Customization options">
-    <div class="opt-group">
-      <p class="opt-label">Sugar Level</p>
-      <div class="opt-pills" id="sugar-options">
-        <span class="opt-pill">Loading...</span>
-      </div>
-    </div>
-    <div class="opt-group">
-      <p class="opt-label">Ice Level</p>
-      <div class="opt-pills" id="ice-options">
-        <span class="opt-pill">Loading...</span>
-      </div>
-    </div>
-    <div class="opt-group">
-      <p class="opt-label">Size</p>
-      <div class="opt-pills">
-        <span class="opt-pill active">Regular</span>
-        <span class="opt-pill">Large +$0.75</span>
-      </div>
-    </div>
-    <div class="opt-group">
-      <p class="opt-label">Toppings +$0.50–$0.75</p>
-      <div class="opt-pills" id="topping-options">
-        <span class="opt-pill">Loading...</span>
-      </div>
-    </div>
-  </footer>
-
- <script src="translations.js"></script>
- <script src="accessibility.js"></script>
- <!-- add clock time -->
- <script>
-  const boardStatus = document.getElementById("board-status");
-  const statusBanner = document.querySelector(".status-banner");
-  const tickerTrack = document.getElementById("ticker-track");
-  const sugarOptions = document.getElementById("sugar-options");
-  const iceOptions = document.getElementById("ice-options");
-  const toppingOptions = document.getElementById("topping-options");
-
-  const CATEGORY_TARGETS = [
-    { id: "milk-tea-list", matchers: ["milk"] },
-    { id: "fruit-tea-list", matchers: ["fruit", "green tea", "black tea", "oolong", "tea"] },
-    { id: "specialty-list", matchers: [] },
-  ];
-
-  function updateClock() {
-    const clockEl = document.getElementById('clock');
-    const now = new Date();
-    let hours = now.getHours();
-    let minutes = now.getMinutes();
-    // Optional: pad single digits with 0
-    hours = hours < 10 ? '0' + hours : hours;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    clockEl.textContent = `${hours}:${minutes}`;
-  }
-
-  // update clock immediately and every minute
-  updateClock();
-  setInterval(updateClock, 1000 * 60);
-
-  function formatMoney(value) {
-    return `$${Number(value || 0).toFixed(2)}`;
-  }
-
-  function itemTag(item, index) {
-    if (index < 2) {
-      return '<span class="item-tag tag-pop">Popular</span>';
-    }
-    if (String(item.name || "").toLowerCase().includes("rose") || String(item.name || "").toLowerCase().includes("lavender")) {
-      return '<span class="item-tag tag-new">New</span>';
-    }
-    return "";
-  }
-
-  function buildDescription(item) {
-    const category = String(item.category || "").trim();
-    if (!category) {
-      return "Available now";
-    }
-    return `${category} · Available now`;
-  }
-
-  function renderItems(listId, items) {
-    const list = document.getElementById(listId);
-    if (!items.length) {
-      list.innerHTML = '<li class="empty-item">No items available.</li>';
-      return;
+    function imageForDrink(name) {
+      const value = String(name || "").toLowerCase();
+      const map = [
+        ["brown sugar", "/customer-interface/images/brownsugar.jpg"],
+        ["classic milk", "/customer-interface/images/classicmilktea.jpg"],
+        ["thai", "/customer-interface/images/thaitea.jpg"],
+        ["taro", "/customer-interface/images/tarotea.jpg"],
+        ["matcha", "/customer-interface/images/matchamilk.jpg"],
+        ["strawberry", "/customer-interface/images/strawberrymilk.jpg"],
+        ["honeydew", "/customer-interface/images/honeydew.jpg"],
+        ["peach", "/customer-interface/images/peachoolong.jpg"],
+        ["lychee", "/customer-interface/images/lycheeblack.jpg"],
+        ["mango", "/customer-interface/images/mangogreen.jpg"],
+        ["jasmine", "/customer-interface/images/jasminegreen.jpg"],
+        ["coffee", "/customer-interface/images/coffeemilk.jpg"],
+        ["rose", "/customer-interface/images/rosemilk.jpg"],
+        ["lavender", "/customer-interface/images/lavendermilk.jpg"],
+        ["oreo", "/customer-interface/images/oreomilk.jpg"],
+        ["fruit", "/customer-interface/images/fruittea.jpg"]
+      ];
+      const found = map.find(([m]) => value.includes(m));
+      return found ? found[1] : "/customer-interface/images/fruittea.jpg";
     }
 
-    list.innerHTML = items
-      .map(
-        (item, index) => `
-          <li class="menu-item">
-            <div class="item-info">
-              <span class="item-name">${item.name}</span>
-              <span class="item-desc">${buildDescription(item)}</span>
-              ${itemTag(item, index)}
-            </div>
-            <span class="item-price">${formatMoney(item.price)}</span>
-          </li>
-        `
-      )
-      .join("");
-  }
+    function updateClock() {
+      const clockEl = document.getElementById("clock");
+      const now = new Date();
+      const hrs = now.getHours();
+      const mins = String(now.getMinutes()).padStart(2, "0");
+      const mer = hrs >= 12 ? "PM" : "AM";
+      clockEl.textContent = `${hrs % 12 || 12}:${mins} ${mer}`;
+    }
 
-  function categorizeItems(items) {
-    const buckets = CATEGORY_TARGETS.map((category) => ({ ...category, items: [] }));
+    const formatMoney = (v) => `$${Number(v || 0).toFixed(2)}`;
+    const seededChoice = (arr, s) => arr[Math.abs(s) % arr.length];
+    const dateSeed = () => {
+      const n = new Date();
+      return Number(`${n.getFullYear()}${String(n.getMonth() + 1).padStart(2, "0")}${String(n.getDate()).padStart(2, "0")}`);
+    };
 
-    items.forEach((item) => {
-      const category = String(item.category || "").toLowerCase();
-      const target = buckets.find(
-        (bucket) => bucket.matchers.length > 0 && bucket.matchers.some((matcher) => category.includes(matcher))
-      );
-
-      if (target) {
-        target.items.push(item);
-      } else {
-        buckets[buckets.length - 1].items.push(item);
+    function renderDailyFeatures(menuItems) {
+      const drinks = (menuItems || []).map((i) => String(i?.name || "").trim()).filter(Boolean);
+      if (!drinks.length) {
+        staffPickLine.textContent = "Unavailable today.";
+        staffPickDrinkEl.textContent = "";
+        flavorDayLine.textContent = "Unavailable today.";
+        flavorDayDrinkEl.textContent = "";
+        return;
       }
-    });
+      const seed = dateSeed();
+      const key = `menuFeature:${seed}`;
+      try {
+        const parsed = JSON.parse(localStorage.getItem(key) || "null");
+        if (parsed?.staff && parsed?.drink && parsed?.flavor) {
+          staffPickLine.innerHTML = `<strong>${parsed.staff}</strong> recommends:`;
+          staffPickDrinkEl.innerHTML = `<strong>${parsed.drink}</strong>`;
+          flavorDayLine.innerHTML = "";
+          flavorDayDrinkEl.innerHTML = `<strong>${parsed.flavor}</strong>`;
+          staffPickImg.src = imageForDrink(parsed.drink);
+          flavorDayImg.src = imageForDrink(parsed.flavor);
+          return;
+        }
+      } catch (_e) {}
 
-    return buckets;
-  }
+      const staff = seededChoice(EMPLOYEE_FIRST_NAMES, seed * 7 + 11);
+      const drink = seededChoice(drinks, seed * 13 + 5);
+      const blocked = FLAVOR_POOL.filter((f) => drink.toLowerCase().includes(f.toLowerCase()));
+      const flavorPool = FLAVOR_POOL.filter((f) => !blocked.includes(f));
+      const flavor = seededChoice(flavorPool.length ? flavorPool : FLAVOR_POOL, seed * 17 + 3);
 
-  function updateTicker(items) {
-    const featured = items.slice(0, 8).map((item) => `<span>${item.name}</span>`).join("");
-    tickerTrack.innerHTML = featured ? `${featured}${featured}` : "<span>No menu items available</span>";
-  }
-
-  function renderModifierOptions(target, items, defaultLabel = "") {
-    if (!items.length) {
-      target.innerHTML = '<span class="opt-pill subtle">Unavailable</span>';
-      return;
+      staffPickLine.innerHTML = `<strong>${staff}</strong> recommends:`;
+      staffPickDrinkEl.innerHTML = `<strong>${drink}</strong>`;
+      flavorDayLine.innerHTML = "";
+      flavorDayDrinkEl.innerHTML = `<strong>${flavor}</strong>`;
+      staffPickImg.src = imageForDrink(drink);
+      flavorDayImg.src = imageForDrink(flavor);
+      localStorage.setItem(key, JSON.stringify({ staff, drink, flavor }));
     }
 
-    target.innerHTML = items
-      .map((item) => {
-        const isActive = item.name === defaultLabel;
-        const priceText = Number(item.priceDelta || 0) > 0 ? ` +${formatMoney(item.priceDelta)}` : "";
-        return `<span class="opt-pill ${isActive ? "active" : ""}">${item.name}${priceText}</span>`;
-      })
-      .join("");
-  }
+    const isRecommended = (item, i) => {
+      const n = String(item?.name || "").toLowerCase();
+      return i === 0 || n.includes("signature") || n.includes("classic") || n.includes("special") || RECOMMENDED_SPECIALTY_NAMES.has(n);
+    };
 
-  async function loadModifierOptions() {
-    const response = await fetch("/api/menu-modifiers");
-    if (!response.ok) {
-      throw new Error(`Modifier request failed with status ${response.status}`);
+    function renderItems(listId, items) {
+      const list = document.getElementById(listId);
+      if (!list) return;
+      if (!items.length) return (list.innerHTML = '<li class="empty-item">No items available.</li>');
+      list.innerHTML = items.map((item, i) => `
+        <li class="menu-item">
+          ${isRecommended(item, i) ? '<span class="item-marker rec" title="Recommended" aria-label="Recommended">★</span>' : '<span class="item-marker" aria-hidden="true">•</span>'}
+          <span class="item-name">${item.name}</span>
+          <span class="item-price">${formatMoney(item.price)}</span>
+        </li>
+      `).join("");
     }
 
-    const items = await response.json();
-    const modifiers = Array.isArray(items) ? items : [];
+    function categorizeItems(items) {
+      const buckets = SECTION_TARGETS.map((t) => ({ ...t, items: [] }));
+      const bucketById = Object.fromEntries(buckets.map((b) => [b.id, b]));
+      items.forEach((item) => {
+        const c = String(item.category || "").toLowerCase();
+        const n = String(item.name || "").toLowerCase();
+        if (c.includes("milk tea")) {
+          bucketById["milk-tea-list"]?.items.push(item);
+          return;
+        }
+        if (c.includes("fruit tea")) {
+          bucketById["fruit-tea-list"]?.items.push(item);
+          return;
+        }
+        if (c.includes("specialty")) {
+          bucketById["specialty-list"]?.items.push(item);
+          return;
+        }
+        const target = buckets.find((b) => b.matchers.some((m) => c.includes(m) || n.includes(m)));
+        if (target) target.items.push(item);
+        else (buckets[0] || target).items.push(item);
+      });
+      return buckets;
+    }
 
-    renderModifierOptions(
-      sugarOptions,
-      modifiers.filter((item) => item.modifierType === "Sugar Level"),
-      "100% Sugar"
-    );
-    renderModifierOptions(
-      iceOptions,
-      modifiers.filter((item) => item.modifierType === "Ice Level"),
-      "Regular Ice"
-    );
-    renderModifierOptions(
-      toppingOptions,
-      modifiers.filter((item) => item.modifierType === "Topping")
-    );
-  }
+    function renderToppingColumns(items) {
+      const names = (items || []).map((i) => String(i?.name || "").toLowerCase());
+      const resolved = TOPPING_CATALOG.filter((t) => names.some((n) => t.matchers.some((m) => n.includes(m))));
+      const show = resolved.length ? resolved : TOPPING_CATALOG;
+      const cheap = show.filter((t) => t.price === 0.5).map((t) => t.label);
+      const premium = show.filter((t) => t.price === 0.75).map((t) => t.label);
+      toppingListLeft.innerHTML = (cheap.length ? cheap : ["Unavailable"]).map((n) => `<li>${n}</li>`).join("");
+      toppingListRight.innerHTML = (premium.length ? premium : ["Unavailable"]).map((n) => `<li>${n}</li>`).join("");
+    }
 
-  async function loadMenuBoard() {
-    try {
-      const [menuResponse] = await Promise.all([fetch("/api/menu-items"), loadModifierOptions()]);
-      if (!menuResponse.ok) {
-        throw new Error(`Request failed with status ${menuResponse.status}`);
+    async function loadModifierOptions() {
+      const response = await fetch("/api/menu-modifiers");
+      if (!response.ok) throw new Error(`Modifier request failed with status ${response.status}`);
+      const items = await response.json();
+      const modifiers = Array.isArray(items) ? items : [];
+      renderToppingColumns(modifiers.filter((item) => item.modifierType === "Topping"));
+    }
+
+    async function loadMenuBoard() {
+      try {
+        updateClock();
+        const [menuRes] = await Promise.all([fetch("/api/menu-items"), loadModifierOptions()]);
+        if (!menuRes.ok) throw new Error(`Menu request failed with status ${menuRes.status}`);
+        const data = await menuRes.json();
+        const menuItems = Array.isArray(data) ? data.filter((i) => i && i.isAvailable !== false) : [];
+        categorizeItems(menuItems).forEach((b) => renderItems(b.id, b.items));
+        renderDailyFeatures(menuItems);
+        if (boardStatus) {
+          boardStatus.textContent = "";
+          boardStatus.classList.remove("error");
+        }
+      } catch (error) {
+        SECTION_TARGETS.forEach((t) => renderItems(t.id, []));
+        renderToppingColumns([]);
+        renderDailyFeatures([]);
+        if (boardStatus) {
+          boardStatus.textContent = `Could not load menu from database. ${error.message}`;
+          boardStatus.classList.add("error");
+        }
       }
-
-      const items = await menuResponse.json();
-      const menuItems = Array.isArray(items) ? items : [];
-      const categories = categorizeItems(menuItems);
-
-      categories.forEach((category) => renderItems(category.id, category.items));
-      updateTicker(menuItems);
-      boardStatus.textContent = "Menu items loaded from database.";
-      statusBanner.classList.remove("error");
-    } catch (error) {
-      CATEGORY_TARGETS.forEach((category) => renderItems(category.id, []));
-      updateTicker([]);
-      renderModifierOptions(sugarOptions, []);
-      renderModifierOptions(iceOptions, []);
-      renderModifierOptions(toppingOptions, []);
-      boardStatus.textContent = `Could not load menu from database. ${error.message}`;
-      statusBanner.classList.add("error");
     }
-  }
 
-  loadMenuBoard();
- </script>
+    (function initBoardDefaults() {
+      root.setAttribute("data-theme", "");
+      root.setAttribute("lang", localStorage.getItem("lang") || "en");
+      root.style.fontSize = `${Number(localStorage.getItem("textSize") || 100)}%`;
+      if (typeof applyTranslations === "function") applyTranslations();
+    })();
 
+    updateClock();
+    setInterval(updateClock, 1000 * 30);
+    loadMenuBoard();
+  </script>
 </body>
 </html>
