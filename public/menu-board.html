@@ -26,13 +26,15 @@
 
     html {
       margin: 0;
-      min-height: 100%;
+      height: 100%;
+      overflow: hidden;
       background: var(--board-bg);
     }
 
     body {
       margin: 0;
-      min-height: 100vh;
+      height: calc(100vh / var(--board-scale));
+      overflow: hidden;
       font-family: "Poppins", "Segoe UI", sans-serif;
       color: var(--text);
       zoom: var(--board-scale);
@@ -43,7 +45,8 @@
       width: 100%;
       display: grid;
       gap: 6px;
-      min-height: 100vh;
+      height: 100%;
+      overflow: hidden;
     }
 
     @supports not (zoom: 1) {
@@ -72,17 +75,24 @@
       box-shadow: none;
       overflow: hidden;
       width: 100%;
-      min-height: calc(100vh - 8px);
+      height: 100%;
     }
 
-    .menu-canvas { min-height: 860px; padding: 28px 40px 24px; }
+    .menu-canvas {
+      height: 100%;
+      padding: 22px 40px 16px;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 14px;
+      overflow: hidden;
+    }
 
     .board-head {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 24px;
-      margin-bottom: 30px;
+      margin-bottom: 0;
     }
 
     .brand-title {
@@ -108,6 +118,34 @@
       font-weight: 700;
       margin: 0;
       line-height: 1.1;
+    }
+
+    .ticker-wrap {
+      overflow: hidden;
+      background: #f2eee4;
+      border: 1px solid #d7d3c8;
+      min-height: 30px;
+      display: flex;
+      align-items: center;
+    }
+
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      animation: ticker-scroll 46s linear infinite;
+    }
+
+    .ticker-track span {
+      color: #486a67;
+      font-size: calc(0.92rem * var(--type-scale));
+      font-weight: 800;
+      line-height: 1;
+      padding: 0 24px;
+      white-space: nowrap;
+    }
+
+    @keyframes ticker-scroll {
+      100% { transform: translateX(-50%); }
     }
 
     .menu-grid {
@@ -173,15 +211,15 @@
     .option-card {
       background: var(--accent-box);
       border: 1px solid #d6d2c8;
-      padding: 24px 30px 22px;
-      margin-top: 34px;
+      padding: 14px 30px 12px;
+      margin-top: 0;
       display: grid;
       grid-template-columns: minmax(230px, 1fr) minmax(280px, 1.25fr) minmax(160px, 0.75fr) minmax(280px, 1fr);
       gap: 38px;
       align-items: start;
     }
 
-    .option-group { display: grid; gap: 14px; align-content: start; width: 100%; }
+    .option-group { display: grid; gap: 8px; align-content: start; width: 100%; }
     .ice-group { justify-self: center; max-width: 380px; }
     .sugar-group { justify-self: center; max-width: 620px; }
     .size-group { justify-self: center; max-width: 170px; }
@@ -198,17 +236,19 @@
 
     .ice-row { display: grid; grid-template-columns: repeat(3, minmax(98px, 1fr)); gap: 22px; justify-items: center; }
     .ice-item, .sweet-item { text-align: center; min-width: 98px; }
-    .cup-icon { width: 74px; height: 102px; display: block; margin: 0 auto 2px; }
+    .cup-icon { width: 62px; height: 84px; display: block; margin: 0 auto 2px; }
     .ice-label, .sweet-label { font-size: calc(0.98rem * var(--type-scale)); font-weight: 700; color: #1f1d1a; white-space: nowrap; }
 
-    .sweet-row { display: grid; grid-template-columns: repeat(5, minmax(92px, 1fr)); gap: 20px; justify-items: center; }
-    .sweet-circle { width: 72px; height: 72px; border-radius: 50%; border: 2px solid #2d3a39; margin: 0 auto 6px; background: #f6f1e4; position: relative; overflow: hidden; }
+    .sweet-row { display: grid; grid-template-columns: repeat(6, minmax(78px, 1fr)); gap: 14px; justify-items: center; }
+    .sweet-double { display: flex; justify-content: center; gap: 2px; transform: translateX(-14px); }
+    .sweet-double .sweet-circle { margin: 0 0 6px; }
+    .sweet-circle { width: 62px; height: 62px; border-radius: 50%; border: 2px solid #2d3a39; margin: 0 auto 5px; background: #f6f1e4; position: relative; overflow: hidden; }
     .sweet-fill { position: absolute; right: 0; top: 0; bottom: 0; background: #101010; }
 
     .size-row { display: flex; align-items: end; gap: 18px; }
     .size-visual { display: grid; justify-items: center; gap: 8px; color: #2f3f3e; font-weight: 700; font-size: calc(0.96rem * var(--type-scale)); }
-    .size-cup-sm { width: 72px; height: 82px; }
-    .size-cup-lg { width: 92px; height: 102px; }
+    .size-cup-sm { width: 60px; height: 68px; }
+    .size-cup-lg { width: 76px; height: 84px; }
 
     .topping-group { padding: 0; }
     .topping-head { margin-bottom: 8px; }
@@ -295,6 +335,12 @@
           </div>
         </div>
 
+        <div class="ticker-wrap" aria-hidden="true">
+          <div class="ticker-track" id="ticker-track">
+            <span>Loading menu...</span>
+          </div>
+        </div>
+
         <div class="menu-grid">
           <section class="menu-column">
             <article class="menu-block" aria-labelledby="milk-tea-heading">
@@ -369,6 +415,7 @@
           <section class="option-group sugar-group" aria-labelledby="sugar-label">
             <h3 class="option-title" id="sugar-label">Sweetness Level</h3>
             <div class="sweet-row" id="sugar-options">
+              <div class="sweet-item"><div class="sweet-double"><div class="sweet-circle"><span class="sweet-fill" style="width:100%;"></span></div><div class="sweet-circle"><span class="sweet-fill" style="width:100%;"></span></div></div><div class="sweet-label">Extra<br />Sugar</div></div>
               <div class="sweet-item"><div class="sweet-circle"><span class="sweet-fill" style="width:100%;"></span></div><div class="sweet-label">100%<br />Normal</div></div>
               <div class="sweet-item"><div class="sweet-circle"><span class="sweet-fill" style="width:80%;"></span></div><div class="sweet-label">80%<br />Less</div></div>
               <div class="sweet-item"><div class="sweet-circle"><span class="sweet-fill" style="width:50%;"></span></div><div class="sweet-label">50%<br />Half</div></div>
@@ -429,6 +476,7 @@
     const staffPickDrinkEl = document.getElementById("staff-pick-drink");
     const flavorDayLine = document.getElementById("flavor-day-line");
     const flavorDayDrinkEl = document.getElementById("flavor-day-drink");
+    const tickerTrack = document.getElementById("ticker-track");
     const toppingListLeft = document.getElementById("topping-list-left");
     const toppingListRight = document.getElementById("topping-list-right");
 
@@ -494,6 +542,13 @@
     }
 
     const formatMoney = (v) => `$${Number(v || 0).toFixed(2)}`;
+    const escapeHtml = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    }[char]));
     const seededChoice = (arr, s) => arr[Math.abs(s) % arr.length];
     const dateSeed = () => {
       const n = new Date();
@@ -543,6 +598,14 @@
       const n = String(item?.name || "").toLowerCase();
       return i === 0 || n.includes("signature") || n.includes("classic") || n.includes("special") || RECOMMENDED_SPECIALTY_NAMES.has(n);
     };
+
+    function updateTicker(menuItems) {
+      const drinks = (menuItems || [])
+        .map((item) => String(item?.name || "").trim())
+        .filter(Boolean);
+      const markup = drinks.map((name) => `<span>${escapeHtml(name)}</span>`).join("");
+      tickerTrack.innerHTML = markup ? `${markup}${markup}` : "<span>No menu items available</span>";
+    }
 
     function renderItems(listId, items) {
       const list = document.getElementById(listId);
@@ -608,6 +671,7 @@
         const data = await menuRes.json();
         const menuItems = Array.isArray(data) ? data.filter((i) => i && i.isAvailable !== false) : [];
         categorizeItems(menuItems).forEach((b) => renderItems(b.id, b.items));
+        updateTicker(menuItems);
         renderDailyFeatures(menuItems);
         if (boardStatus) {
           boardStatus.textContent = "";
@@ -615,6 +679,7 @@
         }
       } catch (error) {
         SECTION_TARGETS.forEach((t) => renderItems(t.id, []));
+        updateTicker([]);
         renderToppingColumns([]);
         renderDailyFeatures([]);
         if (boardStatus) {
