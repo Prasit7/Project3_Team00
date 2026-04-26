@@ -56,7 +56,7 @@ export default function OrdersPage() {
   }, []);
 
   return (
-    <ManagerShell title="Order History" subtitle="All created orders with timestamps and paid amounts">
+    <ManagerShell title="Order History" subtitle="Most recent 200 orders with timestamps and paid amounts">
       <section className={styles.section}>
         <StatusMessage status={status} />
         <h2>Orders</h2>
