@@ -336,6 +336,7 @@ button:disabled {
 }
 
 .menu-item-box {
+  width: 100%;
   min-height: 270px;
   padding: 12px;
   display: grid;
@@ -345,6 +346,10 @@ button:disabled {
   border-radius: 18px;
   border-color: #f0ccb8;
   cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  appearance: none;
   transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
 }
 

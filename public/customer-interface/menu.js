@@ -902,10 +902,9 @@ function renderMenuItems() {
 
   visibleItems.forEach((item) => {
     const itemImagePath = getItemImagePath(item.name);
-    const card = document.createElement("article");
+    const card = document.createElement("button");
     card.className = "menu-item-box";
-    card.setAttribute("role", "button");
-    card.setAttribute("tabindex", "0");
+    card.type = "button";
     card.setAttribute("aria-label", `${item.name}, ${formatMoney(item.price)}. Open customization`);
     card.innerHTML = `
       <div class="menu-item-media" aria-hidden="true">
@@ -922,14 +921,7 @@ function renderMenuItems() {
       <p class="menu-item-hint">Tap to customize</p>
     `;
 
-    const openCardModal = () => openCustomizeModal(item);
-    card.addEventListener("click", openCardModal);
-    card.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        openCardModal();
-      }
-    });
+    card.addEventListener("click", () => openCustomizeModal(item));
 
     menuGrid.appendChild(card);
   });
