@@ -1,7 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "../../app/cashier/cashier.module.css";
+
+const SIZE_OPTIONS = ["Regular", "Large"];
+const TEMPERATURE_OPTIONS = ["Cold", "Hot"];
+const ICE_OPTIONS = ["No Ice", "Less Ice", "Regular Ice", "Extra Ice"];
+const SUGAR_OPTIONS = ["No Sugar", "Light Sugar", "Half Sugar", "Less Sugar", "Normal Sugar", "Extra Sugar"];
 
 export default function CashierShell() {
   const [menuItems, setMenuItems] = useState([]);
@@ -9,7 +14,6 @@ export default function CashierShell() {
   const [orderItems, setOrderItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
-  const [selectedItemId, setSelectedItemId] = useState(null);
   const [activeOrderItemId, setActiveOrderItemId] = useState(null);
   const [isLoadingMenu, setIsLoadingMenu] = useState(true);
   const [menuError, setMenuError] = useState("");
@@ -20,6 +24,7 @@ export default function CashierShell() {
   const [paymentError, setPaymentError] = useState("");
   const [orderNotice, setOrderNotice] = useState("");
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
+  const nextOrderLineIdRef = useRef(1);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,29 +64,17 @@ export default function CashierShell() {
 
         const data = await response.json();
         if (!cancelled) {
+          const dbToppings = (Array.isArray(data) ? data : [])
+            .filter((item) => item.modifierType === "Topping")
+            .map((item) => item.name);
+
           const grouped = [
-            { title: "Size", exclusive: true, options: [] },
-            { title: "Ice Level", exclusive: true, options: [] },
-            { title: "Sugar Level", exclusive: true, options: [] },
-            { title: "Topping", exclusive: false, options: [] },
-          ].map((group) => {
-            const options = (Array.isArray(data) ? data : [])
-              .filter((item) => item.modifierType === group.title)
-              .map((item) => item.name);
-
-            if (group.title === "Sugar Level" && !options.includes("Extra Sugar")) {
-              options.push("Extra Sugar");
-            }
-
-            if (group.title === "Size" && options.length === 0) {
-              options.push("Regular", "Large");
-            }
-
-            return {
-              ...group,
-              options,
-            };
-          });
+            { title: "Size", exclusive: true, options: SIZE_OPTIONS },
+            { title: "Temperature", exclusive: true, options: TEMPERATURE_OPTIONS },
+            { title: "Ice Level", exclusive: true, options: ICE_OPTIONS },
+            { title: "Sugar Level", exclusive: true, options: SUGAR_OPTIONS },
+            { title: "Topping", exclusive: false, options: dbToppings },
+          ];
 
           setModifierGroups(grouped.filter((group) => group.options.length > 0));
         }
@@ -116,10 +109,6 @@ export default function CashierShell() {
     });
   }, [activeCategory, menuItems, searchTerm]);
 
-  const selectedItem = useMemo(
-    () => menuItems.find((item) => item.id === selectedItemId) || null,
-    [menuItems, selectedItemId]
-  );
   const quickDrinkItems = useMemo(() => {
     return menuItems
       .filter((item) => {
@@ -153,17 +142,12 @@ export default function CashierShell() {
   function getSizeOptions() {
     const sizeGroup = modifierGroups.find((group) => group.title === "Size");
     if (sizeGroup?.options?.length) return sizeGroup.options;
-    return ["Regular", "Large"];
+    return SIZE_OPTIONS;
   }
 
   function getDefaultSizeModifier() {
     const sizeOptions = getSizeOptions();
     return sizeOptions.find((option) => option.toLowerCase() === "regular") || sizeOptions[0] || null;
-  }
-
-  function hasSizeModifier(modifiersList) {
-    const sizeOptions = getSizeOptions();
-    return sizeOptions.some((sizeOption) => modifiersList.includes(sizeOption));
   }
 
   function getOrderItemSizeLabel(orderItem) {
@@ -176,42 +160,27 @@ export default function CashierShell() {
     if (!itemToAdd) return;
     setOrderNotice("");
     const defaultSizeModifier = getDefaultSizeModifier();
+    const defaultModifiers = [
+      defaultSizeModifier || "Regular",
+      "Cold",
+      "Regular Ice",
+      "Normal Sugar",
+    ].filter(Boolean);
+    const lineId = nextOrderLineIdRef.current++;
 
-    setOrderItems((previousItems) => {
-      const existingIndex = previousItems.findIndex((item) => item.id === itemToAdd.id);
-
-      if (existingIndex === -1) {
-        return [
-          ...previousItems,
-          {
-            id: itemToAdd.id,
-            name: itemToAdd.name,
-            category: itemToAdd.category,
-            price: Number(itemToAdd.price || 0),
-            quantity: 1,
-            modifiers: defaultSizeModifier ? [defaultSizeModifier] : [],
-          },
-        ];
-      }
-
-      return previousItems.map((item, index) =>
-        index === existingIndex
-          ? {
-              ...item,
-              quantity: item.quantity + 1,
-              modifiers:
-                !hasSizeModifier(item.modifiers) && defaultSizeModifier
-                  ? [...item.modifiers, defaultSizeModifier]
-                  : item.modifiers,
-            }
-          : item
-      );
-    });
-    setActiveOrderItemId(itemToAdd.id);
-  }
-
-  function addSelectedItemToOrder() {
-    addItemToOrder(selectedItem);
+    setOrderItems((previousItems) => [
+      ...previousItems,
+      {
+        id: lineId,
+        menuItemId: itemToAdd.id,
+        name: itemToAdd.name,
+        category: itemToAdd.category,
+        price: Number(itemToAdd.price || 0),
+        quantity: 1,
+        modifiers: defaultModifiers,
+      },
+    ]);
+    setActiveOrderItemId(lineId);
   }
 
   function updateOrderItemQuantity(itemId, nextQuantity) {
@@ -248,9 +217,19 @@ export default function CashierShell() {
         }
 
         if (isExclusive) {
+          const baseModifiers = item.modifiers.filter((modifier) => !groupOptions.includes(modifier));
+
+          if (groupOptions === TEMPERATURE_OPTIONS && modifierLabel === "Hot") {
+            const noIceValue = ICE_OPTIONS[0];
+            return {
+              ...item,
+              modifiers: [...baseModifiers.filter((modifier) => !ICE_OPTIONS.includes(modifier)), modifierLabel, noIceValue],
+            };
+          }
+
           return {
             ...item,
-            modifiers: [...item.modifiers.filter((modifier) => !groupOptions.includes(modifier)), modifierLabel],
+            modifiers: [...baseModifiers, modifierLabel],
           };
         }
 
@@ -260,6 +239,11 @@ export default function CashierShell() {
         };
       })
     );
+  }
+
+  function shouldHideIceLevelForActiveItem() {
+    if (!activeOrderItem) return false;
+    return activeOrderItem.modifiers.includes("Hot");
   }
 
   function formatModifierLabel(groupTitle, modifierLabel) {
@@ -327,7 +311,7 @@ export default function CashierShell() {
           paymentMethod,
           cashReceived: paymentMethod === "cash" ? cashReceivedValue : null,
           items: orderItems.map((item) => ({
-            id: item.id,
+            id: item.menuItemId || item.id,
             quantity: item.quantity,
             price: item.price,
             modifiers: item.modifiers,
@@ -347,7 +331,6 @@ export default function CashierShell() {
         }) · ${paymentMethod.toUpperCase()} payment`
       );
       setOrderItems([]);
-      setSelectedItemId(null);
       setActiveOrderItemId(null);
       setCustomModifierInput("");
       setCashReceived("");
@@ -428,13 +411,12 @@ export default function CashierShell() {
             {!isLoadingMenu &&
               !menuError &&
               filteredItems.map((item) => {
-                const isSelected = item.id === selectedItemId;
                 return (
                   <button
                     key={item.id}
                     type="button"
-                    className={`${styles.menuItemCard} ${isSelected ? styles.menuItemCardSelected : ""}`}
-                    onClick={() => setSelectedItemId(item.id)}
+                    className={styles.menuItemCard}
+                    onClick={() => addItemToOrder(item)}
                   >
                     <span className={styles.menuItemName}>{item.name}</span>
                     <span className={styles.menuItemMeta}>{item.category}</span>
@@ -480,7 +462,7 @@ export default function CashierShell() {
                       className={styles.selectForModsButton}
                       onClick={() => setActiveOrderItemId(item.id)}
                     >
-                      {activeOrderItemId === item.id ? "Selected for Modifications" : "Select for Modifications"}
+                      {activeOrderItemId === item.id ? "Editing Item" : "Edit Item"}
                     </button>
                     {item.modifiers.length > 0 && (
                       <p className={styles.modifierSummary}>Mods: {item.modifiers.join(", ")}</p>
@@ -510,36 +492,21 @@ export default function CashierShell() {
                   </article>
                 ))}
               </div>
-            ) : selectedItem ? (
-              <div className={styles.selectedItemPreview}>
-                <p className={styles.selectedLabel}>Selected Item</p>
-                <p className={styles.selectedName}>{selectedItem.name}</p>
-                <p className={styles.selectedMeta}>
-                  {selectedItem.category} · {formatModifierLabel("Size", getDefaultSizeModifier() || "Regular")} · $
-                  {Number(selectedItem.price || 0).toFixed(2)}
-                </p>
-              </div>
             ) : (
-              "Select an item from the menu."
+              "Tap a menu item to add it to this order."
             )}
           </div>
 
           <div className={styles.actions}>
-            <button
-              type="button"
-              className={styles.secondaryAction}
-              onClick={addSelectedItemToOrder}
-              disabled={!selectedItem}
-            >
-              Add Selected Item
-            </button>
             <div className={styles.modifierPanel}>
-              <p className={styles.modifierTitle}>Apply Modifications</p>
+              <p className={styles.modifierTitle}>Customize Item</p>
               <p className={styles.modifierHelp}>
                 {activeOrderItem ? `Editing: ${activeOrderItem.name}` : "Select an order item to apply modifiers."}
               </p>
               <div className={styles.modifierGroups}>
-                {modifierGroups.map((group) => (
+                {modifierGroups
+                  .filter((group) => !(group.title === "Ice Level" && shouldHideIceLevelForActiveItem()))
+                  .map((group) => (
                   <section key={group.title} className={styles.modifierGroup}>
                     <p className={styles.modifierGroupTitle}>{group.title}</p>
                     <div className={styles.modifierChipRow}>
