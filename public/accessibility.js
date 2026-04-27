@@ -12,7 +12,7 @@
   document.documentElement.setAttribute("lang", lang);
 
   const savedFontScale = parseFloat(localStorage.getItem("kioskFontSize"));
-  if (!Number.isNaN(savedFontScale) && savedFontScale > 0) {
+  if (shouldEnableCustomerFacingA11y() && !Number.isNaN(savedFontScale) && savedFontScale > 0) {
     document.documentElement.style.fontSize = `${savedFontScale * 16}px`;
   }
 })();
