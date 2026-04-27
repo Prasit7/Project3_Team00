@@ -1,4 +1,5 @@
 import { getPool } from "../../../lib/db";
+import { ensureDefaultSmoothies } from "../../../lib/defaultSmoothies";
 import {
   handleRouteError,
   jsonError,
@@ -42,6 +43,8 @@ async function insertRecipeItems(client, menuItemId, recipe) {
 
 export async function GET() {
   try {
+    await ensureDefaultSmoothies(getPool());
+
     const result = await getPool().query(
       `
       SELECT

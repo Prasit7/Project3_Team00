@@ -1,5 +1,7 @@
 const selectedDrinkInput = document.getElementById("selected-drink");
 const sizeSelect = document.getElementById("drink-size");
+const temperatureSelect = document.getElementById("temperature-level");
+const temperatureField = temperatureSelect?.closest(".text-box");
 const iceSelect = document.getElementById("ice-level");
 const sugarSelect = document.getElementById("sugar-level");
 const toppingsList = document.getElementById("toppings-list");
@@ -15,6 +17,15 @@ const SIZE_OPTIONS = [
   { name: "Regular", priceDelta: 0 },
   { name: "Large", priceDelta: 0.75 },
 ];
+const TEMPERATURE_OPTIONS = [{ name: "Cold" }, { name: "Hot" }];
+const SUGAR_LEVEL_OPTIONS = [
+  { name: "No Sugar" },
+  { name: "Light Sugar" },
+  { name: "Half Sugar" },
+  { name: "Less Sugar" },
+  { name: "Normal Sugar" },
+  { name: "Extra Sugar" },
+];
 
 let selectedMenuItem = null;
 let modifiers = [];
@@ -27,6 +38,22 @@ function formatSizeLabel(sizeValue) {
   if (sizeValue === "Regular") return "Regular - 16oz";
   if (sizeValue === "Large") return "Large - 20oz";
   return sizeValue;
+}
+
+function isSmoothieCategory(category) {
+  return String(category || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "")
+    .includes("smoothie");
+}
+
+function shouldShowTemperature() {
+  return !isSmoothieCategory(selectedMenuItem?.category);
+}
+
+function toggleTemperatureField() {
+  if (!temperatureField) return;
+  temperatureField.style.display = shouldShowTemperature() ? "" : "none";
 }
 
 function loadCart() {
@@ -73,6 +100,8 @@ function renderToppings(options, selectedNames = []) {
 }
 
 function getModifiersByType(type) {
+  if (type === "Sugar Level") return SUGAR_LEVEL_OPTIONS;
+  if (type === "Temperature") return TEMPERATURE_OPTIONS;
   return modifiers.filter((modifier) => modifier.modifierType === type);
 }
 
@@ -102,11 +131,16 @@ function updatePreview() {
   const toppings = getCheckedToppings();
   const total = calculateTotal();
 
+  const temperatureLine = shouldShowTemperature()
+    ? `<p>Temperature: ${temperatureSelect.value || "Cold"}</p>`
+    : "";
+
   customizeOrderBox.innerHTML = `
     <p><strong>${selectedMenuItem.itemName}</strong></p>
     <p>Size: ${formatSizeLabel(sizeSelect.value || "Regular")}</p>
+    ${temperatureLine}
     <p>Ice Level: ${iceSelect.value || "Regular Ice"}</p>
-    <p>Sugar Level: ${sugarSelect.value || "100% Sugar"}</p>
+    <p>Sugar Level: ${sugarSelect.value || "Normal Sugar"}</p>
     <p>Toppings: ${toppings.length ? toppings.join(", ") : "None"}</p>
     <p>Special Instructions: ${specialInstructionsInput.value.trim() || "None"}</p>
   `;
@@ -118,11 +152,14 @@ function buildCurrentOrder() {
 
   return {
     ...selectedMenuItem,
+    temperature: shouldShowTemperature() ? temperatureSelect.value || "Cold" : "Cold",
     size: sizeSelect.value,
     ice: iceSelect.value,
     sugar: sugarSelect.value,
     toppings: getCheckedToppings(),
     specialInstructions: specialInstructionsInput.value.trim(),
+    quantity: 1,
+    unitPrice: calculateTotal(),
     totalPrice: calculateTotal(),
   };
 }
@@ -153,15 +190,21 @@ function renderCartPreview() {
 
   customizeOrderBox.innerHTML = cart
     .map(
-      (item, index) => `
+      (item, index) => {
+        const temperatureLine = isSmoothieCategory(item.category)
+          ? ""
+          : `<p>Temperature: ${item.temperature || "Cold"}</p>`;
+        return `
         <p><strong>Item ${index + 1}: ${item.itemName}</strong></p>
         <p>Size: ${formatSizeLabel(item.size)}</p>
+        ${temperatureLine}
         <p>Ice Level: ${item.ice}</p>
         <p>Sugar Level: ${item.sugar}</p>
         <p>Toppings: ${item.toppings.length ? item.toppings.join(", ") : "None"}</p>
         <p>Special Instructions: ${item.specialInstructions || "None"}</p>
         <p>Item Total: ${formatMoney(item.totalPrice)}</p>
-      `
+      `;
+      }
     )
     .join("");
 
@@ -207,19 +250,24 @@ async function initializePage() {
   }
 
   selectedDrinkInput.value = selectedMenuItem.itemName;
+  toggleTemperatureField();
 
   try {
     await loadModifiers();
 
     fillSelectOptions(sizeSelect, SIZE_OPTIONS, "Regular");
+    fillSelectOptions(temperatureSelect, getModifiersByType("Temperature"), "Cold");
     fillSelectOptions(iceSelect, getModifiersByType("Ice Level"), "Regular Ice");
-    fillSelectOptions(sugarSelect, getModifiersByType("Sugar Level"), "100% Sugar");
+    fillSelectOptions(sugarSelect, getModifiersByType("Sugar Level"), "Normal Sugar");
 
     const existingOrder = loadExistingCustomization();
     renderToppings(getModifiersByType("Topping"), existingOrder?.toppings || []);
 
     if (existingOrder) {
       sizeSelect.value = existingOrder.size;
+      temperatureSelect.value = shouldShowTemperature()
+        ? existingOrder.temperature || "Cold"
+        : "Cold";
       iceSelect.value = existingOrder.ice;
       sugarSelect.value = existingOrder.sugar;
       specialInstructionsInput.value = existingOrder.specialInstructions || "";
@@ -234,7 +282,7 @@ async function initializePage() {
   }
 }
 
-[sizeSelect, iceSelect, sugarSelect, specialInstructionsInput].forEach((element) => {
+[sizeSelect, temperatureSelect, iceSelect, sugarSelect, specialInstructionsInput].forEach((element) => {
   element.addEventListener("change", updatePreview);
   element.addEventListener("input", updatePreview);
 });

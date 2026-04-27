@@ -1,10 +1,13 @@
 import { NextResponse } from "next/server";
 import { getPool } from "../../../lib/db";
+import { ensureDefaultSmoothies } from "../../../lib/defaultSmoothies";
 
 export const runtime = "nodejs";
 
 export async function GET() {
   try {
+    await ensureDefaultSmoothies(getPool());
+
     const result = await getPool().query(`
       SELECT menu_item_id, name, category, base_price, is_available
       FROM "Menu_Item"

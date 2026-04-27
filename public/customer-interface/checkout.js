@@ -108,6 +108,9 @@ const ITEM_IMAGE_MAP = {
   pineapplejasminetea: "pineapplejasmine.jpg",
   pineapplejasmine: "pineapplejasmine.jpg",
   pineapplejasminemilktea: "pineapplejasmine.jpg",
+  mangopineapplesmoothie: "pineapplejasmine.jpg",
+  blueberryacaismoothie: "blueberryjasminetea.jpg",
+  strawberrybananasmoothie: "strawberrymilk.jpg",
 };
 
 function formatMoney(value) {
@@ -118,6 +121,13 @@ function formatSizeLabel(sizeValue) {
   if (sizeValue === "Regular") return "Regular - 16oz";
   if (sizeValue === "Large") return "Large - 20oz";
   return sizeValue;
+}
+
+function isSmoothieCategory(category) {
+  return String(category || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "")
+    .includes("smoothie");
 }
 
 function normalizeItemKey(name) {
@@ -220,7 +230,11 @@ function renderOrder(cart) {
 
   checkoutOrderBox.innerHTML = cart
     .map(
-      (order, index) => `
+      (order, index) => {
+        const temperatureLine = isSmoothieCategory(order.category)
+          ? ""
+          : `<p>Temperature: ${order.temperature || "Cold"}</p>`;
+        return `
         <article class="checkout-item-row">
           <div class="checkout-item-media" aria-hidden="true">
             ${
@@ -234,6 +248,7 @@ function renderOrder(cart) {
             <p>Category: ${order.category}</p>
             <p>Size: ${formatSizeLabel(order.size)}</p>
             <p>Quantity: ${Number(order.quantity || 1)}</p>
+            ${temperatureLine}
             <p>Ice Level: ${order.ice}</p>
             <p>Sugar Level: ${order.sugar}</p>
             <p>Toppings: ${order.toppings.length ? order.toppings.join(", ") : "None"}</p>
@@ -241,7 +256,8 @@ function renderOrder(cart) {
             <p>Item Total: ${formatMoney(order.totalPrice)}</p>
           </div>
         </article>
-      `
+      `;
+      }
     )
     .join("");
 
@@ -268,7 +284,13 @@ function buildOrderPayload(cart) {
         id: Number(order.itemId),
         quantity,
         price: unitPrice,
-        modifiers: [order.size, order.ice, order.sugar, ...(order.toppings || [])].filter(Boolean),
+        modifiers: [
+          order.size,
+          ...(isSmoothieCategory(order.category) ? [] : [order.temperature]),
+          order.ice,
+          order.sugar,
+          ...(order.toppings || []),
+        ].filter(Boolean),
       };
     }),
   };
