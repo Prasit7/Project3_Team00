@@ -13,11 +13,23 @@
   gap: 16px;
 }
 
+.authShell {
+  min-height: calc(100vh - 20px);
+  align-content: center;
+  justify-items: center;
+  gap: 14px;
+}
+
 .header {
   background: #ffffff;
   border: 1px solid #d7e5f4;
   border-radius: 14px;
   padding: 16px;
+}
+
+.authHeader {
+  width: min(560px, 100%);
+  text-align: center;
 }
 
 .title {
@@ -28,6 +40,72 @@
 .subtitle {
   margin: 8px 0 0;
   color: #45556f;
+}
+
+.headerMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.employeeBadge {
+  border: 1px solid #c6d9ef;
+  background: #f5faff;
+  border-radius: 10px;
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+  min-width: 280px;
+}
+
+.employeeName {
+  margin: 0;
+  font-weight: 700;
+  color: #1a3055;
+}
+
+.signOutButton {
+  min-height: 40px;
+  border-radius: 10px;
+  border: 1px solid #bfd5ee;
+  background: #ffffff;
+  color: #1f3254;
+  font-weight: 700;
+}
+
+.authPanel {
+  width: min(560px, 100%);
+  background: #ffffff;
+  border: 1px solid #d7e5f4;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 10px 24px rgba(20, 33, 61, 0.08);
+}
+
+.authForm {
+  width: min(430px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 12px;
+}
+
+.authInput {
+  min-height: 48px;
+  border: 1px solid #b9cadf;
+  border-radius: 10px;
+  padding: 0 12px;
+  font-size: 1rem;
+  background: #f8fbff;
+}
+
+.authError {
+  margin: 0;
+  border-radius: 10px;
+  background: #ffe9e9;
+  color: #8c1d18;
+  padding: 8px 10px;
+  font-weight: 700;
 }
 
 .columns {
@@ -593,6 +671,15 @@
     align-items: stretch;
   }
 
+  .headerMeta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .employeeBadge {
+    min-width: 0;
+  }
+
   .searchInput {
     width: 100%;
   }
@@ -624,6 +711,32 @@
 
 :global([data-theme="high-contrast"]) .subtitle {
   color: #ccc;
+}
+
+:global([data-theme="high-contrast"]) .employeeBadge {
+  background: #111;
+  border: 2px solid #fff;
+}
+
+:global([data-theme="high-contrast"]) .employeeName {
+  color: #fff;
+}
+
+:global([data-theme="high-contrast"]) .signOutButton {
+  background: #000;
+  color: #fff;
+  border: 2px solid #fff;
+}
+
+:global([data-theme="high-contrast"]) .authPanel {
+  background: #111;
+  border: 2px solid #fff;
+}
+
+:global([data-theme="high-contrast"]) .authInput {
+  background: #000;
+  color: #fff;
+  border: 2px solid #fff;
 }
 
 :global([data-theme="high-contrast"]) .menuPanel,
