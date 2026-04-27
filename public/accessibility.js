@@ -408,18 +408,46 @@ function loadWaitTime() {
   const AVG_MINUTES_PER_ORDER = 3;
   const BUSINESS_OPEN_HOUR = 9;
 
+  function getRecentOrdersPerHalfHour(data) {
+    const rows = Array.isArray(data.rows)
+      ? data.rows
+        .map((row) => ({
+          hour: Number(row.hour),
+          orders: Number(row.orders) || 0,
+        }))
+        .filter((row) => Number.isInteger(row.hour))
+        .sort((a, b) => a.hour - b.hour)
+      : [];
+
+    const hourNow = new Date().getHours();
+
+    if (rows.length > 0) {
+      const businessDate = String(data.businessDate || "").slice(0, 10);
+      const today = new Date().toISOString().slice(0, 10);
+      const recentRows = businessDate === today
+        ? rows.filter((row) => row.hour >= hourNow - 1 && row.hour <= hourNow)
+        : rows.slice(-2);
+      const fallbackRows = recentRows.length > 0 ? recentRows : rows.slice(-2);
+      const recentOrders = fallbackRows.reduce((total, row) => total + row.orders, 0);
+      const hoursSampled = Math.max(1, fallbackRows.length);
+
+      return (recentOrders / hoursSampled) / 2;
+    }
+
+    const totalOrders = Number(data.totalOrders ?? data.orders_today) || 0;
+    const hoursElapsed = Math.max(1, hourNow - BUSINESS_OPEN_HOUR);
+    return (totalOrders / hoursElapsed) / 2;
+  }
+
   async function fetchAndUpdate() {
     try {
-      const res = await fetch("/api/xreport");
+      const res = await fetch("/api/wait-time");
       if (!res.ok) throw new Error();
 
       const data = await res.json();
-      const ordersToday = parseInt(data.orders_today, 10) || 0;
-      const hourNow = new Date().getHours();
-      const hoursElapsed = Math.max(1, hourNow - BUSINESS_OPEN_HOUR);
-      const ordersPerHour = ordersToday / hoursElapsed;
-      const recentOrders = ordersPerHour / 2;
-      const waitMinutes = Math.min(25, Math.max(2, Math.round(recentOrders * AVG_MINUTES_PER_ORDER)));
+      const waitMinutes = Number.isFinite(Number(data.waitMinutes))
+        ? Number(data.waitMinutes)
+        : Math.min(25, Math.max(2, Math.round(getRecentOrdersPerHalfHour(data) * AVG_MINUTES_PER_ORDER)));
 
       waitEl.textContent = `Estimated wait: ~${waitMinutes} min`;
     } catch (_) {
