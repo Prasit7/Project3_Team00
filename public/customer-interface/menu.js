@@ -582,7 +582,7 @@ function openCustomizeModal(item) {
 
   modalSizeLevel.innerHTML = SIZE_OPTIONS.map(
     (sizeOption) =>
-      `<option value="${sizeOption.name}">${t(sizeOption.labelKey)}${sizeOption.priceDelta > 0 ? ` (+${formatMoney(sizeOption.priceDelta)})` : ""}</option>`
+      `<option value="${sizeOption.name}">${formatSizeLabel(sizeOption.name)}${sizeOption.priceDelta > 0 ? ` (+${formatMoney(sizeOption.priceDelta)})` : ""}</option>`
   ).join("");
   modalSizeLevel.value = SIZE_OPTIONS[0].name;
 
