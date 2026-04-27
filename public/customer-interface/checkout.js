@@ -118,6 +118,57 @@ function formatMoney(value) {
   return `$${Number(value).toFixed(2)}`;
 }
 
+function getUiLang() {
+  return (localStorage.getItem("lang") || document.documentElement.getAttribute("lang") || "en").toLowerCase();
+}
+
+function isSpanishUi() {
+  return getUiLang() === "es";
+}
+
+function translateUi(enText, esText) {
+  return isSpanishUi() ? esText : enText;
+}
+
+function translateDrinkName(name) {
+  if (!isSpanishUi()) return String(name || "");
+  return String(name || "")
+    .replace(/Milk Tea/gi, "Te con leche")
+    .replace(/Fruit Tea/gi, "Te de fruta")
+    .replace(/Green Tea/gi, "Te verde")
+    .replace(/Black Tea/gi, "Te negro")
+    .replace(/Oolong Tea/gi, "Te oolong")
+    .replace(/Jasmine Tea/gi, "Te de jazmin")
+    .replace(/Smoothie/gi, "Batido");
+}
+
+function translateCategoryName(category) {
+  if (!isSpanishUi()) return String(category || "");
+  return String(category || "")
+    .replace(/Milk Tea/gi, "Te con leche")
+    .replace(/Fruit Tea/gi, "Te de fruta")
+    .replace(/Smoothie/gi, "Batido")
+    .replace(/Special/gi, "Especial");
+}
+
+function translateModifierValue(value) {
+  if (!isSpanishUi()) return String(value || "");
+  return String(value || "")
+    .replace(/\bCold\b/gi, "Frio")
+    .replace(/\bHot\b/gi, "Caliente")
+    .replace(/\bNo Ice\b/gi, "Sin hielo")
+    .replace(/\bLess Ice\b/gi, "Menos hielo")
+    .replace(/\bRegular Ice\b/gi, "Hielo regular")
+    .replace(/\bExtra Ice\b/gi, "Hielo extra")
+    .replace(/\bNo Sugar\b/gi, "Sin azucar")
+    .replace(/\bLight Sugar\b/gi, "Azucar ligera")
+    .replace(/\bHalf Sugar\b/gi, "Media azucar")
+    .replace(/\bLess Sugar\b/gi, "Menos azucar")
+    .replace(/\bNormal Sugar\b/gi, "Azucar normal")
+    .replace(/\bExtra Sugar\b/gi, "Azucar extra")
+    .replace(/\bLarge\b/gi, "Grande");
+}
+
 function formatSizeLabel(sizeValue) {
   if (sizeValue === "Regular") return "Regular - 16oz";
   if (sizeValue === "Large") return "Large - 20oz";
@@ -234,9 +285,9 @@ function loadCart() {
 
 function renderOrder(cart) {
   if (cart.length === 0) {
-    checkoutOrderBox.innerHTML = `<p>No order available yet.</p>`;
-    checkoutTotal.textContent = `Total: ${formatMoney(0)}`;
-    checkoutStatus.textContent = "No order available yet.";
+    checkoutOrderBox.innerHTML = `<p>${translateUi("No order available yet.", "Aun no hay pedido disponible.")}</p>`;
+    checkoutTotal.textContent = `${translateUi("Total", "Total")}: ${formatMoney(0)}`;
+    checkoutStatus.textContent = translateUi("No order available yet.", "Aun no hay pedido disponible.");
     return;
   }
 
@@ -245,7 +296,7 @@ function renderOrder(cart) {
       (order, index) => {
         const temperatureLine = isSmoothieCategory(order.category)
           ? ""
-          : `<p>Temperature: ${order.temperature || "Cold"}</p>`;
+          : `<p>${translateUi("Temperature", "Temperatura")}: ${translateModifierValue(order.temperature || "Cold")}</p>`;
         return `
         <article class="checkout-item-row">
           <div class="checkout-item-media" aria-hidden="true">
@@ -256,16 +307,16 @@ function renderOrder(cart) {
             }
           </div>
           <div class="checkout-item-content">
-            <p><strong>Item ${index + 1}: ${order.itemName}</strong></p>
-            <p>Category: ${order.category}</p>
-            <p>Size: ${formatSizeLabel(order.size)}</p>
-            <p>Quantity: ${Number(order.quantity || 1)}</p>
+            <p><strong>${translateUi("Item", "Articulo")} ${index + 1}: ${translateDrinkName(order.itemName)}</strong></p>
+            <p>${translateUi("Category", "Categoria")}: ${translateCategoryName(order.category)}</p>
+            <p>${translateUi("Size", "Tamano")}: ${translateModifierValue(formatSizeLabel(order.size))}</p>
+            <p>${translateUi("Quantity", "Cantidad")}: ${Number(order.quantity || 1)}</p>
             ${temperatureLine}
-            <p>Ice Level: ${order.ice}</p>
-            <p>Sugar Level: ${order.sugar}</p>
-            <p>Toppings: ${order.toppings.length ? order.toppings.join(", ") : "None"}</p>
-            <p>Special Instructions: ${order.specialInstructions || "None"}</p>
-            <p>Item Total: ${formatMoney(order.totalPrice)}</p>
+            <p>${translateUi("Ice Level", "Nivel de hielo")}: ${translateModifierValue(order.ice)}</p>
+            <p>${translateUi("Sugar Level", "Nivel de azucar")}: ${translateModifierValue(order.sugar)}</p>
+            <p>${translateUi("Toppings", "Toppings")}: ${order.toppings.length ? order.toppings.map((entry) => translateModifierValue(entry)).join(", ") : translateUi("None", "Ninguno")}</p>
+            <p>${translateUi("Special Instructions", "Instrucciones especiales")}: ${order.specialInstructions || translateUi("None", "Ninguno")}</p>
+            <p>${translateUi("Item Total", "Total del articulo")}: ${formatMoney(order.totalPrice)}</p>
           </div>
         </article>
       `;
@@ -274,8 +325,11 @@ function renderOrder(cart) {
     .join("");
 
   const total = cart.reduce((sum, order) => sum + Number(order.totalPrice || 0), 0);
-  checkoutTotal.textContent = `Total: ${formatMoney(total)}`;
-  checkoutStatus.textContent = "Step 3 of 3: Review the order and complete checkout.";
+  checkoutTotal.textContent = `${translateUi("Total", "Total")}: ${formatMoney(total)}`;
+  checkoutStatus.textContent = translateUi(
+    "Step 3 of 3: Review the order and complete checkout.",
+    "Paso 3 de 3: Revisa el pedido y completa el pago."
+  );
 }
 
 function resetOrderSummary() {

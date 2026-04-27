@@ -11,8 +11,50 @@ function setWeatherStatus(config, message) {
   }
 }
 
+function getCurrentLang() {
+  return (localStorage.getItem("lang") || document.documentElement.getAttribute("lang") || "en").toLowerCase();
+}
+
+function toSpanishWeatherDescription(description) {
+  const replacements = [
+    [/thunderstorm/gi, "tormenta electrica"],
+    [/drizzle/gi, "llovizna"],
+    [/rain/gi, "lluvia"],
+    [/snow/gi, "nieve"],
+    [/mist/gi, "neblina"],
+    [/smoke/gi, "humo"],
+    [/haze/gi, "calima"],
+    [/dust/gi, "polvo"],
+    [/fog/gi, "niebla"],
+    [/sand/gi, "arena"],
+    [/ash/gi, "ceniza"],
+    [/squall/gi, "turbonada"],
+    [/tornado/gi, "tornado"],
+    [/clear sky/gi, "cielo despejado"],
+    [/clear/gi, "despejado"],
+    [/few clouds/gi, "pocas nubes"],
+    [/scattered clouds/gi, "nubes dispersas"],
+    [/broken clouds/gi, "nubes fragmentadas"],
+    [/overcast clouds/gi, "nublado"],
+    [/clouds/gi, "nublado"],
+  ];
+
+  let text = String(description || "");
+  replacements.forEach(([pattern, replacement]) => {
+    text = text.replace(pattern, replacement);
+  });
+  return text;
+}
+
 function setWeatherError(config, messageKey) {
-  const fallback = {
+  const lang = getCurrentLang();
+  const fallback = lang === "es"
+    ? {
+      weatherUnavailable: "El clima no esta disponible en este navegador.",
+      weatherPermissionDenied: "Se necesita permiso de ubicacion para cargar el clima local.",
+      weatherFailed: "No se pudo cargar el clima en este momento.",
+    }
+    : {
     weatherUnavailable: "Weather is unavailable in this browser.",
     weatherPermissionDenied: "Location permission is required to load local weather.",
     weatherFailed: "Weather could not be loaded right now.",
@@ -31,11 +73,14 @@ function updateWeatherCard(config, data) {
     return;
   }
 
-  const description = data.weather.description || "";
+  const lang = getCurrentLang();
+  const rawDescription = data.weather.description || "";
+  const description = lang === "es" ? toSpanishWeatherDescription(rawDescription) : rawDescription;
+  status.setAttribute("data-weather-raw", rawDescription);
 
   status.textContent = description
     ? description.charAt(0).toUpperCase() + description.slice(1)
-    : "Weather";
+    : (lang === "es" ? "Clima" : "Weather");
 
   if (temp && Number.isFinite(data.weather.temperature)) {
     temp.textContent = `${Math.round(data.weather.temperature)}°${getTemperatureUnitLabel(data.weather.units)}`;
@@ -43,9 +88,20 @@ function updateWeatherCard(config, data) {
 
   if (data.weather.icon && icon && iconWrap) {
     icon.textContent = data.weather.icon;
-    icon.setAttribute("aria-label", description || "Weather icon");
+    icon.setAttribute("aria-label", description || (lang === "es" ? "Icono del clima" : "Weather icon"));
     iconWrap.hidden = false;
   }
+}
+
+function relocalizeCurrentWeather(config) {
+  const status = document.getElementById(config.statusId);
+  if (!status) return;
+
+  const original = status.getAttribute("data-weather-raw");
+  if (!original) return;
+  const lang = getCurrentLang();
+  const next = lang === "es" ? toSpanishWeatherDescription(original) : original;
+  status.textContent = next ? next.charAt(0).toUpperCase() + next.slice(1) : (lang === "es" ? "Clima" : "Weather");
 }
 
 async function fetchWeatherData(params) {
@@ -114,4 +170,8 @@ async function loadWeatherWidget(config) {
       maximumAge: 300000,
     }
   );
+
+  window.addEventListener("app:languagechange", () => {
+    relocalizeCurrentWeather(config);
+  });
 }

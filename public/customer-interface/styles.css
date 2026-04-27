@@ -1124,6 +1124,21 @@ a:focus-visible {
   border: 2px solid #fff;
 }
 
+[data-theme="high-contrast"] .customer-page p,
+[data-theme="high-contrast"] .customer-page label,
+[data-theme="high-contrast"] .customer-page span,
+[data-theme="high-contrast"] .customer-page h1,
+[data-theme="high-contrast"] .customer-page h2,
+[data-theme="high-contrast"] .customer-page h3,
+[data-theme="high-contrast"] .customer-page li {
+  color: #fff;
+}
+
+[data-theme="high-contrast"] .customer-page a:not(.nav-button) {
+  color: #0ff;
+  text-decoration: underline;
+}
+
 [data-theme="high-contrast"] .category-button.active,
 [data-theme="high-contrast"] .primary-link {
   background: #ff0;
@@ -1190,6 +1205,22 @@ a:focus-visible {
   background: #111;
   border: 2px solid #fff;
   color: #fff;
+}
+
+[data-theme="high-contrast"] .assistant-messages,
+[data-theme="high-contrast"] .assistant-msg,
+[data-theme="high-contrast"] .assistant-msg--bot,
+[data-theme="high-contrast"] .assistant-msg--user {
+  background: #000;
+  border: 2px solid #fff;
+  color: #fff;
+}
+
+[data-theme="high-contrast"] .assistant-form input,
+[data-theme="high-contrast"] .assistant-box input {
+  background: #000;
+  color: #fff;
+  border: 2px solid #fff;
 }
 
 [data-theme="high-contrast"] .payment-success-modal {

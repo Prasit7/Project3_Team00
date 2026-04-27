@@ -9,6 +9,64 @@
   const lastTranslatedByTextNode = new WeakMap();
   const attrStateByElement = new WeakMap();
   const EXCLUDED_SELECTOR = ".a11y-toolbar, script, style, noscript, iframe, #kiosk-magnifier-lens";
+  const FALLBACK_ES_MAP = new Map([
+    ["Choose Your Items", "Elige tus bebidas"],
+    ["Customize Your Drink", "Personaliza tu bebida"],
+    ["Checkout", "Pago"],
+    ["Step 1 of 3: Select drinks from the menu.", "Paso 1 de 3: Selecciona bebidas del menu."],
+    ["Step 2 of 3: Choose size, ice, sugar, and toppings.", "Paso 2 de 3: Elige tamano, hielo, azucar y toppings."],
+    ["Step 3 of 3: Review the order and complete checkout.", "Paso 3 de 3: Revisa tu pedido y completa el pago."],
+    ["Estimated wait:", "Tiempo estimado:"],
+    ["Cart", "Carrito"],
+    ["Personal Assistant", "Asistente personal"],
+    ["Ask", "Preguntar"],
+    ["Next: Checkout", "Siguiente: Pago"],
+    ["Back to Menu", "Volver al menu"],
+    ["Back to Customization", "Volver a personalizacion"],
+    ["Add to Order", "Agregar al pedido"],
+    ["Order More", "Pedir mas"],
+    ["Cancel Order", "Cancelar pedido"],
+    ["Pay", "Pagar"],
+    ["Order Summary", "Resumen del pedido"],
+    ["No item selected yet.", "Aun no hay bebida seleccionada."],
+    ["No customization saved yet.", "Aun no hay personalizacion guardada."],
+    ["No order available yet.", "Aun no hay pedido disponible."],
+    ["Loading menu from database...", "Cargando menu desde la base de datos..."],
+    ["Loading selected item and customization options...", "Cargando bebida seleccionada y opciones de personalizacion..."],
+    ["Loading order summary...", "Cargando resumen del pedido..."],
+    ["Tap to customize", "Toca para personalizar"],
+    ["Open customization", "Abrir personalizacion"],
+    ["Selected Drink", "Bebida seleccionada"],
+    ["Size", "Tamano"],
+    ["Temperature", "Temperatura"],
+    ["Ice Level", "Nivel de hielo"],
+    ["Sugar Level", "Nivel de azucar"],
+    ["Toppings", "Toppings"],
+    ["Special Instructions", "Instrucciones especiales"],
+    ["Optional note", "Nota opcional"],
+    ["Drink Customization", "Personalizacion de bebida"],
+    ["Quantity", "Cantidad"],
+    ["Total:", "Total:"],
+    ["Menu categories", "Categorias del menu"],
+    ["Menu items", "Bebidas del menu"],
+    ["Order is confirmed.", "El pedido esta confirmado."],
+    ["Payment Successful", "Pago exitoso"],
+    ["Start New Order", "Iniciar nuevo pedido"],
+    ["Loading current weather...", "Cargando clima actual..."],
+    ["Ask the kiosk assistant", "Preguntar al asistente del kiosco"],
+    ["Ask about drinks, toppings, or your order...", "Pregunta sobre bebidas, toppings o tu pedido..."],
+    ["Hi! I can help with menu choices, toppings, customization, and ordering.", "Hola. Puedo ayudarte con opciones del menu, toppings, personalizacion y pedidos."],
+    ["Thinking...", "Pensando..."],
+    ["Network issue. Please try again.", "Problema de red. Intentalo de nuevo."],
+    ["How can I help with your order?", "Como puedo ayudarte con tu pedido?"],
+    ["I can help with menu and ordering, but I am temporarily unavailable. Please try again.", "Puedo ayudarte con menu y pedidos, pero temporalmente no estoy disponible. Intentalo de nuevo."],
+    ["Removed", "Se elimino"],
+    ["from your cart.", "de tu carrito."],
+    ["Do you want any modifications?", "Quieres alguna modificacion?"],
+    ["Payment complete. Order", "Pago completado. Pedido"],
+    ["is confirmed.", "confirmado."],
+    ["Starting a new order in", "Iniciando un nuevo pedido en"],
+  ]);
 
   let currentLang = localStorage.getItem("lang") || "en";
   let mutationObserver = null;
@@ -76,41 +134,104 @@
     return targets;
   }
 
-  async function requestTranslations(texts, targetLang) {
-    if (!texts.length) return [];
+  function fallbackTranslateText(text, targetLang) {
+    if (targetLang !== "es") return text;
+    let result = String(text || "");
 
-    const uncached = [];
-    const keyOrder = [];
-
-    texts.forEach((text) => {
-      const key = `${targetLang}::${text}`;
-      keyOrder.push(key);
-      if (!CACHE.has(key)) uncached.push(text);
-    });
-
-    if (uncached.length) {
-      const response = await fetch("/api/translate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          source: "en",
-          target: targetLang,
-          texts: uncached,
-        }),
-      });
-
-      const payload = await response.json();
-      if (!response.ok || !payload?.ok || !Array.isArray(payload?.translations)) {
-        throw new Error(payload?.error || "Translation request failed.");
-      }
-
-      uncached.forEach((text, index) => {
-        const translated = String(payload.translations[index] || text);
-        CACHE.set(`${targetLang}::${text}`, translated);
-      });
+    for (const [english, spanish] of FALLBACK_ES_MAP.entries()) {
+      result = result.replaceAll(english, spanish);
     }
 
-    return keyOrder.map((key) => CACHE.get(key) || key.split("::")[1]);
+    const phraseReplacements = [
+      [/\bItem\s+(\d+)\s*:/gi, "Articulo $1:"],
+      [/\bCategory\s*:/gi, "Categoria:"],
+      [/\bSize\s*:/gi, "Tamano:"],
+      [/\bQuantity\s*:/gi, "Cantidad:"],
+      [/\bTemperature\s*:/gi, "Temperatura:"],
+      [/\bIce Level\s*:/gi, "Nivel de hielo:"],
+      [/\bSugar Level\s*:/gi, "Nivel de azucar:"],
+      [/\bToppings\s*:/gi, "Toppings:"],
+      [/\bSpecial Instructions\s*:/gi, "Instrucciones especiales:"],
+      [/\bItem Total\s*:/gi, "Total del articulo:"],
+      [/\bTotal\s*:/gi, "Total:"],
+      [/\bnone\b/gi, "ninguno"],
+      [/\bNo\b/gi, "No"],
+      [/\bLoading\b/gi, "Cargando"],
+      [/\bweather\b/gi, "clima"],
+      [/\bThunderstorm\b/gi, "Tormenta electrica"],
+      [/\bDrizzle\b/gi, "Llovizna"],
+      [/\bRain\b/gi, "Lluvia"],
+      [/\bSnow\b/gi, "Nieve"],
+      [/\bMist\b/gi, "Neblina"],
+      [/\bSmoke\b/gi, "Humo"],
+      [/\bHaze\b/gi, "Calima"],
+      [/\bDust\b/gi, "Polvo"],
+      [/\bFog\b/gi, "Niebla"],
+      [/\bSand\b/gi, "Arena"],
+      [/\bAsh\b/gi, "Ceniza"],
+      [/\bSquall\b/gi, "Turbonada"],
+      [/\bTornado\b/gi, "Tornado"],
+      [/\bClear sky\b/gi, "Cielo despejado"],
+      [/\bClear\b/gi, "Despejado"],
+      [/\bClouds\b/gi, "Nublado"],
+      [/\bfew clouds\b/gi, "pocas nubes"],
+      [/\bscattered clouds\b/gi, "nubes dispersas"],
+      [/\bbroken clouds\b/gi, "nubes fragmentadas"],
+      [/\bovercast clouds\b/gi, "nublado"],
+      [/\bMilk Tea\b/gi, "Te con leche"],
+      [/\bFruit Tea\b/gi, "Te de fruta"],
+      [/\bGreen Tea\b/gi, "Te verde"],
+      [/\bBlack Tea\b/gi, "Te negro"],
+      [/\bOolong Tea\b/gi, "Te oolong"],
+      [/\bJasmine Tea\b/gi, "Te de jazmin"],
+      [/\bSmoothie\b/gi, "Batido"],
+    ];
+
+    phraseReplacements.forEach(([pattern, replacement]) => {
+      result = result.replace(pattern, replacement);
+    });
+
+    return result;
+  }
+
+  async function requestTranslations(texts, targetLang) {
+    if (!texts.length) return [];
+    try {
+      const uncached = [];
+      const keyOrder = [];
+
+      texts.forEach((text) => {
+        const key = `${targetLang}::${text}`;
+        keyOrder.push(key);
+        if (!CACHE.has(key)) uncached.push(text);
+      });
+
+      if (uncached.length) {
+        const response = await fetch("/api/translate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            source: "en",
+            target: targetLang,
+            texts: uncached,
+          }),
+        });
+
+        const payload = await response.json();
+        if (!response.ok || !payload?.ok || !Array.isArray(payload?.translations)) {
+          return texts.map((text) => fallbackTranslateText(text, targetLang));
+        }
+
+        uncached.forEach((text, index) => {
+          const translated = String(payload.translations[index] || text);
+          CACHE.set(`${targetLang}::${text}`, translated);
+        });
+      }
+
+      return keyOrder.map((key) => CACHE.get(key) || key.split("::")[1]);
+    } catch {
+      return texts.map((text) => fallbackTranslateText(text, targetLang));
+    }
   }
 
   async function applyLanguage(targetLang) {

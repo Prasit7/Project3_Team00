@@ -43,30 +43,110 @@ function isMagnifierPreview() {
   return new URLSearchParams(window.location.search).get("magnifierPreview") === "1";
 }
 
+function getA11yLabels(lang = localStorage.getItem("lang") || "en", isHighContrast = localStorage.getItem("highContrast") === "true") {
+  if (lang === "es") {
+    return {
+      toolbarLabel: "Opciones de accesibilidad",
+      contrastOn: "⬛ Alto contraste activado",
+      contrastOff: "🔲 Alto contraste",
+      contrastAria: "Alternar modo de alto contraste",
+      languageGroupAria: "Seleccion de idioma",
+      enAria: "Cambiar a ingles",
+      esAria: "Cambiar a espanol",
+      textSizeAria: "Ajustar tamano de texto",
+      magnifierOff: "🔍 Lupa",
+      magnifierOn: "🔍 Activada",
+      contrastButtonText: isHighContrast ? "⬛ Alto contraste activado" : "🔲 Alto contraste",
+    };
+  }
+
+  return {
+    toolbarLabel: "Accessibility options",
+    contrastOn: "⬛ High Contrast On",
+    contrastOff: "🔲 High Contrast",
+    contrastAria: "Toggle high contrast mode",
+    languageGroupAria: "Language selection",
+    enAria: "Switch to English",
+    esAria: "Cambiar a español",
+    textSizeAria: "Adjust text size",
+    magnifierOff: "🔍 Magnifier",
+    magnifierOn: "🔍 On",
+    contrastButtonText: isHighContrast ? "⬛ High Contrast On" : "🔲 High Contrast",
+  };
+}
+
+function refreshToolbarLanguage() {
+  const lang = localStorage.getItem("lang") || "en";
+  const isHighContrast = localStorage.getItem("highContrast") === "true";
+  const labels = getA11yLabels(lang, isHighContrast);
+
+  const toolbar = document.querySelector(".a11y-toolbar");
+  if (toolbar) {
+    toolbar.setAttribute("aria-label", labels.toolbarLabel);
+  }
+
+  const langToggle = document.querySelector(".lang-toggle");
+  if (langToggle) {
+    langToggle.setAttribute("aria-label", labels.languageGroupAria);
+  }
+
+  const contrastBtn = document.getElementById("contrast-toggle");
+  if (contrastBtn) {
+    contrastBtn.setAttribute("aria-label", labels.contrastAria);
+    contrastBtn.textContent = labels.contrastButtonText;
+  }
+
+  const enBtn = document.getElementById("lang-en");
+  const esBtn = document.getElementById("lang-es");
+  if (enBtn) enBtn.setAttribute("aria-label", labels.enAria);
+  if (esBtn) esBtn.setAttribute("aria-label", labels.esAria);
+
+  const textSlider = document.getElementById("text-size-slider");
+  if (textSlider) {
+    textSlider.setAttribute("aria-label", labels.textSizeAria);
+  }
+
+  const magnifierBtn = document.getElementById("magnifier-toggle");
+  if (magnifierBtn) {
+    const isActive = magnifierBtn.getAttribute("aria-pressed") === "true";
+    magnifierBtn.textContent = isActive ? labels.magnifierOn : labels.magnifierOff;
+    magnifierBtn.setAttribute(
+      "aria-label",
+      lang === "es" ? "Alternar lupa de pantalla" : "Toggle screen magnifier"
+    );
+  }
+}
+
 function injectToolbar() {
   const isHighContrast = localStorage.getItem("highContrast") === "true";
   const lang = localStorage.getItem("lang") || "en";
+  const labels = getA11yLabels(lang, isHighContrast);
   const toolbar = document.createElement("div");
   toolbar.className = "a11y-toolbar";
   toolbar.setAttribute("role", "toolbar");
-  toolbar.setAttribute("aria-label", "Accessibility options");
+  toolbar.setAttribute("aria-label", labels.toolbarLabel);
 
   toolbar.innerHTML = `
     <button class="a11y-btn" id="contrast-toggle" type="button"
       aria-pressed="${isHighContrast}"
-      aria-label="Toggle high contrast mode">
-      ${isHighContrast ? "⬛ High Contrast On" : "🔲 High Contrast"}
+      aria-label="${labels.contrastAria}">
+      ${labels.contrastButtonText}
     </button>
-    <div class="lang-toggle" role="group" aria-label="Language selection">
+    <div class="lang-toggle" role="group" aria-label="${labels.languageGroupAria}">
       <button class="a11y-btn lang-btn ${lang === "en" ? "lang-active" : ""}" id="lang-en"
-        type="button" aria-pressed="${lang === "en"}" aria-label="Switch to English">EN</button>
+        type="button" aria-pressed="${lang === "en"}" aria-label="${labels.enAria}">EN</button>
       <span class="lang-divider" aria-hidden="true">|</span>
       <button class="a11y-btn lang-btn ${lang === "es" ? "lang-active" : ""}" id="lang-es"
-        type="button" aria-pressed="${lang === "es"}" aria-label="Cambiar a español">ES</button>
+        type="button" aria-pressed="${lang === "es"}" aria-label="${labels.esAria}">ES</button>
     </div>
   `;
 
-  document.body.insertBefore(toolbar, document.body.firstChild);
+  const primaryMain = document.querySelector("main");
+  if (primaryMain) {
+    primaryMain.insertBefore(toolbar, primaryMain.firstChild);
+  } else {
+    document.body.insertBefore(toolbar, document.body.firstChild);
+  }
 
   document.getElementById("contrast-toggle").addEventListener("click", toggleContrast);
   document.getElementById("lang-en").addEventListener("click", () => setLang("en"));
@@ -78,14 +158,15 @@ function toggleContrast() {
   const next = localStorage.getItem("highContrast") !== "true";
   localStorage.setItem("highContrast", next);
   document.documentElement.setAttribute("data-theme", next ? "high-contrast" : "");
-
   const btn = document.getElementById("contrast-toggle");
-  if (!btn) return;
-  btn.setAttribute("aria-pressed", next);
-  btn.textContent = next ? "⬛ High Contrast On" : "🔲 High Contrast";
+  if (btn) {
+    btn.setAttribute("aria-pressed", next);
+  }
+  refreshToolbarLanguage();
 }
 
 function setLang(lang) {
+  const previous = localStorage.getItem("lang") || "en";
   const next = lang === "es" ? "es" : "en";
   localStorage.setItem("lang", next);
   document.documentElement.setAttribute("lang", next);
@@ -98,10 +179,36 @@ function setLang(lang) {
     enBtn.classList.toggle("lang-active", next === "en");
     esBtn.classList.toggle("lang-active", next === "es");
   }
+  refreshToolbarLanguage();
+  window.dispatchEvent(new CustomEvent("app:languagechange", { detail: { lang: next } }));
 
-  if (window.GoogleCloudTranslate && typeof window.GoogleCloudTranslate.setLanguage === "function") {
-    window.GoogleCloudTranslate.setLanguage(next).catch(() => {});
+  const isCustomerPage = window.location.pathname.includes("customer-interface");
+  if (previous !== next && isCustomerPage) {
+    // Force a clean re-render from source content so language toggles never leave stale text behind.
+    window.location.reload();
+    return;
   }
+
+  const translator = window.GoogleCloudTranslate;
+  if (!translator) return;
+
+  (async () => {
+    try {
+      if (typeof translator.init === "function") {
+        translator.init();
+      }
+
+      if (typeof translator.setLanguage === "function") {
+        await translator.setLanguage(next);
+      }
+
+      // Retry refresh to catch late-rendered text nodes and ensure visible switch.
+      if (typeof translator.refresh === "function") {
+        window.setTimeout(() => translator.refresh().catch(() => {}), 140);
+        window.setTimeout(() => translator.refresh().catch(() => {}), 360);
+      }
+    } catch (_) {}
+  })();
 }
 
 function injectToolbarStyles() {
@@ -113,30 +220,58 @@ function injectToolbarStyles() {
     .a11y-toolbar {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 6px 12px;
-      background: #222;
-      color: #fff;
-      font-size: 0.85rem;
+      justify-content: center;
+      flex-wrap: nowrap;
+      gap: 10px;
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto 14px;
+      padding: 10px 12px;
+      border: 1px solid #cfdced;
+      border-radius: 14px;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(244, 250, 255, 0.94)),
+        radial-gradient(circle at top right, rgba(231, 111, 79, 0.14), transparent 40%);
+      color: #22334f;
+      box-shadow: 0 10px 20px rgba(29, 52, 84, 0.14);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      font-size: 0.9rem;
       position: relative;
       z-index: 30;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
     }
 
     .a11y-btn {
-      background: transparent;
-      color: #fff;
-      border: 1px solid #666;
-      border-radius: 4px;
-      padding: 4px 10px;
+      min-height: 36px;
+      padding: 6px 12px;
+      border-radius: 10px;
+      border: 1px solid #bdd2ec;
+      background: #ffffff;
+      color: #1d3558;
+      font-size: 0.84rem;
+      font-weight: 700;
       cursor: pointer;
-      font-size: 0.85rem;
+      transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease;
+    }
+
+    .a11y-btn:hover {
+      background: #edf5ff;
+      border-color: #8eb2e0;
+      transform: translateY(-1px);
+    }
+
+    .a11y-btn[aria-pressed="true"] {
+      border-color: #1f8c86;
+      background: #def7f5;
+      color: #0f5f5a;
     }
 
     .a11y-btn:focus-visible,
     .a11y-text-size input:focus-visible {
-      outline: 2px solid #fff;
+      outline: 3px solid rgba(15, 159, 149, 0.55);
       outline-offset: 2px;
     }
 
@@ -144,7 +279,8 @@ function injectToolbarStyles() {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding-left: 6px;
+      padding-left: 8px;
+      border-left: 1px solid #d8e5f4;
     }
 
     .lang-toggle {
@@ -154,12 +290,13 @@ function injectToolbarStyles() {
     }
 
     .lang-divider {
-      color: #888;
+      color: #8ca0bf;
     }
 
     .lang-active {
-      background: #fff;
-      color: #222;
+      background: #def7f5;
+      color: #0f5f5a;
+      border-color: #1f8c86;
       font-weight: 700;
     }
 
@@ -167,6 +304,7 @@ function injectToolbarStyles() {
     .a11y-size-icon {
       font-weight: 700;
       line-height: 1;
+      color: #244263;
     }
 
     .a11y-size-icon {
@@ -174,8 +312,8 @@ function injectToolbarStyles() {
     }
 
     .a11y-text-size input {
-      width: 120px;
-      accent-color: #fff;
+      width: 128px;
+      accent-color: #1f8c86;
     }
 
     #kiosk-magnifier-lens {
@@ -201,16 +339,36 @@ function injectToolbarStyles() {
 
     [data-theme="high-contrast"] .a11y-toolbar {
       background: #000;
-      border-bottom: 2px solid #fff;
+      border: 2px solid #fff;
+      color: #fff;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
     }
 
     [data-theme="high-contrast"] .a11y-btn {
+      background: #000;
+      color: #fff;
       border-color: #fff;
+    }
+
+    [data-theme="high-contrast"] .a11y-btn:hover {
+      background: #111;
+      transform: none;
     }
 
     [data-theme="high-contrast"] .lang-active {
       background: #fff;
       color: #000;
+    }
+
+    [data-theme="high-contrast"] .a11y-text-size {
+      border-left-color: #fff;
+    }
+
+    [data-theme="high-contrast"] .a11y-text-size label,
+    [data-theme="high-contrast"] .a11y-size-icon {
+      color: #fff;
     }
 
     [data-theme="high-contrast"] #kiosk-magnifier-lens {
@@ -238,7 +396,7 @@ function injectTextSizeSlider() {
       max="1.5"
       step="0.05"
       value="${saved}"
-      aria-label="Adjust text size"
+      aria-label="${(localStorage.getItem("lang") || "en") === "es" ? "Ajustar tamano de texto" : "Adjust text size"}"
     />
     <span class="a11y-size-icon" aria-hidden="true">A</span>
   `;
@@ -268,8 +426,11 @@ function injectMagnifier() {
   btn.id = "magnifier-toggle";
   btn.type = "button";
   btn.setAttribute("aria-pressed", "false");
-  btn.setAttribute("aria-label", "Toggle screen magnifier");
-  btn.textContent = "🔍 Magnifier";
+  btn.setAttribute(
+    "aria-label",
+    (localStorage.getItem("lang") || "en") === "es" ? "Alternar lupa de pantalla" : "Toggle screen magnifier"
+  );
+  btn.textContent = (localStorage.getItem("lang") || "en") === "es" ? "🔍 Lupa" : "🔍 Magnifier";
   toolbar.appendChild(btn);
 
   const lens = document.createElement("div");
@@ -279,6 +440,7 @@ function injectMagnifier() {
   lens.style.height = `${LENS_SIZE}px`;
   lens.style.left = "140px";
   lens.style.top = "140px";
+  lens.style.transform = "translate(-50%, -50%)";
 
   const iframe = document.createElement("iframe");
   iframe.setAttribute("aria-hidden", "true");
@@ -292,10 +454,8 @@ function injectMagnifier() {
   document.body.appendChild(lens);
 
   let active = false;
-  let lensX = 140;
-  let lensY = 140;
-  let targetX = lensX + LENS_SIZE / 2;
-  let targetY = lensY + LENS_SIZE / 2;
+  let targetX = 140;
+  let targetY = 140;
   let iframeLoaded = false;
 
   function initIframe() {
@@ -316,6 +476,11 @@ function injectMagnifier() {
           const style = iframeDoc.createElement("style");
           style.textContent = `
             .a11y-toolbar,
+            .a11y-toolbar * {
+              visibility: hidden !important;
+              pointer-events: none !important;
+            }
+
             #kiosk-magnifier-lens {
               display: none !important;
             }
@@ -345,21 +510,19 @@ function injectMagnifier() {
   }
 
   function moveLens(x, y, focusX = x + LENS_SIZE / 2, focusY = y + LENS_SIZE / 2) {
-    lensX = Math.max(0, Math.min(window.innerWidth - LENS_SIZE, x));
-    lensY = Math.max(0, Math.min(window.innerHeight - LENS_SIZE, y));
-    targetX = Math.max(0, Math.min(window.innerWidth, focusX));
-    targetY = Math.max(0, Math.min(window.innerHeight, focusY));
+    targetX = focusX;
+    targetY = focusY;
 
-    lens.style.left = `${lensX}px`;
-    lens.style.top = `${lensY}px`;
+    lens.style.left = `${focusX}px`;
+    lens.style.top = `${focusY}px`;
     updateOffset();
   }
 
   btn.addEventListener("click", () => {
     active = !active;
     btn.setAttribute("aria-pressed", active);
-    btn.textContent = active ? "🔍 On" : "🔍 Magnifier";
     lens.classList.toggle("active", active);
+    refreshToolbarLanguage();
 
     if (active) {
       initIframe();
@@ -399,7 +562,7 @@ function injectMagnifier() {
     iframe.style.width = `${window.innerWidth}px`;
     iframe.style.height = `${window.innerHeight}px`;
     if (active) {
-      moveLens(lensX, lensY, targetX, targetY);
+      moveLens(targetX - LENS_SIZE / 2, targetY - LENS_SIZE / 2, targetX, targetY);
     }
   });
 }
@@ -466,4 +629,5 @@ document.addEventListener("DOMContentLoaded", () => {
   if (window.GoogleCloudTranslate && typeof window.GoogleCloudTranslate.init === "function") {
     window.GoogleCloudTranslate.init();
   }
+  refreshToolbarLanguage();
 });

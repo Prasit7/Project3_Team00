@@ -1,6 +1,7 @@
 const categoryBar = document.getElementById("category-bar");
 const menuGrid = document.getElementById("menu-grid");
 const statusText = document.getElementById("customer-status");
+const statusBar = statusText?.closest(".status-bar");
 const selectedItemBox = document.getElementById("selected-item-box");
 const selectedItemTotal = document.getElementById("selected-item-total");
 const nextCustomizeLink = document.getElementById("next-customize-link");
@@ -48,6 +49,19 @@ let activeCategory = "";
 let activeModalItem = null;
 let activeModalQuantity = 1;
 let editingCartIndex = null;
+
+function setStatusMessage(message) {
+  if (!statusText) return;
+  const nextMessage = String(message || "").trim();
+  statusText.textContent = nextMessage;
+  if (statusBar) {
+    statusBar.classList.toggle("is-hidden", nextMessage.length === 0);
+  }
+}
+
+function clearStatusMessage() {
+  setStatusMessage("");
+}
 
 const ITEM_IMAGE_MAP = {
   classicmilktea: "classicmilktea.jpg",
@@ -243,7 +257,7 @@ function removeCartItemAt(indexToRemove) {
   saveCart(cart);
   renderCartSummary();
   if (removedItem) {
-    statusText.textContent = `${removedItem.itemName} removed from cart.`;
+    setStatusMessage(`${removedItem.itemName} removed from cart.`);
   }
 }
 
@@ -281,6 +295,86 @@ function escapeHtml(text) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function getUiLang() {
+  return (localStorage.getItem("lang") || document.documentElement.getAttribute("lang") || "en").toLowerCase();
+}
+
+function isSpanishUi() {
+  return getUiLang() === "es";
+}
+
+function translateUi(enText, esText) {
+  return getUiLang() === "es" ? esText : enText;
+}
+
+function translateDrinkName(name) {
+  if (!isSpanishUi()) return String(name || "");
+  return String(name || "")
+    .replace(/Milk Tea/gi, "Te con leche")
+    .replace(/Fruit Tea/gi, "Te de fruta")
+    .replace(/Green Tea/gi, "Te verde")
+    .replace(/Black Tea/gi, "Te negro")
+    .replace(/Oolong Tea/gi, "Te oolong")
+    .replace(/Jasmine Tea/gi, "Te de jazmin")
+    .replace(/Smoothie/gi, "Batido");
+}
+
+function translateCategoryName(category) {
+  if (!isSpanishUi()) return String(category || "");
+  return String(category || "")
+    .replace(/Milk Tea/gi, "Te con leche")
+    .replace(/Fruit Tea/gi, "Te de fruta")
+    .replace(/Smoothie/gi, "Batido")
+    .replace(/Special/gi, "Especial");
+}
+
+function translateModifierValue(value) {
+  if (!isSpanishUi()) return String(value || "");
+  return String(value || "")
+    .replace(/\bCold\b/gi, "Frio")
+    .replace(/\bHot\b/gi, "Caliente")
+    .replace(/\bNo Ice\b/gi, "Sin hielo")
+    .replace(/\bLess Ice\b/gi, "Menos hielo")
+    .replace(/\bRegular Ice\b/gi, "Hielo regular")
+    .replace(/\bExtra Ice\b/gi, "Hielo extra")
+    .replace(/\bNo Sugar\b/gi, "Sin azucar")
+    .replace(/\bLight Sugar\b/gi, "Azucar ligera")
+    .replace(/\bHalf Sugar\b/gi, "Media azucar")
+    .replace(/\bLess Sugar\b/gi, "Menos azucar")
+    .replace(/\bNormal Sugar\b/gi, "Azucar normal")
+    .replace(/\bExtra Sugar\b/gi, "Azucar extra")
+    .replace(/\bRegular\b/gi, "Regular")
+    .replace(/\bLarge\b/gi, "Grande");
+}
+
+function postProcessAssistantReply(replyText) {
+  const base = String(replyText || "");
+  if (!isSpanishUi()) return base;
+
+  const replacements = [
+    [/\bRemoved\b/gi, "Se elimino"],
+    [/\bfrom your cart\b/gi, "de tu carrito"],
+    [/\bI recommend\b/gi, "Te recomiendo"],
+    [/\bDo you want any other modifications\??/gi, "Quieres alguna otra modificacion?"],
+    [/\bDo you want any modifications\??/gi, "Quieres alguna modificacion?"],
+    [/\bYour cart is updated\b/gi, "Tu carrito se actualizo"],
+    [/\badded to your cart\b/gi, "agregado a tu carrito"],
+    [/\bdefault settings\b/gi, "configuracion predeterminada"],
+    [/\bsize\b/gi, "tamano"],
+    [/\bice level\b/gi, "nivel de hielo"],
+    [/\bsugar level\b/gi, "nivel de azucar"],
+    [/\btoppings\b/gi, "toppings"],
+    [/\bNetwork issue\. Please try again\./gi, "Problema de red. Intentalo de nuevo."],
+    [/\bI can help with menu and ordering[^\n]*/gi, "Puedo ayudarte con menu y pedidos."],
+  ];
+
+  let text = base;
+  replacements.forEach(([pattern, replacement]) => {
+    text = text.replace(pattern, replacement);
+  });
+  return text;
 }
 
 function appendAssistantMessage(kind, text) {
@@ -346,7 +440,7 @@ function removeCartItemFromAssistant(action) {
   saveCart(cart);
   renderCartSummary();
   if (removed) {
-    statusText.textContent = `${removed.itemName} removed from cart.`;
+    setStatusMessage(`${removed.itemName} removed from cart.`);
   }
 
   const pending = getAssistantPendingItem();
@@ -393,7 +487,7 @@ function addDefaultItemFromAssistant(itemId, itemName) {
   cart.push(order);
   saveCart(cart);
   renderCartSummary();
-  statusText.textContent = `${order.itemName} added to cart.`;
+  setStatusMessage(`${order.itemName} added to cart.`);
   return cart.length - 1;
 }
 
@@ -452,7 +546,7 @@ function updatePendingCartItemFromAssistant(updates) {
   cart[targetIndex] = updated;
   saveCart(cart);
   renderCartSummary();
-  statusText.textContent = `${updated.itemName} updated`;
+  setStatusMessage(`${updated.itemName} updated`);
   setAssistantPendingItem({
     ...pending,
     cartIndex: targetIndex,
@@ -515,7 +609,7 @@ async function handleAssistantSubmit(event) {
 
   appendAssistantMessage("user", text);
   assistantInput.value = "";
-  appendAssistantMessage("bot", "Thinking...");
+  appendAssistantMessage("bot", translateUi("Thinking...", "Pensando..."));
 
   try {
     const response = await fetch("/api/assistant", {
@@ -523,6 +617,7 @@ async function handleAssistantSubmit(event) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         message: text,
+        language: getUiLang(),
         cart: buildAssistantCartContext(),
         pendingItem: getAssistantPendingItem(),
       }),
@@ -537,24 +632,30 @@ async function handleAssistantSubmit(event) {
       const detail = payload?.detail ? ` (${payload.detail})` : "";
       appendAssistantMessage(
         "bot",
-        `I can help with menu and ordering, but I am temporarily unavailable. Please try again.${detail}`
+        translateUi(
+          `I can help with menu and ordering, but I am temporarily unavailable. Please try again.${detail}`,
+          `Puedo ayudarte con menu y pedidos, pero temporalmente no estoy disponible. Intentalo de nuevo.${detail}`
+        )
       );
       return;
     }
 
-    appendAssistantMessage("bot", payload.reply || "How can I help with your order?");
+    appendAssistantMessage(
+      "bot",
+      postProcessAssistantReply(payload.reply || translateUi("How can I help with your order?", "Como puedo ayudarte con tu pedido?"))
+    );
     handleAssistantAction(payload.action);
   } catch (_error) {
     if (assistantMessages?.lastElementChild) {
       assistantMessages.lastElementChild.remove();
     }
-    appendAssistantMessage("bot", "Network issue. Please try again.");
+    appendAssistantMessage("bot", translateUi("Network issue. Please try again.", "Problema de red. Intentalo de nuevo."));
   }
 }
 
 function setNextActionEnabled(enabled) {
   nextCustomizeLink.href = "checkout.html";
-  nextCustomizeLink.textContent = "Next: Checkout";
+  nextCustomizeLink.textContent = translateUi("Next: Checkout", "Siguiente: Pago");
 
   if (enabled) {
     nextCustomizeLink.classList.remove("is-disabled");
@@ -570,8 +671,8 @@ function renderCartSummary() {
   const cart = loadCart();
 
   if (cart.length === 0) {
-    selectedItemBox.innerHTML = `<p>No item selected yet.</p>`;
-    selectedItemTotal.textContent = `Total: ${formatMoney(0)}`;
+    selectedItemBox.innerHTML = `<p>${translateUi("No item selected yet.", "Aun no hay bebida seleccionada.")}</p>`;
+    selectedItemTotal.textContent = `${translateUi("Total", "Total")}: ${formatMoney(0)}`;
     setNextActionEnabled(false);
     return;
   }
@@ -581,19 +682,19 @@ function renderCartSummary() {
       (item, index) => {
         const itemImagePath = getItemImagePath(item.itemName);
         const temperatureLine = shouldShowTemperature(item.category)
-          ? `<p>Temperature: ${item.temperature || "Cold"}</p>`
+          ? `<p>${translateUi("Temperature", "Temperatura")}: ${translateModifierValue(item.temperature || "Cold")}</p>`
           : "";
         return `
         <article class="cart-item-row">
           <div class="cart-item-content">
-            <p><strong>Item ${index + 1}: ${item.itemName}</strong></p>
-            <p>Size: ${formatSizeLabel(item.size)}</p>
-            <p>Quantity: ${Number(item.quantity || 1)}</p>
+            <p><strong>${translateUi("Item", "Articulo")} ${index + 1}: ${translateDrinkName(item.itemName)}</strong></p>
+            <p>${translateUi("Size", "Tamano")}: ${translateModifierValue(formatSizeLabel(item.size))}</p>
+            <p>${translateUi("Quantity", "Cantidad")}: ${Number(item.quantity || 1)}</p>
             ${temperatureLine}
-            <p>Ice Level: ${item.ice}</p>
-            <p>Sugar Level: ${item.sugar}</p>
-            <p>Toppings: ${item.toppings.length ? item.toppings.join(", ") : "None"}</p>
-            <p>Item Total: ${formatMoney(item.totalPrice)}</p>
+            <p>${translateUi("Ice Level", "Nivel de hielo")}: ${translateModifierValue(item.ice)}</p>
+            <p>${translateUi("Sugar Level", "Nivel de azucar")}: ${translateModifierValue(item.sugar)}</p>
+            <p>${translateUi("Toppings", "Toppings")}: ${item.toppings.length ? item.toppings.map((entry) => translateModifierValue(entry)).join(", ") : translateUi("None", "Ninguno")}</p>
+            <p>${translateUi("Item Total", "Total del articulo")}: ${formatMoney(item.totalPrice)}</p>
           </div>
           <div class="cart-item-side">
             <div class="cart-item-thumb" aria-hidden="true">
@@ -608,19 +709,19 @@ function renderCartSummary() {
                 type="button"
                 class="cart-item-edit-btn"
                 data-edit-index="${index}"
-                aria-label="Edit ${item.itemName}"
-                title="Edit customizations"
+                aria-label="${translateUi("Edit", "Editar")} ${translateDrinkName(item.itemName)}"
+                title="${translateUi("Edit customizations", "Editar personalizacion")}"
               >
-                Edit
+                ${translateUi("Edit", "Editar")}
               </button>
-              <div class="cart-item-qty-controls" aria-label="Quantity controls for ${item.itemName}">
+              <div class="cart-item-qty-controls" aria-label="${translateUi("Quantity controls for", "Controles de cantidad para")} ${translateDrinkName(item.itemName)}">
                 <button
                   type="button"
                   class="cart-item-qty-btn"
                   data-qty-index="${index}"
                   data-qty-delta="-1"
-                  aria-label="Decrease quantity for ${item.itemName}"
-                  title="Decrease quantity"
+                  aria-label="${translateUi("Decrease quantity for", "Disminuir cantidad de")} ${translateDrinkName(item.itemName)}"
+                  title="${translateUi("Decrease quantity", "Disminuir cantidad")}"
                 >
                   -
                 </button>
@@ -630,8 +731,8 @@ function renderCartSummary() {
                   class="cart-item-qty-btn"
                   data-qty-index="${index}"
                   data-qty-delta="1"
-                  aria-label="Increase quantity for ${item.itemName}"
-                  title="Increase quantity"
+                  aria-label="${translateUi("Increase quantity for", "Aumentar cantidad de")} ${translateDrinkName(item.itemName)}"
+                  title="${translateUi("Increase quantity", "Aumentar cantidad")}"
                 >
                   +
                 </button>
@@ -645,7 +746,7 @@ function renderCartSummary() {
     .join("");
 
   const total = cart.reduce((sum, item) => sum + Number(item.totalPrice || 0), 0);
-  selectedItemTotal.textContent = `Total: ${formatMoney(total)}`;
+  selectedItemTotal.textContent = `${translateUi("Total", "Total")}: ${formatMoney(total)}`;
   setNextActionEnabled(true);
 }
 
@@ -661,7 +762,7 @@ function renderCategories() {
       activeCategory = category;
     }
     button.type = "button";
-    button.textContent = category;
+    button.textContent = translateCategoryName(category);
     button.addEventListener("click", () => {
       activeCategory = category;
       [...categoryBar.querySelectorAll(".category-button")].forEach((item) => item.classList.remove("active"));
@@ -678,8 +779,8 @@ function openCustomizeModal(item, existingOrder = null) {
   activeModalQuantity = existingOrder?.quantity || 1;
   const itemImagePath = getItemImagePath(item.name);
 
-  modalDrinkName.textContent = item.name;
-  modalDrinkCategory.textContent = `${item.category} · Base ${formatMoney(item.price)}`;
+  modalDrinkName.textContent = translateDrinkName(item.name);
+  modalDrinkCategory.textContent = `${translateCategoryName(item.category)} · ${translateUi("Base", "Base")} ${formatMoney(item.price)}`;
   modalSpecialInstructions.value = "";
   if (itemImagePath) {
     modalMedia.innerHTML = `<img src="${itemImagePath}" alt="${item.name}" class="menu-item-image" loading="lazy" />`;
@@ -689,7 +790,7 @@ function openCustomizeModal(item, existingOrder = null) {
 
   modalSizeLevel.innerHTML = SIZE_OPTIONS.map(
     (sizeOption) =>
-      `<option value="${sizeOption.name}">${formatSizeLabel(sizeOption.name)}${sizeOption.priceDelta > 0 ? ` (+${formatMoney(sizeOption.priceDelta)})` : ""}</option>`
+      `<option value="${sizeOption.name}">${translateModifierValue(formatSizeLabel(sizeOption.name))}${sizeOption.priceDelta > 0 ? ` (+${formatMoney(sizeOption.priceDelta)})` : ""}</option>`
   ).join("");
   modalSizeLevel.value = SIZE_OPTIONS[0].name;
 
@@ -705,13 +806,13 @@ function openCustomizeModal(item, existingOrder = null) {
   modalTemperatureLevel.style.display = showTemperature ? "" : "none";
 
   modalTemperatureLevel.innerHTML = temperatureOptions
-    .map((option) => `<option value="${option.name}">${option.name}</option>`)
+    .map((option) => `<option value="${option.name}">${translateModifierValue(option.name)}</option>`)
     .join("");
   modalIceLevel.innerHTML = iceOptions
-    .map((option) => `<option value="${option.name}">${option.name}</option>`)
+    .map((option) => `<option value="${option.name}">${translateModifierValue(option.name)}</option>`)
     .join("");
   modalSugarLevel.innerHTML = sugarOptions
-    .map((option) => `<option value="${option.name}">${option.name}</option>`)
+    .map((option) => `<option value="${option.name}">${translateModifierValue(option.name)}</option>`)
     .join("");
 
   if (modalTemperatureLevel.options.length > 0) {
@@ -734,7 +835,7 @@ function openCustomizeModal(item, existingOrder = null) {
       (option) => `
         <label class="checkbox-option">
           <input type="checkbox" value="${option.name}" />
-          <span>${option.name} (${formatMoney(option.priceDelta)})</span>
+          <span>${translateModifierValue(option.name)} (${formatMoney(option.priceDelta)})</span>
         </label>
       `
     )
@@ -870,7 +971,7 @@ function addModalOrderToCart() {
     })
   );
 
-  statusText.textContent = Number.isInteger(editingCartIndex) ? `${order.itemName} updated.` : `${order.itemName} added to cart.`;
+  setStatusMessage(Number.isInteger(editingCartIndex) ? `${order.itemName} updated.` : `${order.itemName} added to cart.`);
   renderCartSummary();
   closeCustomizeModal();
 }
@@ -905,7 +1006,10 @@ function renderMenuItems() {
     const card = document.createElement("button");
     card.className = "menu-item-box";
     card.type = "button";
-    card.setAttribute("aria-label", `${item.name}, ${formatMoney(item.price)}. Open customization`);
+    card.setAttribute(
+      "aria-label",
+      `${translateDrinkName(item.name)}, ${formatMoney(item.price)}. ${translateUi("Open customization", "Abrir personalizacion")}`
+    );
     card.innerHTML = `
       <div class="menu-item-media" aria-hidden="true">
         ${
@@ -915,10 +1019,10 @@ function renderMenuItems() {
         }
       </div>
       <div class="menu-item-details">
-        <h2>${item.name}</h2>
+        <h2>${translateDrinkName(item.name)}</h2>
         <p class="price-text">${formatMoney(item.price)}</p>
       </div>
-      <p class="menu-item-hint">Tap to customize</p>
+      <p class="menu-item-hint">${translateUi("Tap to customize", "Toca para personalizar")}</p>
     `;
 
     card.addEventListener("click", () => openCustomizeModal(item));
@@ -947,7 +1051,7 @@ async function loadMenuItems() {
     menuItems = Array.isArray(items) ? items : [];
 
     if (menuItems.length === 0) {
-      statusText.textContent = "No menu items available right now.";
+      setStatusMessage("No menu items available right now.");
       menuGrid.innerHTML = `<article class="menu-item-box skeleton-box"><h2>No menu items available right now.</h2></article>`;
       return;
     }
@@ -955,9 +1059,9 @@ async function loadMenuItems() {
     await loadModifiers();
     renderCategories();
     renderMenuItems();
-    statusText.textContent = "Menu is ready.";
+    clearStatusMessage();
   } catch (error) {
-    statusText.textContent = "Something went wrong. Please try again.";
+    setStatusMessage("Something went wrong. Please try again.");
     menuGrid.innerHTML =
       `<article class="menu-item-box skeleton-box"><h2>Menu unavailable</h2><p class="price-text">Please try again soon.</p></article>`;
   }

@@ -35,6 +35,36 @@ function formatMoney(value) {
   return `$${Number(value).toFixed(2)}`;
 }
 
+function getUiLang() {
+  return (localStorage.getItem("lang") || document.documentElement.getAttribute("lang") || "en").toLowerCase();
+}
+
+function isSpanishUi() {
+  return getUiLang() === "es";
+}
+
+function translateUi(enText, esText) {
+  return isSpanishUi() ? esText : enText;
+}
+
+function translateModifierValue(value) {
+  if (!isSpanishUi()) return String(value || "");
+  return String(value || "")
+    .replace(/\bCold\b/gi, "Frio")
+    .replace(/\bHot\b/gi, "Caliente")
+    .replace(/\bNo Ice\b/gi, "Sin hielo")
+    .replace(/\bLess Ice\b/gi, "Menos hielo")
+    .replace(/\bRegular Ice\b/gi, "Hielo regular")
+    .replace(/\bExtra Ice\b/gi, "Hielo extra")
+    .replace(/\bNo Sugar\b/gi, "Sin azucar")
+    .replace(/\bLight Sugar\b/gi, "Azucar ligera")
+    .replace(/\bHalf Sugar\b/gi, "Media azucar")
+    .replace(/\bLess Sugar\b/gi, "Menos azucar")
+    .replace(/\bNormal Sugar\b/gi, "Azucar normal")
+    .replace(/\bExtra Sugar\b/gi, "Azucar extra")
+    .replace(/\bLarge\b/gi, "Grande");
+}
+
 function formatSizeLabel(sizeValue) {
   if (sizeValue === "Regular") return "Regular - 16oz";
   if (sizeValue === "Large") return "Large - 20oz";
@@ -99,7 +129,9 @@ function fillSelectOptions(selectElement, options, defaultValue) {
   options.forEach((option) => {
     const element = document.createElement("option");
     element.value = option.name;
-    element.textContent = selectElement === sizeSelect ? formatSizeLabel(option.name) : option.name;
+    element.textContent = translateModifierValue(
+      selectElement === sizeSelect ? formatSizeLabel(option.name) : option.name
+    );
     if (option.name === defaultValue) element.selected = true;
     selectElement.appendChild(element);
   });
@@ -113,7 +145,7 @@ function renderToppings(options, selectedNames = []) {
     label.className = "checkbox-option";
     label.innerHTML = `
       <input type="checkbox" value="${option.name}" ${selectedNames.includes(option.name) ? "checked" : ""} />
-      <span>${option.name} (${formatMoney(option.priceDelta)})</span>
+      <span>${translateModifierValue(option.name)} (${formatMoney(option.priceDelta)})</span>
     `;
 
     label.querySelector("input").addEventListener("change", updatePreview);
@@ -154,22 +186,22 @@ function updatePreview() {
   const total = calculateTotal();
 
   const temperatureLine = shouldShowTemperature()
-    ? `<p>Temperature: ${temperatureSelect.value || "Cold"}</p>`
+    ? `<p>${translateUi("Temperature", "Temperatura")}: ${translateModifierValue(temperatureSelect.value || "Cold")}</p>`
     : "";
   const iceLine = shouldShowIceField()
-    ? `<p>Ice Level: ${iceSelect.value || "Regular Ice"}</p>`
+    ? `<p>${translateUi("Ice Level", "Nivel de hielo")}: ${translateModifierValue(iceSelect.value || "Regular Ice")}</p>`
     : "";
 
   customizeOrderBox.innerHTML = `
     <p><strong>${selectedMenuItem.itemName}</strong></p>
-    <p>Size: ${formatSizeLabel(sizeSelect.value || "Regular")}</p>
+    <p>${translateUi("Size", "Tamano")}: ${translateModifierValue(formatSizeLabel(sizeSelect.value || "Regular"))}</p>
     ${temperatureLine}
     ${iceLine}
-    <p>Sugar Level: ${sugarSelect.value || "Normal Sugar"}</p>
-    <p>Toppings: ${toppings.length ? toppings.join(", ") : "None"}</p>
-    <p>Special Instructions: ${specialInstructionsInput.value.trim() || "None"}</p>
+    <p>${translateUi("Sugar Level", "Nivel de azucar")}: ${translateModifierValue(sugarSelect.value || "Normal Sugar")}</p>
+    <p>${translateUi("Toppings", "Toppings")}: ${toppings.length ? toppings.map((entry) => translateModifierValue(entry)).join(", ") : translateUi("None", "Ninguno")}</p>
+    <p>${translateUi("Special Instructions", "Instrucciones especiales")}: ${specialInstructionsInput.value.trim() || translateUi("None", "Ninguno")}</p>
   `;
-  customizeTotal.textContent = `Total: ${formatMoney(total)}`;
+  customizeTotal.textContent = `${translateUi("Total", "Total")}: ${formatMoney(total)}`;
 }
 
 function buildCurrentOrder() {
@@ -218,23 +250,23 @@ function renderCartPreview() {
       (item, index) => {
         const temperatureLine = isSmoothieCategory(item.category)
           ? ""
-          : `<p>Temperature: ${item.temperature || "Cold"}</p>`;
+          : `<p>${translateUi("Temperature", "Temperatura")}: ${translateModifierValue(item.temperature || "Cold")}</p>`;
         return `
-        <p><strong>Item ${index + 1}: ${item.itemName}</strong></p>
-        <p>Size: ${formatSizeLabel(item.size)}</p>
+        <p><strong>${translateUi("Item", "Articulo")} ${index + 1}: ${item.itemName}</strong></p>
+        <p>${translateUi("Size", "Tamano")}: ${translateModifierValue(formatSizeLabel(item.size))}</p>
         ${temperatureLine}
-        <p>Ice Level: ${item.ice}</p>
-        <p>Sugar Level: ${item.sugar}</p>
-        <p>Toppings: ${item.toppings.length ? item.toppings.join(", ") : "None"}</p>
-        <p>Special Instructions: ${item.specialInstructions || "None"}</p>
-        <p>Item Total: ${formatMoney(item.totalPrice)}</p>
+        <p>${translateUi("Ice Level", "Nivel de hielo")}: ${translateModifierValue(item.ice)}</p>
+        <p>${translateUi("Sugar Level", "Nivel de azucar")}: ${translateModifierValue(item.sugar)}</p>
+        <p>${translateUi("Toppings", "Toppings")}: ${item.toppings.length ? item.toppings.map((entry) => translateModifierValue(entry)).join(", ") : translateUi("None", "Ninguno")}</p>
+        <p>${translateUi("Special Instructions", "Instrucciones especiales")}: ${item.specialInstructions || translateUi("None", "Ninguno")}</p>
+        <p>${translateUi("Item Total", "Total del articulo")}: ${formatMoney(item.totalPrice)}</p>
       `;
       }
     )
     .join("");
 
   const total = cart.reduce((sum, item) => sum + Number(item.totalPrice || 0), 0);
-  customizeTotal.textContent = `Total: ${formatMoney(total)}`;
+  customizeTotal.textContent = `${translateUi("Total", "Total")}: ${formatMoney(total)}`;
 }
 
 async function loadModifiers() {

@@ -339,6 +339,10 @@ function createAssistantActionReplyForAdd(item) {
   return `Added ${item.name} to your cart with default settings (Regular size, Regular Ice, 100% Sugar, no toppings). Current item price is $${itemPrice}. Do you want any modifications?`;
 }
 
+function pickLangText(isSpanish, englishText, spanishText) {
+  return isSpanish ? spanishText : englishText;
+}
+
 function normalizeCart(rawCart) {
   if (!Array.isArray(rawCart)) return [];
 
@@ -435,6 +439,8 @@ export async function POST(request) {
 
     const body = await request.json().catch(() => ({}));
     const message = cleanText(body.message, MAX_MESSAGE_LENGTH);
+    const requestedLanguage = String(body.language || "en").toLowerCase() === "es" ? "es" : "en";
+    const isSpanish = requestedLanguage === "es";
     const cart = normalizeCart(body.cart);
 
     if (!message) {
@@ -447,7 +453,11 @@ export async function POST(request) {
     if (hasDisallowedManagementIntent(message)) {
       return NextResponse.json({
         ok: true,
-        reply: "I can help with cart, menu info, and drink customizations only. I cannot change menu records or system settings.",
+        reply: pickLangText(
+          isSpanish,
+          "I can help with cart, menu info, and drink customizations only. I cannot change menu records or system settings.",
+          "Puedo ayudarte con carrito, menu y personalizacion de bebidas. No puedo cambiar registros del menu ni configuraciones del sistema."
+        ),
       });
     }
 
@@ -457,7 +467,11 @@ export async function POST(request) {
       if (cartItem) {
         return NextResponse.json({
           ok: true,
-          reply: `Removed ${cartItem.itemName} from your cart.`,
+          reply: pickLangText(
+            isSpanish,
+            `Removed ${cartItem.itemName} from your cart.`,
+            `Se elimino ${cartItem.itemName} de tu carrito.`
+          ),
           action: {
             type: "REMOVE_CART_ITEM",
             cartIndex: cartItem.cartIndex,
@@ -469,7 +483,11 @@ export async function POST(request) {
 
       return NextResponse.json({
         ok: true,
-        reply: "I could not find that drink in your cart. Tell me the drink name or item number to remove.",
+        reply: pickLangText(
+          isSpanish,
+          "I could not find that drink in your cart. Tell me the drink name or item number to remove.",
+          "No pude encontrar esa bebida en tu carrito. Dime el nombre de la bebida o el numero de articulo para eliminar."
+        ),
       });
     }
 
@@ -486,7 +504,11 @@ export async function POST(request) {
     if (pendingItem && isNoModificationMessage(message)) {
       return NextResponse.json({
         ok: true,
-        reply: `Got it. Keeping ${pendingItem.name} with default settings. Your cart is updated.`,
+        reply: pickLangText(
+          isSpanish,
+          `Got it. Keeping ${pendingItem.name} with default settings. Your cart is updated.`,
+          `Entendido. Mantendremos ${pendingItem.name} con configuracion predeterminada. Tu carrito se actualizo.`
+        ),
         action: { type: "CLEAR_PENDING_ITEM" },
       });
     }
@@ -494,7 +516,11 @@ export async function POST(request) {
     if (pendingItem && isStartModificationMessage(message)) {
       return NextResponse.json({
         ok: true,
-        reply: `Sure. For ${pendingItem.name}, tell me your preferred size, ice level, sugar level, and toppings.`,
+        reply: pickLangText(
+          isSpanish,
+          `Sure. For ${pendingItem.name}, tell me your preferred size, ice level, sugar level, and toppings.`,
+          `Claro. Para ${pendingItem.name}, dime tu tamano, nivel de hielo, nivel de azucar y toppings preferidos.`
+        ),
       });
     }
 
@@ -502,7 +528,11 @@ export async function POST(request) {
       const randomItem = items[Math.floor(Math.random() * items.length)];
       return NextResponse.json({
         ok: true,
-        reply: createAssistantActionReplyForAdd(randomItem),
+        reply: pickLangText(
+          isSpanish,
+          createAssistantActionReplyForAdd(randomItem),
+          `Se agrego ${randomItem.name} a tu carrito con configuracion predeterminada (tamano Regular, hielo regular, 100% azucar, sin toppings). El precio actual es $${Number(randomItem.price || 0).toFixed(2)}. Quieres alguna modificacion?`
+        ),
         action: {
           type: "ADD_DEFAULT_ITEM",
           itemId: randomItem.id,
@@ -514,7 +544,11 @@ export async function POST(request) {
     if (pendingItem && hasAddThatIntent(message)) {
       return NextResponse.json({
         ok: true,
-        reply: createAssistantActionReplyForAdd(pendingItem),
+        reply: pickLangText(
+          isSpanish,
+          createAssistantActionReplyForAdd(pendingItem),
+          `Se agrego ${pendingItem.name} a tu carrito con configuracion predeterminada (tamano Regular, hielo regular, 100% azucar, sin toppings). Quieres alguna modificacion?`
+        ),
         action: {
           type: "ADD_DEFAULT_ITEM",
           itemId: pendingItem.id,
@@ -528,7 +562,11 @@ export async function POST(request) {
       if (parsed.applied.length > 0) {
         return NextResponse.json({
           ok: true,
-          reply: `Updated ${pendingItem.name}: ${parsed.applied.join(", ")}. Do you want any other modifications?`,
+          reply: pickLangText(
+            isSpanish,
+            `Updated ${pendingItem.name}: ${parsed.applied.join(", ")}. Do you want any other modifications?`,
+            `Se actualizo ${pendingItem.name}: ${parsed.applied.join(", ")}. Quieres alguna otra modificacion?`
+          ),
           action: {
             type: "UPDATE_PENDING_ITEM",
             updates: parsed.updates,
@@ -542,7 +580,11 @@ export async function POST(request) {
         if (normalizedItemName && normalizedMessage.includes(normalizedItemName.slice(0, Math.min(normalizedItemName.length, 12)))) {
           return NextResponse.json({
             ok: true,
-            reply: `I cannot remove the main flavor from ${pendingItem.name}. You can choose a different drink if you want another flavor.`,
+            reply: pickLangText(
+              isSpanish,
+              `I cannot remove the main flavor from ${pendingItem.name}. You can choose a different drink if you want another flavor.`,
+              `No puedo eliminar el sabor principal de ${pendingItem.name}. Puedes elegir otra bebida si quieres otro sabor.`
+            ),
           });
         }
       }
@@ -553,7 +595,11 @@ export async function POST(request) {
       if (recommendation) {
         return NextResponse.json({
           ok: true,
-          reply: `I recommend ${recommendation.name}. It is a great choice. Want me to add it to your cart?`,
+          reply: pickLangText(
+            isSpanish,
+            `I recommend ${recommendation.name}. It is a great choice. Want me to add it to your cart?`,
+            `Te recomiendo ${recommendation.name}. Es una gran opcion. Quieres que la agregue a tu carrito?`
+          ),
           action: {
             type: "SET_PENDING_ITEM",
             itemId: recommendation.id,
@@ -567,7 +613,11 @@ export async function POST(request) {
     if (requestedItem) {
       return NextResponse.json({
         ok: true,
-        reply: createAssistantActionReplyForAdd(requestedItem),
+        reply: pickLangText(
+          isSpanish,
+          createAssistantActionReplyForAdd(requestedItem),
+          `Se agrego ${requestedItem.name} a tu carrito con configuracion predeterminada (tamano Regular, hielo regular, 100% azucar, sin toppings). Quieres alguna modificacion?`
+        ),
         action: {
           type: "ADD_DEFAULT_ITEM",
           itemId: requestedItem.id,
@@ -601,7 +651,8 @@ export async function POST(request) {
                 "8) Output plain text only. Do not use markdown formatting like **bold**, bullets, or code ticks.\n" +
                 "9) If there is a pending drink in context and the user says short replies like 'normal', treat it as keeping default modifications.\n" +
                 "10) If a user asks anything outside menu information, drink recommendations, toppings, customization, or ordering help, respond exactly: I do not have information on that. I can help with menu and ordering questions.\n" +
-                "11) If requested details are missing from provided context, respond exactly: I do not have that information.",
+                "11) If requested details are missing from provided context, respond exactly: I do not have that information.\n" +
+                `12) Reply language must be ${isSpanish ? "Spanish" : "English"}.`,
             },
           ],
         },
