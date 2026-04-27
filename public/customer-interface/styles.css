@@ -841,6 +841,44 @@ button:disabled {
   font: inherit;
 }
 
+.quantity-control {
+  display: grid;
+  grid-template-columns: 48px minmax(72px, 1fr) 48px;
+  gap: 10px;
+  align-items: center;
+  max-width: 240px;
+}
+
+.quantity-button {
+  width: 48px;
+  height: 48px;
+  border: 1px solid #eabda5;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--accent-strong);
+  cursor: pointer;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.quantity-button:hover {
+  border-color: #df9d7d;
+  background: #fff0e5;
+}
+
+.quantity-value {
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #ebc6b2;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--text);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
 
 .modal-footer {
   display: flex;

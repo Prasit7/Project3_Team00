@@ -233,6 +233,7 @@ function renderOrder(cart) {
             <p><strong>Item ${index + 1}: ${order.itemName}</strong></p>
             <p>Category: ${order.category}</p>
             <p>Size: ${formatSizeLabel(order.size)}</p>
+            <p>Quantity: ${Number(order.quantity || 1)}</p>
             <p>Ice Level: ${order.ice}</p>
             <p>Sugar Level: ${order.sugar}</p>
             <p>Toppings: ${order.toppings.length ? order.toppings.join(", ") : "None"}</p>
@@ -257,12 +258,19 @@ function buildOrderPayload(cart) {
   return {
     status: "completed",
     paymentMethod: "customer-kiosk",
-    items: cart.map((order) => ({
-      id: Number(order.itemId),
-      quantity: 1,
-      price: Number(order.totalPrice),
-      modifiers: [order.size, order.ice, order.sugar, ...(order.toppings || [])].filter(Boolean),
-    })),
+    items: cart.map((order) => {
+      const quantity = Math.max(1, Number(order.quantity || 1));
+      const unitPrice = Number.isFinite(Number(order.unitPrice))
+        ? Number(order.unitPrice)
+        : Number(order.totalPrice || 0) / quantity;
+
+      return {
+        id: Number(order.itemId),
+        quantity,
+        price: unitPrice,
+        modifiers: [order.size, order.ice, order.sugar, ...(order.toppings || [])].filter(Boolean),
+      };
+    }),
   };
 }
 

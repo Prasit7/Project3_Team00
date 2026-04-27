@@ -14,6 +14,9 @@ const modalDrinkName = document.getElementById("modal-drink-name");
 const modalDrinkCategory = document.getElementById("modal-drink-category");
 const modalMedia = document.querySelector(".modal-media");
 const modalSizeLevel = document.getElementById("modal-size-level");
+const modalQuantityMinus = document.getElementById("modal-quantity-minus");
+const modalQuantityPlus = document.getElementById("modal-quantity-plus");
+const modalQuantityValue = document.getElementById("modal-quantity-value");
 const modalIceLevel = document.getElementById("modal-ice-level");
 const modalSugarLevel = document.getElementById("modal-sugar-level");
 const modalToppingsList = document.getElementById("modal-toppings-list");
@@ -31,6 +34,7 @@ let menuItems = [];
 let modifiers = [];
 let activeCategory = "";
 let activeModalItem = null;
+let activeModalQuantity = 1;
 
 const ITEM_IMAGE_MAP = {
   classicmilktea: "classicmilktea.jpg",
@@ -244,6 +248,7 @@ function buildAssistantCartContext() {
     cartIndex: index,
     itemId: item.itemId,
     itemName: item.itemName,
+    quantity: Number(item.quantity || 1),
     size: item.size,
     ice: item.ice,
     sugar: item.sugar,
@@ -328,6 +333,8 @@ function addDefaultItemFromAssistant(itemId, itemName) {
     sugar: regularSugar ? regularSugar.name : sugarOptions[0]?.name || "100% Sugar",
     toppings: [],
     specialInstructions: "",
+    quantity: 1,
+    unitPrice: Number(item.price || 0),
     totalPrice: Number(item.price || 0),
   };
 
@@ -339,13 +346,20 @@ function addDefaultItemFromAssistant(itemId, itemName) {
   return cart.length - 1;
 }
 
-function recalculateCartItemTotal(item) {
+function calculateCartItemUnitTotal(item) {
   const sizeDelta = item.size === "Large" ? 0.75 : 0;
   const toppingTotal = (Array.isArray(item.toppings) ? item.toppings : []).reduce((sum, toppingName) => {
     const topping = getModifiersByType("Topping").find((option) => option.name === toppingName);
     return sum + (topping ? Number(topping.priceDelta || 0) : 0);
   }, 0);
+
   return Number(item.basePrice || 0) + sizeDelta + toppingTotal;
+}
+
+function recalculateCartItemTotal(item) {
+  const unitTotal = calculateCartItemUnitTotal(item);
+  const quantity = Math.max(1, Number(item.quantity || 1));
+  return unitTotal * quantity;
 }
 
 function updatePendingCartItemFromAssistant(updates) {
@@ -380,6 +394,7 @@ function updatePendingCartItemFromAssistant(updates) {
     );
   }
 
+  updated.unitPrice = calculateCartItemUnitTotal(updated);
   updated.totalPrice = recalculateCartItemTotal(updated);
 
   cart[targetIndex] = updated;
@@ -510,6 +525,7 @@ function renderCartSummary() {
           <div class="cart-item-content">
             <p><strong>Item ${index + 1}: ${item.itemName}</strong></p>
             <p>Size: ${formatSizeLabel(item.size)}</p>
+            <p>Quantity: ${Number(item.quantity || 1)}</p>
             <p>Ice Level: ${item.ice}</p>
             <p>Sugar Level: ${item.sugar}</p>
             <p>Toppings: ${item.toppings.length ? item.toppings.join(", ") : "None"}</p>
@@ -569,6 +585,7 @@ function renderCategories() {
 
 function openCustomizeModal(item) {
   activeModalItem = item;
+  activeModalQuantity = 1;
   const itemImagePath = getItemImagePath(item.name);
 
   modalDrinkName.textContent = item.name;
@@ -618,10 +635,17 @@ function openCustomizeModal(item) {
     )
     .join("");
 
-  updateModalTotal();
+  setModalQuantity(1);
 
   modalOverlay.classList.remove("is-hidden");
   document.body.classList.add("modal-open");
+}
+
+function setModalQuantity(nextQuantity) {
+  activeModalQuantity = Math.min(99, Math.max(1, Number(nextQuantity) || 1));
+  modalQuantityValue.textContent = String(activeModalQuantity);
+  modalQuantityMinus.disabled = activeModalQuantity <= 1;
+  updateModalTotal();
 }
 
 function closeCustomizeModal() {
@@ -634,7 +658,7 @@ function getCheckedToppings() {
   return [...modalToppingsList.querySelectorAll("input:checked")].map((input) => input.value);
 }
 
-function calculateModalTotal() {
+function calculateModalUnitTotal() {
   if (!activeModalItem) return 0;
 
   const sizeOption = SIZE_OPTIONS.find((option) => option.name === (modalSizeLevel.value || "Regular"));
@@ -645,6 +669,10 @@ function calculateModalTotal() {
   }, 0);
 
   return Number(activeModalItem.price || 0) + (sizeOption ? sizeOption.priceDelta : 0) + toppingTotal;
+}
+
+function calculateModalTotal() {
+  return calculateModalUnitTotal() * activeModalQuantity;
 }
 
 function updateModalTotal() {
@@ -664,6 +692,8 @@ function addModalOrderToCart() {
     sugar: modalSugarLevel.value || "100% Sugar",
     toppings: getCheckedToppings(),
     specialInstructions: modalSpecialInstructions.value.trim(),
+    quantity: activeModalQuantity,
+    unitPrice: calculateModalUnitTotal(),
     totalPrice: calculateModalTotal(),
   };
 
@@ -766,6 +796,8 @@ modalIceLevel.addEventListener("change", updateModalTotal);
 modalSugarLevel.addEventListener("change", updateModalTotal);
 modalToppingsList.addEventListener("change", updateModalTotal);
 modalSpecialInstructions.addEventListener("input", updateModalTotal);
+modalQuantityMinus.addEventListener("click", () => setModalQuantity(activeModalQuantity - 1));
+modalQuantityPlus.addEventListener("click", () => setModalQuantity(activeModalQuantity + 1));
 modalAddToOrderButton.addEventListener("click", addModalOrderToCart);
 selectedItemBox.addEventListener("click", (event) => {
   const removeButton = event.target.closest("[data-remove-index]");
