@@ -2,6 +2,7 @@ const checkoutOrderBox = document.getElementById("checkout-order-box");
 const checkoutTotal = document.getElementById("checkout-total");
 const checkoutStatus = document.getElementById("checkout-status");
 const payButton = document.getElementById("pay-button");
+const cancelOrderButton = document.getElementById("cancel-order-button");
 const paymentSuccessOverlay = document.getElementById("payment-success-overlay");
 const paymentSuccessMessage = document.getElementById("payment-success-message");
 const paymentSuccessCountdown = document.getElementById("payment-success-countdown");
@@ -186,6 +187,17 @@ function goToNewOrder() {
   window.location.href = "index.html";
 }
 
+function cancelCurrentOrder() {
+  if (countdownTimer) {
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+  }
+  sessionStorage.removeItem("customerSelectedMenuItem");
+  sessionStorage.removeItem("customerCustomizedOrder");
+  sessionStorage.removeItem("customerCart");
+  window.location.href = "index.html";
+}
+
 function showPaymentSuccessModal(orderId) {
   if (countdownTimer) {
     clearInterval(countdownTimer);
@@ -340,5 +352,8 @@ payButton.addEventListener("click", async () => {
 });
 
 successNewOrderButton.addEventListener("click", goToNewOrder);
+if (cancelOrderButton) {
+  cancelOrderButton.addEventListener("click", cancelCurrentOrder);
+}
 
 renderOrder(loadCart());

@@ -3,6 +3,7 @@ const sizeSelect = document.getElementById("drink-size");
 const temperatureSelect = document.getElementById("temperature-level");
 const temperatureField = temperatureSelect?.closest(".text-box");
 const iceSelect = document.getElementById("ice-level");
+const iceField = iceSelect?.closest(".text-box");
 const sugarSelect = document.getElementById("sugar-level");
 const toppingsList = document.getElementById("toppings-list");
 const specialInstructionsInput = document.getElementById("special-instructions");
@@ -54,6 +55,27 @@ function shouldShowTemperature() {
 function toggleTemperatureField() {
   if (!temperatureField) return;
   temperatureField.style.display = shouldShowTemperature() ? "" : "none";
+}
+
+function getNoIceValue() {
+  const noIceOption = [...iceSelect.options].find((option) =>
+    String(option.value || "").toLowerCase().includes("no ice")
+  );
+  return noIceOption ? noIceOption.value : "No Ice";
+}
+
+function shouldShowIceField() {
+  if (!shouldShowTemperature()) return true;
+  return (temperatureSelect.value || "Cold") !== "Hot";
+}
+
+function toggleIceField() {
+  if (!iceField) return;
+  const showIce = shouldShowIceField();
+  iceField.style.display = showIce ? "" : "none";
+  if (!showIce) {
+    iceSelect.value = getNoIceValue();
+  }
 }
 
 function loadCart() {
@@ -134,12 +156,15 @@ function updatePreview() {
   const temperatureLine = shouldShowTemperature()
     ? `<p>Temperature: ${temperatureSelect.value || "Cold"}</p>`
     : "";
+  const iceLine = shouldShowIceField()
+    ? `<p>Ice Level: ${iceSelect.value || "Regular Ice"}</p>`
+    : "";
 
   customizeOrderBox.innerHTML = `
     <p><strong>${selectedMenuItem.itemName}</strong></p>
     <p>Size: ${formatSizeLabel(sizeSelect.value || "Regular")}</p>
     ${temperatureLine}
-    <p>Ice Level: ${iceSelect.value || "Regular Ice"}</p>
+    ${iceLine}
     <p>Sugar Level: ${sugarSelect.value || "Normal Sugar"}</p>
     <p>Toppings: ${toppings.length ? toppings.join(", ") : "None"}</p>
     <p>Special Instructions: ${specialInstructionsInput.value.trim() || "None"}</p>
@@ -154,7 +179,7 @@ function buildCurrentOrder() {
     ...selectedMenuItem,
     temperature: shouldShowTemperature() ? temperatureSelect.value || "Cold" : "Cold",
     size: sizeSelect.value,
-    ice: iceSelect.value,
+    ice: shouldShowIceField() ? iceSelect.value : getNoIceValue(),
     sugar: sugarSelect.value,
     toppings: getCheckedToppings(),
     specialInstructions: specialInstructionsInput.value.trim(),
@@ -273,6 +298,8 @@ async function initializePage() {
       specialInstructionsInput.value = existingOrder.specialInstructions || "";
     }
 
+    toggleIceField();
+
     if (loadCart().length > 0) renderCartPreview();
 
     customizeStatus.textContent = "Customization options are ready.";
@@ -282,9 +309,18 @@ async function initializePage() {
   }
 }
 
-[sizeSelect, temperatureSelect, iceSelect, sugarSelect, specialInstructionsInput].forEach((element) => {
+[sizeSelect, iceSelect, sugarSelect, specialInstructionsInput].forEach((element) => {
   element.addEventListener("change", updatePreview);
   element.addEventListener("input", updatePreview);
+});
+
+temperatureSelect.addEventListener("change", () => {
+  toggleIceField();
+  updatePreview();
+});
+temperatureSelect.addEventListener("input", () => {
+  toggleIceField();
+  updatePreview();
 });
 
 orderMoreButton.addEventListener("click", () => {

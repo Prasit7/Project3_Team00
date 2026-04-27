@@ -19,6 +19,7 @@ const modalQuantityPlus = document.getElementById("modal-quantity-plus");
 const modalQuantityValue = document.getElementById("modal-quantity-value");
 const modalTemperatureLabel = document.querySelector("label[for='modal-temperature-level']");
 const modalTemperatureLevel = document.getElementById("modal-temperature-level");
+const modalIceLabel = document.querySelector("label[for='modal-ice-level']");
 const modalIceLevel = document.getElementById("modal-ice-level");
 const modalSugarLevel = document.getElementById("modal-sugar-level");
 const modalToppingsList = document.getElementById("modal-toppings-list");
@@ -759,6 +760,7 @@ function openCustomizeModal(item, existingOrder = null) {
     modalAddToOrderButton.textContent = "Add to Order";
   }
 
+  syncModalIceVisibility();
   setModalQuantity(activeModalQuantity);
 
   modalOverlay.classList.remove("is-hidden");
@@ -770,6 +772,30 @@ function setModalQuantity(nextQuantity) {
   modalQuantityValue.textContent = String(activeModalQuantity);
   modalQuantityMinus.disabled = activeModalQuantity <= 1;
   updateModalTotal();
+}
+
+function getModalNoIceValue() {
+  const noIceOption = [...modalIceLevel.options].find((option) =>
+    String(option.value || "").toLowerCase().includes("no ice")
+  );
+  return noIceOption ? noIceOption.value : "No Ice";
+}
+
+function shouldShowIceSelector() {
+  if (!activeModalItem) return true;
+  if (!shouldShowTemperature(activeModalItem)) return true;
+  return (modalTemperatureLevel.value || "Cold") !== "Hot";
+}
+
+function syncModalIceVisibility() {
+  const showIce = shouldShowIceSelector();
+  if (modalIceLabel) {
+    modalIceLabel.style.display = showIce ? "" : "none";
+  }
+  modalIceLevel.style.display = showIce ? "" : "none";
+  if (!showIce) {
+    modalIceLevel.value = getModalNoIceValue();
+  }
 }
 
 function closeCustomizeModal() {
@@ -817,7 +843,7 @@ function addModalOrderToCart() {
       ? modalTemperatureLevel.value || "Cold"
       : "Cold",
     size: modalSizeLevel.value || "Regular",
-    ice: modalIceLevel.value || "Regular Ice",
+    ice: shouldShowIceSelector() ? modalIceLevel.value || "Regular Ice" : getModalNoIceValue(),
     sugar: modalSugarLevel.value || "Normal Sugar",
     toppings: getCheckedToppings(),
     specialInstructions: modalSpecialInstructions.value.trim(),
@@ -946,7 +972,10 @@ async function loadMenuItems() {
 }
 
 modalSizeLevel.addEventListener("change", updateModalTotal);
-modalTemperatureLevel.addEventListener("change", updateModalTotal);
+modalTemperatureLevel.addEventListener("change", () => {
+  syncModalIceVisibility();
+  updateModalTotal();
+});
 modalIceLevel.addEventListener("change", updateModalTotal);
 modalSugarLevel.addEventListener("change", updateModalTotal);
 modalToppingsList.addEventListener("change", updateModalTotal);
