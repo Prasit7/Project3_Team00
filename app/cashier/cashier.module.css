@@ -195,12 +195,6 @@
   gap: 4px;
 }
 
-.menuItemCardSelected {
-  border-color: #0b7d51;
-  background: #e8f8ef;
-  box-shadow: inset 0 0 0 1px #0b7d51;
-}
-
 .menuItemName {
   font-size: 1rem;
   font-weight: 700;
@@ -239,31 +233,6 @@
 .emptyState {
   background: #f6f8fb;
   color: #526174;
-}
-
-.selectedItemPreview {
-  text-align: left;
-}
-
-.selectedLabel {
-  margin: 0 0 6px;
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #4e627f;
-}
-
-.selectedName {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #172b4d;
-}
-
-.selectedMeta {
-  margin: 6px 0 0;
-  color: #3f5576;
-  font-weight: 600;
 }
 
 .orderItemsList {
