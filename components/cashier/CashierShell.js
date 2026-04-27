@@ -7,6 +7,7 @@ const SIZE_OPTIONS = ["Regular", "Large"];
 const TEMPERATURE_OPTIONS = ["Cold", "Hot"];
 const ICE_OPTIONS = ["No Ice", "Less Ice", "Regular Ice", "Extra Ice"];
 const SUGAR_OPTIONS = ["No Sugar", "Light Sugar", "Half Sugar", "Less Sugar", "Normal Sugar", "Extra Sugar"];
+const CASHIER_SESSION_STORAGE_KEY = "cashierEmployeeSession";
 
 export default function CashierShell() {
   const [menuItems, setMenuItems] = useState([]);
@@ -24,7 +25,30 @@ export default function CashierShell() {
   const [paymentError, setPaymentError] = useState("");
   const [orderNotice, setOrderNotice] = useState("");
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
+  const [cashierSession, setCashierSession] = useState(null);
+  const [employeeIdInput, setEmployeeIdInput] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [isRestoringSession, setIsRestoringSession] = useState(true);
   const nextOrderLineIdRef = useRef(1);
+
+  useEffect(() => {
+    try {
+      const savedSession = window.sessionStorage.getItem(CASHIER_SESSION_STORAGE_KEY);
+      if (savedSession) {
+        const parsedSession = JSON.parse(savedSession);
+        if (parsedSession?.id && parsedSession?.fullName) {
+          setCashierSession(parsedSession);
+        } else {
+          window.sessionStorage.removeItem(CASHIER_SESSION_STORAGE_KEY);
+        }
+      }
+    } catch {
+      window.sessionStorage.removeItem(CASHIER_SESSION_STORAGE_KEY);
+    } finally {
+      setIsRestoringSession(false);
+    }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -138,6 +162,61 @@ export default function CashierShell() {
   const checkoutReady =
     orderItems.length > 0 &&
     (paymentMethod === "card" || (paymentMethod === "cash" && cashReceivedValue >= orderTotal));
+
+  async function handleCashierLogin(event) {
+    event.preventDefault();
+    setAuthError("");
+    const parsedId = Number.parseInt(employeeIdInput.trim(), 10);
+
+    if (!Number.isInteger(parsedId) || parsedId <= 0) {
+      setAuthError("Enter a valid positive employee ID.");
+      return;
+    }
+
+    setIsSigningIn(true);
+    try {
+      const response = await fetch("/api/cashier/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ employeeId: parsedId }),
+      });
+      const payload = await response.json();
+
+      if (!response.ok || !payload?.ok || !payload?.data) {
+        throw new Error(payload?.error?.message || "Employee sign-in failed.");
+      }
+
+      const fullName = `${payload.data.firstName} ${payload.data.lastName}`.trim();
+      const sessionValue = {
+        id: payload.data.id,
+        fullName,
+        role: payload.data.role || "Employee",
+      };
+
+      setCashierSession(sessionValue);
+      window.sessionStorage.setItem(CASHIER_SESSION_STORAGE_KEY, JSON.stringify(sessionValue));
+      setEmployeeIdInput("");
+    } catch (error) {
+      setAuthError(error.message || "Unable to sign in. Try again.");
+    } finally {
+      setIsSigningIn(false);
+    }
+  }
+
+  function handleCashierLogout() {
+    setCashierSession(null);
+    setEmployeeIdInput("");
+    setAuthError("");
+    setOrderItems([]);
+    setActiveOrderItemId(null);
+    setCustomModifierInput("");
+    setCashReceived("");
+    setPaymentMethod("");
+    setIsCashModalOpen(false);
+    setPaymentError("");
+    setOrderNotice("");
+    window.sessionStorage.removeItem(CASHIER_SESSION_STORAGE_KEY);
+  }
 
   function getSizeOptions() {
     const sizeGroup = modifierGroups.find((group) => group.title === "Size");
@@ -343,11 +422,68 @@ export default function CashierShell() {
     }
   }
 
+  if (isRestoringSession) {
+    return (
+      <section className={styles.shell} aria-label="Cashier POS Layout">
+        <header className={styles.header}>
+          <h1 className={styles.title}>Cashier POS</h1>
+          <p className={styles.subtitle}>Checking cashier session...</p>
+        </header>
+      </section>
+    );
+  }
+
+  if (!cashierSession) {
+    return (
+      <section className={`${styles.shell} ${styles.authShell}`} aria-label="Cashier Login">
+        <header className={`${styles.header} ${styles.authHeader}`}>
+          <h1 className={styles.title}>Cashier POS Sign-In</h1>
+          <p className={styles.subtitle}>Enter your employee ID to access the cashier terminal.</p>
+        </header>
+
+        <section className={styles.authPanel}>
+          <form className={styles.authForm} onSubmit={handleCashierLogin}>
+            <label htmlFor="cashier-employee-id" className={styles.modifierHelp}>
+              Employee ID
+            </label>
+            <input
+              id="cashier-employee-id"
+              type="number"
+              min="1"
+              step="1"
+              value={employeeIdInput}
+              onChange={(event) => setEmployeeIdInput(event.target.value)}
+              placeholder="e.g. 1001"
+              className={styles.authInput}
+              autoFocus
+            />
+            <button type="submit" className={styles.primaryAction} disabled={isSigningIn}>
+              {isSigningIn ? "Signing In..." : "Sign In"}
+            </button>
+            {authError ? <p className={styles.authError}>{authError}</p> : null}
+          </form>
+        </section>
+      </section>
+    );
+  }
+
   return (
     <section className={styles.shell} aria-label="Cashier POS Layout">
       <header className={styles.header}>
-        <h1 className={styles.title}>Cashier POS</h1>
-        <p className={styles.subtitle}>Fast item search, live order editing, and checkout flow.</p>
+        <div className={styles.headerMeta}>
+          <div>
+            <h1 className={styles.title}>Cashier POS</h1>
+            <p className={styles.subtitle}>Fast item search, live order editing, and checkout flow.</p>
+          </div>
+          <div className={styles.employeeBadge}>
+            <p className={styles.employeeName}>
+              Signed in: {cashierSession.fullName} (ID {cashierSession.id})
+            </p>
+            <button type="button" className={styles.signOutButton} onClick={handleCashierLogout}>
+              Sign Out
+            </button>
+          </div>
+        </div>
       </header>
 
       <div className={styles.columns}>
