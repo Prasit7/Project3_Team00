@@ -10,22 +10,22 @@
   <main class="customer-page">
     <section class="page-header">
       <div class="page-header-copy">
-        <h1 data-i18n="checkoutTitle">Checkout</h1>
-        <p data-i18n="checkoutStep">Step 3 of 3: Review the order and complete checkout.</p>
+        <h1>Checkout</h1>
+        <p>Step 3 of 3: Review the order and complete checkout.</p>
         <p class="page-wait-time" id="wait-time-text">Estimated wait: --</p>
       </div>
     </section>
 
     <section class="status-bar" aria-live="polite">
-      <p id="checkout-status" data-i18n="checkoutStep">Loading order summary...</p>
+      <p id="checkout-status">Loading order summary...</p>
     </section>
 
     <section class="page-shell page-shell--checkout" aria-label="Checkout summary and actions">
       <div class="page-shell-main">
         <section class="checkout-section" aria-labelledby="checkout-heading">
-          <h2 id="checkout-heading" data-i18n="orderSummary">Order Summary</h2>
+          <h2 id="checkout-heading">Order Summary</h2>
           <div class="order-box order-box--feature" id="checkout-order-box">
-            <p data-i18n="noOrder">No order available yet.</p>
+            <p>No order available yet.</p>
           </div>
           <p class="total-text" id="checkout-total">Total: $0.00</p>
         </section>
@@ -33,26 +33,24 @@
 
       <aside class="page-shell-side page-stack">
         <section class="page-actions page-actions--stacked">
-          <a class="nav-button" href="customize.html" data-i18n="backToCustomize">Back to Customization</a>
-          <a class="nav-button" href="index.html" data-i18n="startNewOrder">Start New Order</a>
-          <button class="nav-button primary-link nav-button--strong" id="pay-button" type="button" data-i18n="pay">Pay</button>
+          <a class="nav-button" href="customize.html">Back to Customization</a>
+          <a class="nav-button" href="index.html">Start New Order</a>
+          <button class="nav-button primary-link nav-button--strong" id="pay-button" type="button">Pay</button>
         </section>
       </aside>
     </section>
 
     <div class="payment-success-overlay is-hidden" id="payment-success-overlay" role="presentation">
       <section class="payment-success-modal" role="dialog" aria-modal="true" aria-labelledby="payment-success-title">
-        <h2 id="payment-success-title" data-i18n="paymentSuccessTitle">Payment Successful</h2>
+        <h2 id="payment-success-title">Payment Successful</h2>
         <p id="payment-success-message">Order is confirmed.</p>
-        <p id="payment-success-countdown" data-i18n="autoNewOrderIn">Starting a new order in 15s</p>
-        <button class="nav-button primary-link" id="success-new-order-btn" type="button" data-i18n="startNewOrder">
+        <p id="payment-success-countdown">Starting a new order in 15s</p>
+        <button class="nav-button primary-link" id="success-new-order-btn" type="button">
           Start New Order
         </button>
       </section>
     </div>
   </main>
-
-  <script src="../translations.js"></script>
   <script src="../accessibility.js"></script>
   <script src="checkout.js"></script>
 </body>

@@ -1,15 +1,12 @@
 // accessibility.js
 // Shared accessibility controls for static public pages.
-// High contrast and language are available everywhere.
+// High contrast is available everywhere.
 // Text size and screen magnifier are limited to the menu board and customer kiosk.
 
 (function () {
   if (localStorage.getItem("highContrast") === "true") {
     document.documentElement.setAttribute("data-theme", "high-contrast");
   }
-
-  const lang = localStorage.getItem("lang") || "en";
-  document.documentElement.setAttribute("lang", lang);
 
   const savedFontScale = parseFloat(localStorage.getItem("kioskFontSize"));
   if (!Number.isNaN(savedFontScale) && savedFontScale > 0) {
@@ -19,12 +16,10 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   if (isMagnifierPreview()) {
-    applyTranslations();
     return;
   }
 
   injectToolbar();
-  applyTranslations();
 
   if (shouldEnableCustomerFacingA11y()) {
     injectTextSizeSlider();
@@ -47,8 +42,6 @@ function isMagnifierPreview() {
 
 function injectToolbar() {
   const isHighContrast = localStorage.getItem("highContrast") === "true";
-  const lang = localStorage.getItem("lang") || "en";
-
   const toolbar = document.createElement("div");
   toolbar.className = "a11y-toolbar";
   toolbar.setAttribute("role", "toolbar");
@@ -60,21 +53,11 @@ function injectToolbar() {
       aria-label="Toggle high contrast mode">
       ${isHighContrast ? "⬛ High Contrast On" : "🔲 High Contrast"}
     </button>
-    <div class="lang-toggle" role="group" aria-label="Language selection">
-      <button class="a11y-btn lang-btn ${lang === "en" ? "lang-active" : ""}" id="lang-en"
-        type="button" aria-pressed="${lang === "en"}" aria-label="Switch to English">EN</button>
-      <span class="lang-divider" aria-hidden="true">|</span>
-      <button class="a11y-btn lang-btn ${lang === "es" ? "lang-active" : ""}" id="lang-es"
-        type="button" aria-pressed="${lang === "es"}" aria-label="Cambiar a español">ES</button>
-    </div>
   `;
 
   document.body.insertBefore(toolbar, document.body.firstChild);
 
   document.getElementById("contrast-toggle").addEventListener("click", toggleContrast);
-  document.getElementById("lang-en").addEventListener("click", () => setLang("en"));
-  document.getElementById("lang-es").addEventListener("click", () => setLang("es"));
-
   injectToolbarStyles();
 }
 
@@ -87,18 +70,6 @@ function toggleContrast() {
   if (!btn) return;
   btn.setAttribute("aria-pressed", next);
   btn.textContent = next ? "⬛ High Contrast On" : "🔲 High Contrast";
-}
-
-function setLang(lang) {
-  localStorage.setItem("lang", lang);
-  document.documentElement.setAttribute("lang", lang);
-
-  document.getElementById("lang-en").setAttribute("aria-pressed", lang === "en");
-  document.getElementById("lang-es").setAttribute("aria-pressed", lang === "es");
-  document.getElementById("lang-en").classList.toggle("lang-active", lang === "en");
-  document.getElementById("lang-es").classList.toggle("lang-active", lang === "es");
-
-  applyTranslations();
 }
 
 function injectToolbarStyles() {
@@ -135,22 +106,6 @@ function injectToolbarStyles() {
     .a11y-text-size input:focus-visible {
       outline: 2px solid #fff;
       outline-offset: 2px;
-    }
-
-    .lang-toggle {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .lang-divider {
-      color: #888;
-    }
-
-    .lang-active {
-      background: #fff;
-      color: #222;
-      font-weight: 700;
     }
 
     .a11y-text-size {
@@ -203,11 +158,6 @@ function injectToolbarStyles() {
 
     [data-theme="high-contrast"] .a11y-btn {
       border-color: #fff;
-    }
-
-    [data-theme="high-contrast"] .lang-active {
-      background: #fff;
-      color: #000;
     }
 
     [data-theme="high-contrast"] #kiosk-magnifier-lens {

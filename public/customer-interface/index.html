@@ -10,13 +10,13 @@
   <main class="customer-page">
     <section class="page-header">
       <div class="page-header-copy">
-        <h1 data-i18n="menuTitle">Choose Your Items</h1>
-        <p data-i18n="menuStep">Step 1 of 3: Select drinks from the menu.</p>
+        <h1>Choose Your Items</h1>
+        <p>Step 1 of 3: Select drinks from the menu.</p>
         <p class="page-wait-time" id="wait-time-text">Estimated wait: --</p>
       </div>
       <aside class="kiosk-weather" aria-labelledby="kiosk-weather-heading">
         <div class="kiosk-weather-copy">
-          <p id="kiosk-weather-heading" class="kiosk-weather-status" data-i18n="weatherLoading">Loading current weather...</p>
+          <p id="kiosk-weather-heading" class="kiosk-weather-status">Loading current weather...</p>
           <p id="kiosk-weather-temp" class="kiosk-weather-temp"></p>
         </div>
         <div id="kiosk-weather-icon-wrap" class="kiosk-weather-icon-wrap" hidden>
@@ -28,7 +28,7 @@
     <section class="menu-kiosk-layout" aria-label="Customer kiosk menu and cart">
       <div class="menu-kiosk-main">
         <section class="status-bar" aria-live="polite">
-          <p id="customer-status" data-i18n="loadingMenu">Loading menu from database...</p>
+          <p id="customer-status">Loading menu from database...</p>
         </section>
 
         <section class="category-bar" id="category-bar" aria-label="Menu categories">
@@ -42,9 +42,9 @@
 
       <aside class="menu-kiosk-side">
         <section class="order-section" aria-labelledby="order-heading">
-          <h2 id="order-heading" data-i18n="currentOrder">Cart</h2>
+          <h2 id="order-heading">Cart</h2>
           <div class="order-box" id="selected-item-box">
-            <p data-i18n="noItemSelected">No item selected yet.</p>
+            <p>No item selected yet.</p>
           </div>
           <p class="total-text" id="selected-item-total">Total: $0.00</p>
         </section>
@@ -71,14 +71,14 @@
         </section>
 
         <section class="page-actions">
-          <a class="nav-button primary-link is-disabled" id="next-customize-link" href="checkout.html" aria-disabled="true" data-i18n="nextCheckout">Next: Checkout</a>
+          <a class="nav-button primary-link is-disabled" id="next-customize-link" href="checkout.html" aria-disabled="true">Next: Checkout</a>
         </section>
       </aside>
     </section>
 
     <div class="kiosk-modal-overlay is-hidden" id="customize-modal-overlay" role="presentation">
       <section class="kiosk-modal" role="dialog" aria-modal="true" aria-labelledby="modal-drink-name">
-        <button class="modal-close" id="close-customize-modal" type="button" aria-label="Close customization" data-i18n-aria-label="closeCustomization">
+        <button class="modal-close" id="close-customize-modal" type="button" aria-label="Close customization">
           ×
         </button>
 
@@ -91,37 +91,35 @@
         </div>
 
         <div class="modal-section">
-          <h3 data-i18n="selectSize">Select Size</h3>
-          <label for="modal-size-level" data-i18n="size">Size</label>
+          <h3>Select Size</h3>
+          <label for="modal-size-level">Size</label>
           <select id="modal-size-level"></select>
         </div>
 
         <div class="modal-section modal-selects">
-          <label for="modal-ice-level" data-i18n="iceLevel">Ice Level</label>
+          <label for="modal-ice-level">Ice Level</label>
           <select id="modal-ice-level"></select>
-          <label for="modal-sugar-level" data-i18n="sugarLevel">Sugar Level</label>
+          <label for="modal-sugar-level">Sugar Level</label>
           <select id="modal-sugar-level"></select>
         </div>
 
         <div class="modal-section">
-          <h3 data-i18n="toppings">Toppings</h3>
+          <h3>Toppings</h3>
           <div class="checkbox-list" id="modal-toppings-list"></div>
         </div>
 
         <div class="modal-section">
-          <label for="modal-special-instructions" data-i18n="specialInstructions">Special Instructions</label>
-          <input id="modal-special-instructions" type="text" placeholder="Optional note" data-i18n="optionalNote" />
+          <label for="modal-special-instructions">Special Instructions</label>
+          <input id="modal-special-instructions" type="text" placeholder="Optional note" />
         </div>
 
         <div class="modal-footer">
           <p class="modal-total" id="modal-live-total">Total: $0.00</p>
-          <button class="nav-button primary-link" id="modal-add-to-order" type="button" data-i18n="addToOrder">Add to Order</button>
+          <button class="nav-button primary-link" id="modal-add-to-order" type="button">Add to Order</button>
         </div>
       </section>
     </div>
   </main>
-
-  <script src="../translations.js"></script>
   <script src="../accessibility.js"></script>
   <script src="../weather.js"></script>
   <script src="menu.js"></script>

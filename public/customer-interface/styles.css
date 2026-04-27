@@ -959,11 +959,6 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
-.a11y-bar .lang-active {
-  font-weight: 700;
-  border-color: var(--accent-strong);
-}
-
 /* high contrast overrides */
 [data-theme="high-contrast"] body {
   background: #000;

@@ -132,8 +132,8 @@ function getItemImagePath(itemName) {
 }
 
 function formatSizeLabel(sizeValue) {
-  if (sizeValue === "Regular") return t("sizeRegular");
-  if (sizeValue === "Large") return t("sizeLarge");
+  if (sizeValue === "Regular") return "Regular - 16oz";
+  if (sizeValue === "Large") return "Large - 20oz";
   return sizeValue;
 }
 
@@ -159,7 +159,7 @@ function removeCartItemAt(indexToRemove) {
   saveCart(cart);
   renderCartSummary();
   if (removedItem) {
-    statusText.textContent = `${removedItem.itemName} ${t("removedFromCartStatus")}`;
+    statusText.textContent = `${removedItem.itemName} removed from cart.`;
   }
 }
 
@@ -237,7 +237,7 @@ function removeCartItemFromAssistant(action) {
   saveCart(cart);
   renderCartSummary();
   if (removed) {
-    statusText.textContent = `${removed.itemName} ${t("removedFromCartStatus")}`;
+    statusText.textContent = `${removed.itemName} removed from cart.`;
   }
 
   const pending = getAssistantPendingItem();
@@ -281,7 +281,7 @@ function addDefaultItemFromAssistant(itemId, itemName) {
   cart.push(order);
   saveCart(cart);
   renderCartSummary();
-  statusText.textContent = `${order.itemName} ${t("addedToCartStatus")}`;
+  statusText.textContent = `${order.itemName} added to cart.`;
   return cart.length - 1;
 }
 
@@ -425,7 +425,7 @@ async function handleAssistantSubmit(event) {
 
 function setNextActionEnabled(enabled) {
   nextCustomizeLink.href = "checkout.html";
-  nextCustomizeLink.textContent = t("nextCheckout");
+  nextCustomizeLink.textContent = "Next: Checkout";
 
   if (enabled) {
     nextCustomizeLink.classList.remove("is-disabled");
@@ -441,8 +441,8 @@ function renderCartSummary() {
   const cart = loadCart();
 
   if (cart.length === 0) {
-    selectedItemBox.innerHTML = `<p>${t("noItemSelected")}</p>`;
-    selectedItemTotal.textContent = `${t("total")} ${formatMoney(0)}`;
+    selectedItemBox.innerHTML = `<p>No item selected yet.</p>`;
+    selectedItemTotal.textContent = `Total: ${formatMoney(0)}`;
     setNextActionEnabled(false);
     return;
   }
@@ -454,12 +454,12 @@ function renderCartSummary() {
         return `
         <article class="cart-item-row">
           <div class="cart-item-content">
-            <p><strong>${t("itemWord")} ${index + 1}: ${item.itemName}</strong></p>
-            <p>${t("size")}: ${formatSizeLabel(item.size)}</p>
-            <p>${t("iceLevel")}: ${item.ice}</p>
-            <p>${t("sugarLevel")}: ${item.sugar}</p>
-            <p>${t("toppings")}: ${item.toppings.length ? item.toppings.join(", ") : t("none")}</p>
-            <p>${t("itemTotal")}: ${formatMoney(item.totalPrice)}</p>
+            <p><strong>Item ${index + 1}: ${item.itemName}</strong></p>
+            <p>Size: ${formatSizeLabel(item.size)}</p>
+            <p>Ice Level: ${item.ice}</p>
+            <p>Sugar Level: ${item.sugar}</p>
+            <p>Toppings: ${item.toppings.length ? item.toppings.join(", ") : "None"}</p>
+            <p>Item Total: ${formatMoney(item.totalPrice)}</p>
           </div>
           <div class="cart-item-side">
             <div class="cart-item-thumb" aria-hidden="true">
@@ -473,8 +473,8 @@ function renderCartSummary() {
               type="button"
               class="cart-item-remove"
               data-remove-index="${index}"
-              aria-label="${t("removeFromCart")}: ${item.itemName}"
-              title="${t("removeFromCart")}"
+              aria-label="Remove from cart: ${item.itemName}"
+              title="Remove from cart"
             >
               ×
             </button>
@@ -486,7 +486,7 @@ function renderCartSummary() {
     .join("");
 
   const total = cart.reduce((sum, item) => sum + Number(item.totalPrice || 0), 0);
-  selectedItemTotal.textContent = `${t("total")} ${formatMoney(total)}`;
+  selectedItemTotal.textContent = `Total: ${formatMoney(total)}`;
   setNextActionEnabled(true);
 }
 
@@ -518,7 +518,7 @@ function openCustomizeModal(item) {
   const itemImagePath = getItemImagePath(item.name);
 
   modalDrinkName.textContent = item.name;
-  modalDrinkCategory.textContent = `${item.category} · ${t("baseLabel")} ${formatMoney(item.price)}`;
+  modalDrinkCategory.textContent = `${item.category} · Base ${formatMoney(item.price)}`;
   modalSpecialInstructions.value = "";
   if (itemImagePath) {
     modalMedia.innerHTML = `<img src="${itemImagePath}" alt="${item.name}" class="menu-item-image" loading="lazy" />`;
@@ -594,7 +594,7 @@ function calculateModalTotal() {
 }
 
 function updateModalTotal() {
-  modalLiveTotal.textContent = `${t("total")} ${formatMoney(calculateModalTotal())}`;
+  modalLiveTotal.textContent = `Total: ${formatMoney(calculateModalTotal())}`;
 }
 
 function addModalOrderToCart() {
@@ -627,7 +627,7 @@ function addModalOrderToCart() {
     })
   );
 
-  statusText.textContent = `${order.itemName} ${t("addedToCartStatus")}`;
+  statusText.textContent = `${order.itemName} added to cart.`;
   renderCartSummary();
   closeCustomizeModal();
 }
@@ -642,7 +642,7 @@ function renderMenuItems() {
     card.className = "menu-item-box";
     card.setAttribute("role", "button");
     card.setAttribute("tabindex", "0");
-    card.setAttribute("aria-label", `${item.name}, ${formatMoney(item.price)}. ${t("openCustomization")}`);
+    card.setAttribute("aria-label", `${item.name}, ${formatMoney(item.price)}. Open customization`);
     card.innerHTML = `
       <div class="menu-item-media" aria-hidden="true">
         ${
@@ -655,7 +655,7 @@ function renderMenuItems() {
         <h2>${item.name}</h2>
         <p class="price-text">${formatMoney(item.price)}</p>
       </div>
-      <p class="menu-item-hint">${t("tapToCustomize")}</p>
+      <p class="menu-item-hint">Tap to customize</p>
     `;
 
     const openCardModal = () => openCustomizeModal(item);
@@ -691,19 +691,19 @@ async function loadMenuItems() {
     menuItems = Array.isArray(items) ? items : [];
 
     if (menuItems.length === 0) {
-      statusText.textContent = t("noMenuItems");
-      menuGrid.innerHTML = `<article class="menu-item-box skeleton-box"><h2>${t("noMenuItems")}</h2></article>`;
+      statusText.textContent = "No menu items available right now.";
+      menuGrid.innerHTML = `<article class="menu-item-box skeleton-box"><h2>No menu items available right now.</h2></article>`;
       return;
     }
 
     await loadModifiers();
     renderCategories();
     renderMenuItems();
-    statusText.textContent = t("menuReady");
+    statusText.textContent = "Menu is ready.";
   } catch (error) {
-    statusText.textContent = t("statusError");
+    statusText.textContent = "Something went wrong. Please try again.";
     menuGrid.innerHTML =
-      `<article class="menu-item-box skeleton-box"><h2>${t("menuUnavailable")}</h2><p class="price-text">${t("databaseLoadFailed")}</p></article>`;
+      `<article class="menu-item-box skeleton-box"><h2>Menu unavailable</h2><p class="price-text">Please try again soon.</p></article>`;
   }
 }
 

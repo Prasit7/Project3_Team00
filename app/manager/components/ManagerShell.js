@@ -19,12 +19,10 @@ const navItems = [
 export default function ManagerShell({ title, subtitle, children }) {
   const pathname = usePathname();
   const [isHighContrast, setIsHighContrast] = useState(false);
-  const [lang, setLang] = useState("en");
 
   // read saved preferences on mount
   useEffect(() => {
     setIsHighContrast(localStorage.getItem("highContrast") === "true");
-    setLang(localStorage.getItem("lang") || "en");
   }, []);
 
   // apply data-theme to <html> whenever isHighContrast changes
@@ -35,12 +33,6 @@ export default function ManagerShell({ title, subtitle, children }) {
     );
     localStorage.setItem("highContrast", isHighContrast);
   }, [isHighContrast]);
-
-  // apply lang to <html> whenever lang changes
-  useEffect(() => {
-    document.documentElement.setAttribute("lang", lang);
-    localStorage.setItem("lang", lang);
-  }, [lang]);
 
   return (
     <div className={styles.page}>
@@ -57,27 +49,6 @@ export default function ManagerShell({ title, subtitle, children }) {
           >
             {isHighContrast ? "High Contrast: On" : "High Contrast: Off"}
           </button>
-          <div role="group" aria-label="Language selection">
-            <button
-              className={`${styles.a11yBtn} ${lang === "en" ? styles.a11yBtnActive : ""}`}
-              type="button"
-              aria-pressed={lang === "en"}
-              aria-label="Switch to English"
-              onClick={() => setLang("en")}
-            >
-              EN
-            </button>
-            <span className={styles.langDivider} aria-hidden="true"> | </span>
-            <button
-              className={`${styles.a11yBtn} ${lang === "es" ? styles.a11yBtnActive : ""}`}
-              type="button"
-              aria-pressed={lang === "es"}
-              aria-label="Cambiar a español"
-              onClick={() => setLang("es")}
-            >
-              ES
-            </button>
-          </div>
         </div>
 
         <header className={styles.header}>

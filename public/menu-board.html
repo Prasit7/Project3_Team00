@@ -344,14 +344,14 @@
         <div class="menu-grid">
           <section class="menu-column">
             <article class="menu-block" aria-labelledby="milk-tea-heading">
-              <h2 class="block-title" id="milk-tea-heading" data-i18n="milkTeas">Milk Teas</h2>
+              <h2 class="block-title" id="milk-tea-heading">Milk Teas</h2>
               <ul class="item-list" id="milk-tea-list"><li class="empty-item">Loading items...</li></ul>
             </article>
           </section>
 
           <section class="menu-column">
             <article class="menu-block" aria-labelledby="fruit-tea-heading">
-              <h2 class="block-title" id="fruit-tea-heading" data-i18n="fruitTeas">Fruit Teas</h2>
+              <h2 class="block-title" id="fruit-tea-heading">Fruit Teas</h2>
               <ul class="item-list" id="fruit-tea-list"><li class="empty-item">Loading items...</li></ul>
             </article>
           </section>
@@ -465,8 +465,6 @@
       </section>
     </main>
   </div>
-
-  <script src="translations.js"></script>
   <script>
     const root = document.documentElement;
     const boardStatus = document.getElementById("board-status");
@@ -691,9 +689,7 @@
 
     (function initBoardDefaults() {
       root.setAttribute("data-theme", "");
-      root.setAttribute("lang", localStorage.getItem("lang") || "en");
       root.style.fontSize = `${Number(localStorage.getItem("textSize") || 100)}%`;
-      if (typeof applyTranslations === "function") applyTranslations();
     })();
 
     updateClock();
