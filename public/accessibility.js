@@ -19,12 +19,10 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   if (isMagnifierPreview()) {
-    applyTranslations();
     return;
   }
 
   injectToolbar();
-  applyTranslations();
 
   if (shouldEnableCustomerFacingA11y()) {
     injectTextSizeSlider();
@@ -48,7 +46,6 @@ function isMagnifierPreview() {
 function injectToolbar() {
   const isHighContrast = localStorage.getItem("highContrast") === "true";
   const lang = localStorage.getItem("lang") || "en";
-
   const toolbar = document.createElement("div");
   toolbar.className = "a11y-toolbar";
   toolbar.setAttribute("role", "toolbar");
@@ -74,7 +71,6 @@ function injectToolbar() {
   document.getElementById("contrast-toggle").addEventListener("click", toggleContrast);
   document.getElementById("lang-en").addEventListener("click", () => setLang("en"));
   document.getElementById("lang-es").addEventListener("click", () => setLang("es"));
-
   injectToolbarStyles();
 }
 
@@ -90,15 +86,22 @@ function toggleContrast() {
 }
 
 function setLang(lang) {
-  localStorage.setItem("lang", lang);
-  document.documentElement.setAttribute("lang", lang);
+  const next = lang === "es" ? "es" : "en";
+  localStorage.setItem("lang", next);
+  document.documentElement.setAttribute("lang", next);
 
-  document.getElementById("lang-en").setAttribute("aria-pressed", lang === "en");
-  document.getElementById("lang-es").setAttribute("aria-pressed", lang === "es");
-  document.getElementById("lang-en").classList.toggle("lang-active", lang === "en");
-  document.getElementById("lang-es").classList.toggle("lang-active", lang === "es");
+  const enBtn = document.getElementById("lang-en");
+  const esBtn = document.getElementById("lang-es");
+  if (enBtn && esBtn) {
+    enBtn.setAttribute("aria-pressed", String(next === "en"));
+    esBtn.setAttribute("aria-pressed", String(next === "es"));
+    enBtn.classList.toggle("lang-active", next === "en");
+    esBtn.classList.toggle("lang-active", next === "es");
+  }
 
-  applyTranslations();
+  if (window.GoogleCloudTranslate && typeof window.GoogleCloudTranslate.setLanguage === "function") {
+    window.GoogleCloudTranslate.setLanguage(next).catch(() => {});
+  }
 }
 
 function injectToolbarStyles() {
@@ -137,6 +140,13 @@ function injectToolbarStyles() {
       outline-offset: 2px;
     }
 
+    .a11y-text-size {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding-left: 6px;
+    }
+
     .lang-toggle {
       display: flex;
       align-items: center;
@@ -151,13 +161,6 @@ function injectToolbarStyles() {
       background: #fff;
       color: #222;
       font-weight: 700;
-    }
-
-    .a11y-text-size {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding-left: 6px;
     }
 
     .a11y-text-size label,
@@ -430,3 +433,9 @@ function loadWaitTime() {
   fetchAndUpdate();
   window.setInterval(fetchAndUpdate, 60000);
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (window.GoogleCloudTranslate && typeof window.GoogleCloudTranslate.init === "function") {
+    window.GoogleCloudTranslate.init();
+  }
+});

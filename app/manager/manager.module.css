@@ -229,10 +229,6 @@
   font-weight: 700;
 }
 
-.langDivider {
-  color: #c9d6e5;
-}
-
 /* high contrast overrides */
 :global([data-theme="high-contrast"]) .page {
   background: #000;

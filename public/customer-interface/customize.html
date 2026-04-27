@@ -10,49 +10,49 @@
   <main class="customer-page">
     <section class="page-header">
       <div class="page-header-copy">
-        <h1 data-i18n="customizeTitle">Customize Your Drink</h1>
-        <p data-i18n="customizeStep">Step 2 of 3: Choose size, ice, sugar, and toppings.</p>
+        <h1>Customize Your Drink</h1>
+        <p>Step 2 of 3: Choose size, ice, sugar, and toppings.</p>
         <p class="page-wait-time" id="wait-time-text">Estimated wait: --</p>
       </div>
     </section>
 
     <section class="status-bar" aria-live="polite">
-      <p id="customize-status" data-i18n="loadingCustomization">Loading selected item and customization options...</p>
+      <p id="customize-status">Loading selected item and customization options...</p>
     </section>
 
     <section class="page-shell page-shell--customize" aria-label="Customization and cart">
       <div class="page-shell-main">
         <section class="customization-section" aria-labelledby="customize-heading">
-          <h2 id="customize-heading" data-i18n="drinkCustomization">Drink Customization</h2>
+          <h2 id="customize-heading">Drink Customization</h2>
           <div class="customization-grid customization-grid--feature">
             <div class="text-box text-box--hero">
-              <label for="selected-drink" data-i18n="selectedDrink">Selected Drink</label>
+              <label for="selected-drink">Selected Drink</label>
               <input id="selected-drink" name="selected-drink" type="text" readonly />
             </div>
 
             <div class="text-box">
-              <label for="drink-size" data-i18n="size">Size</label>
+              <label for="drink-size">Size</label>
               <select id="drink-size" name="drink-size"></select>
             </div>
 
             <div class="text-box">
-              <label for="ice-level" data-i18n="iceLevel">Ice Level</label>
+              <label for="ice-level">Ice Level</label>
               <select id="ice-level" name="ice-level"></select>
             </div>
 
             <div class="text-box">
-              <label for="sugar-level" data-i18n="sugarLevel">Sugar Level</label>
+              <label for="sugar-level">Sugar Level</label>
               <select id="sugar-level" name="sugar-level"></select>
             </div>
 
             <div class="text-box text-box--wide">
-              <label for="toppings" data-i18n="toppings">Toppings</label>
+              <label for="toppings">Toppings</label>
               <div id="toppings-list" class="checkbox-list"></div>
             </div>
 
             <div class="text-box text-box--wide">
-              <label for="special-instructions" data-i18n="specialInstructions">Special Instructions</label>
-              <input id="special-instructions" name="special-instructions" type="text" placeholder="Optional note" data-i18n="optionalNote" />
+              <label for="special-instructions">Special Instructions</label>
+              <input id="special-instructions" name="special-instructions" type="text" placeholder="Optional note" />
             </div>
           </div>
         </section>
@@ -60,24 +60,23 @@
 
       <aside class="page-shell-side page-stack">
         <section class="order-section" aria-labelledby="customize-order-heading">
-          <h2 id="customize-order-heading" data-i18n="currentOrder">Cart</h2>
+          <h2 id="customize-order-heading">Cart</h2>
           <div class="order-box" id="customize-order-box">
-            <p data-i18n="noCustomization">No customization saved yet.</p>
+            <p>No customization saved yet.</p>
           </div>
           <p class="total-text" id="customize-total">Total: $0.00</p>
         </section>
 
         <section class="page-actions page-actions--stacked">
-          <a class="nav-button" href="index.html" data-i18n="backToMenu">Back to Menu</a>
-          <button class="nav-button primary-link" id="add-to-order-button" type="button" data-i18n="addToOrder">Add to Order</button>
-          <button class="nav-button" id="order-more-button" type="button" data-i18n="orderMore">Order More</button>
-          <button class="nav-button" id="checkout-button" type="button" data-i18n="checkout">Checkout</button>
+          <a class="nav-button" href="index.html">Back to Menu</a>
+          <button class="nav-button primary-link" id="add-to-order-button" type="button">Add to Order</button>
+          <button class="nav-button" id="order-more-button" type="button">Order More</button>
+          <button class="nav-button" id="checkout-button" type="button">Checkout</button>
         </section>
       </aside>
     </section>
   </main>
-
-  <script src="../translations.js"></script>
+  <script src="../google-translate.js"></script>
   <script src="../accessibility.js"></script>
   <script src="customize.js"></script>
 </body>

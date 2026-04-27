@@ -136,12 +136,6 @@ body {
   outline-offset: 2px;
 }
 
-.a11y-bar .lang-active {
-  font-weight: 700;
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
 /* high contrast overrides — activated when data-theme="high-contrast" is set on <html> */
 [data-theme="high-contrast"] body {
   background: #000;
@@ -156,11 +150,6 @@ body {
 [data-theme="high-contrast"] .a11y-bar button {
   border-color: #fff;
   color: #fff;
-}
-
-[data-theme="high-contrast"] .a11y-bar .lang-active {
-  background: #fff;
-  color: #000;
 }
 
 [data-theme="high-contrast"] .interface-section {

@@ -61,8 +61,8 @@ function formatMoney(value) {
 }
 
 function formatSizeLabel(sizeValue) {
-  if (sizeValue === "Regular") return t("sizeRegular");
-  if (sizeValue === "Large") return t("sizeLarge");
+  if (sizeValue === "Regular") return "Regular - 16oz";
+  if (sizeValue === "Large") return "Large - 20oz";
   return sizeValue;
 }
 
@@ -128,12 +128,12 @@ function showPaymentSuccessModal(orderId) {
     countdownTimer = null;
   }
 
-  paymentSuccessMessage.textContent = `${t("paymentComplete")} #${orderId} ${t("savedToDatabase")}`;
+  paymentSuccessMessage.textContent = `Payment complete. Order #${orderId} is confirmed.`;
   paymentSuccessOverlay.classList.remove("is-hidden");
   document.body.classList.add("modal-open");
 
   let secondsLeft = 15;
-  paymentSuccessCountdown.textContent = `${t("autoNewOrderIn")} ${secondsLeft}${t("secondsShort")}`;
+  paymentSuccessCountdown.textContent = `Starting a new order in ${secondsLeft}s`;
 
   countdownTimer = setInterval(() => {
     secondsLeft -= 1;
@@ -141,7 +141,7 @@ function showPaymentSuccessModal(orderId) {
       goToNewOrder();
       return;
     }
-    paymentSuccessCountdown.textContent = `${t("autoNewOrderIn")} ${secondsLeft}${t("secondsShort")}`;
+    paymentSuccessCountdown.textContent = `Starting a new order in ${secondsLeft}s`;
   }, 1000);
 }
 
@@ -158,9 +158,9 @@ function loadCart() {
 
 function renderOrder(cart) {
   if (cart.length === 0) {
-    checkoutOrderBox.innerHTML = `<p>${t("noOrder")}</p>`;
-    checkoutTotal.textContent = `${t("total")} ${formatMoney(0)}`;
-    checkoutStatus.textContent = t("noOrder");
+    checkoutOrderBox.innerHTML = `<p>No order available yet.</p>`;
+    checkoutTotal.textContent = `Total: ${formatMoney(0)}`;
+    checkoutStatus.textContent = "No order available yet.";
     return;
   }
 
@@ -176,14 +176,14 @@ function renderOrder(cart) {
             }
           </div>
           <div class="checkout-item-content">
-            <p><strong>${t("itemWord")} ${index + 1}: ${order.itemName}</strong></p>
-            <p>${t("categoryLabel")}: ${order.category}</p>
-            <p>${t("size")}: ${formatSizeLabel(order.size)}</p>
-            <p>${t("iceLevel")}: ${order.ice}</p>
-            <p>${t("sugarLevel")}: ${order.sugar}</p>
-            <p>${t("toppings")}: ${order.toppings.length ? order.toppings.join(", ") : t("none")}</p>
-            <p>${t("specialInstructions")}: ${order.specialInstructions || t("none")}</p>
-            <p>${t("itemTotal")}: ${formatMoney(order.totalPrice)}</p>
+            <p><strong>Item ${index + 1}: ${order.itemName}</strong></p>
+            <p>Category: ${order.category}</p>
+            <p>Size: ${formatSizeLabel(order.size)}</p>
+            <p>Ice Level: ${order.ice}</p>
+            <p>Sugar Level: ${order.sugar}</p>
+            <p>Toppings: ${order.toppings.length ? order.toppings.join(", ") : "None"}</p>
+            <p>Special Instructions: ${order.specialInstructions || "None"}</p>
+            <p>Item Total: ${formatMoney(order.totalPrice)}</p>
           </div>
         </article>
       `
@@ -191,8 +191,8 @@ function renderOrder(cart) {
     .join("");
 
   const total = cart.reduce((sum, order) => sum + Number(order.totalPrice || 0), 0);
-  checkoutTotal.textContent = `${t("total")} ${formatMoney(total)}`;
-  checkoutStatus.textContent = t("checkoutStep");
+  checkoutTotal.textContent = `Total: ${formatMoney(total)}`;
+  checkoutStatus.textContent = "Step 3 of 3: Review the order and complete checkout.";
 }
 
 function resetOrderSummary() {
@@ -230,14 +230,14 @@ async function submitOrder(cart) {
 payButton.addEventListener("click", async () => {
   const cart = loadCart();
   if (cart.length === 0) {
-    checkoutStatus.textContent = t("noOrder");
+    checkoutStatus.textContent = "No order available yet.";
     return;
   }
 
   payButton.disabled = true;
   const originalButtonText = payButton.textContent;
-  payButton.textContent = t("processing");
-  checkoutStatus.textContent = t("submittingOrder");
+  payButton.textContent = "Processing...";
+  checkoutStatus.textContent = "Submitting your order...";
 
   try {
     const payload = await submitOrder(cart);
@@ -245,10 +245,10 @@ payButton.addEventListener("click", async () => {
     sessionStorage.removeItem("customerCustomizedOrder");
     sessionStorage.removeItem("customerCart");
     resetOrderSummary();
-    checkoutStatus.textContent = `${t("paymentComplete")} #${payload.orderId} ${t("savedToDatabase")}`;
+    checkoutStatus.textContent = `Payment complete. Order #${payload.orderId} is confirmed.`;
     showPaymentSuccessModal(payload.orderId);
   } catch (error) {
-    checkoutStatus.textContent = `${t("paymentFailed")} ${error.message}`;
+    checkoutStatus.textContent = `Payment failed. ${error.message}`;
   } finally {
     payButton.disabled = false;
     payButton.textContent = originalButtonText;

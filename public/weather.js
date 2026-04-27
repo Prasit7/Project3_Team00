@@ -18,7 +18,7 @@ function setWeatherError(config, messageKey) {
     weatherFailed: "Weather could not be loaded right now.",
   };
 
-  setWeatherStatus(config, typeof t === "function" ? t(messageKey) : fallback[messageKey]);
+  setWeatherStatus(config, fallback[messageKey]);
 }
 
 function updateWeatherCard(config, data) {
@@ -35,7 +35,7 @@ function updateWeatherCard(config, data) {
 
   status.textContent = description
     ? description.charAt(0).toUpperCase() + description.slice(1)
-    : (typeof t === "function" ? t("weatherTitle") : "Weather");
+    : "Weather";
 
   if (temp && Number.isFinite(data.weather.temperature)) {
     temp.textContent = `${Math.round(data.weather.temperature)}°${getTemperatureUnitLabel(data.weather.units)}`;

@@ -24,8 +24,8 @@ function formatMoney(value) {
 }
 
 function formatSizeLabel(sizeValue) {
-  if (sizeValue === "Regular") return t("sizeRegular");
-  if (sizeValue === "Large") return t("sizeLarge");
+  if (sizeValue === "Regular") return "Regular - 16oz";
+  if (sizeValue === "Large") return "Large - 20oz";
   return sizeValue;
 }
 
@@ -94,8 +94,8 @@ function calculateTotal() {
 
 function updatePreview() {
   if (!selectedMenuItem) {
-    customizeOrderBox.innerHTML = `<p>${t("noItemSelected")}</p>`;
-    customizeTotal.textContent = `${t("total")} ${formatMoney(0)}`;
+    customizeOrderBox.innerHTML = `<p>No item selected yet.</p>`;
+    customizeTotal.textContent = `Total: ${formatMoney(0)}`;
     return;
   }
 
@@ -104,13 +104,13 @@ function updatePreview() {
 
   customizeOrderBox.innerHTML = `
     <p><strong>${selectedMenuItem.itemName}</strong></p>
-    <p>${t("size")}: ${formatSizeLabel(sizeSelect.value || "Regular")}</p>
-    <p>${t("iceLevel")}: ${iceSelect.value || "Regular Ice"}</p>
-    <p>${t("sugarLevel")}: ${sugarSelect.value || "100% Sugar"}</p>
-    <p>${t("toppings")}: ${toppings.length ? toppings.join(", ") : t("none")}</p>
-    <p>${t("specialInstructions")}: ${specialInstructionsInput.value.trim() || t("none")}</p>
+    <p>Size: ${formatSizeLabel(sizeSelect.value || "Regular")}</p>
+    <p>Ice Level: ${iceSelect.value || "Regular Ice"}</p>
+    <p>Sugar Level: ${sugarSelect.value || "100% Sugar"}</p>
+    <p>Toppings: ${toppings.length ? toppings.join(", ") : "None"}</p>
+    <p>Special Instructions: ${specialInstructionsInput.value.trim() || "None"}</p>
   `;
-  customizeTotal.textContent = `${t("total")} ${formatMoney(total)}`;
+  customizeTotal.textContent = `Total: ${formatMoney(total)}`;
 }
 
 function buildCurrentOrder() {
@@ -130,7 +130,7 @@ function buildCurrentOrder() {
 function addCurrentItemToCart() {
   const order = buildCurrentOrder();
   if (!order) {
-    customizeStatus.textContent = t("noItemSelected");
+    customizeStatus.textContent = "No item selected yet.";
     return false;
   }
 
@@ -138,7 +138,7 @@ function addCurrentItemToCart() {
   cart.push(order);
   saveCart(cart);
   sessionStorage.removeItem("customerCustomizedOrder");
-  customizeStatus.textContent = `${order.itemName} ${t("addedToCartStatus")}`;
+  customizeStatus.textContent = `${order.itemName} added to cart.`;
   renderCartPreview();
   return true;
 }
@@ -154,19 +154,19 @@ function renderCartPreview() {
   customizeOrderBox.innerHTML = cart
     .map(
       (item, index) => `
-        <p><strong>${t("itemWord")} ${index + 1}: ${item.itemName}</strong></p>
-        <p>${t("size")}: ${formatSizeLabel(item.size)}</p>
-        <p>${t("iceLevel")}: ${item.ice}</p>
-        <p>${t("sugarLevel")}: ${item.sugar}</p>
-        <p>${t("toppings")}: ${item.toppings.length ? item.toppings.join(", ") : t("none")}</p>
-        <p>${t("specialInstructions")}: ${item.specialInstructions || t("none")}</p>
-        <p>${t("itemTotal")}: ${formatMoney(item.totalPrice)}</p>
+        <p><strong>Item ${index + 1}: ${item.itemName}</strong></p>
+        <p>Size: ${formatSizeLabel(item.size)}</p>
+        <p>Ice Level: ${item.ice}</p>
+        <p>Sugar Level: ${item.sugar}</p>
+        <p>Toppings: ${item.toppings.length ? item.toppings.join(", ") : "None"}</p>
+        <p>Special Instructions: ${item.specialInstructions || "None"}</p>
+        <p>Item Total: ${formatMoney(item.totalPrice)}</p>
       `
     )
     .join("");
 
   const total = cart.reduce((sum, item) => sum + Number(item.totalPrice || 0), 0);
-  customizeTotal.textContent = `${t("total")} ${formatMoney(total)}`;
+  customizeTotal.textContent = `Total: ${formatMoney(total)}`;
 }
 
 async function loadModifiers() {
@@ -201,7 +201,7 @@ async function initializePage() {
   selectedMenuItem = loadSelectedItem();
 
   if (!selectedMenuItem) {
-    customizeStatus.textContent = t("noItemSelected");
+    customizeStatus.textContent = "No item selected yet.";
     updatePreview();
     return;
   }
@@ -227,10 +227,10 @@ async function initializePage() {
 
     if (loadCart().length > 0) renderCartPreview();
 
-    customizeStatus.textContent = t("customizationReady");
+    customizeStatus.textContent = "Customization options are ready.";
     if (loadCart().length === 0) updatePreview();
   } catch (error) {
-    customizeStatus.textContent = t("statusError");
+    customizeStatus.textContent = "Something went wrong. Please try again.";
   }
 }
 
@@ -250,7 +250,7 @@ addToOrderButton.addEventListener("click", () => {
 checkoutButton.addEventListener("click", () => {
   const cart = loadCart();
   if (cart.length === 0) {
-    customizeStatus.textContent = t("noCustomization");
+    customizeStatus.textContent = "No customization saved yet.";
     return;
   }
 

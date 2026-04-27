@@ -235,11 +235,6 @@ h2 {
 
 
 /* ACTIVE LANGUAGE */
-.lang-active {
-  font-weight: 700;
-  border: 2px solid var(--brand);
-}
-
 [data-theme="high-contrast"] body {
   background: #000;
   color: #fff;
