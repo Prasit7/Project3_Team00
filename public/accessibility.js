@@ -1,7 +1,7 @@
 // accessibility.js
 // Shared accessibility controls for static public pages.
 // High contrast and language are available everywhere.
-// Text size and screen magnifier are limited to the menu board and customer kiosk.
+// Text size and screen magnifier are limited to the customer kiosk.
 
 (function () {
   if (localStorage.getItem("highContrast") === "true") {
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function shouldEnableCustomerFacingA11y() {
   const path = window.location.pathname;
-  return path.includes("customer-interface") || path.endsWith("/menu-board.html") || path === "/menu-board.html";
+  return path.includes("customer-interface");
 }
 
 function isMagnifierPreview() {
