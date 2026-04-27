@@ -207,9 +207,31 @@ function hasAddIntent(message) {
   return /\b(add|order|get|want|i'll take|ill take|put)\b/.test(text);
 }
 
+function hasRecommendationIntent(message) {
+  const text = String(message || "").toLowerCase();
+  return /\b(recommend|suggest|best|good|what should i (get|order)|what do you recommend)\b/.test(text);
+}
+
+function hasAddThatIntent(message) {
+  const text = String(message || "").toLowerCase();
+  return hasAddIntent(text) && /\b(that|it|this|one)\b/.test(text);
+}
+
+function hasRandomAddIntent(message) {
+  const text = String(message || "").toLowerCase();
+  return hasAddIntent(text) && /\b(random|surprise|anything|whatever|any drink)\b/.test(text);
+}
+
 function hasRemoveCartIntent(message) {
   const text = String(message || "").toLowerCase();
   return /\b(remove|delete|cancel|take out|take off)\b/.test(text);
+}
+
+function hasDisallowedManagementIntent(message) {
+  const text = String(message || "").toLowerCase();
+  const hasAdminVerb = /\b(remove|delete|edit|update|change|set|disable|enable|add)\b/.test(text);
+  const hasAdminTarget = /\b(menu|database|db|inventory|modifier|price|item availability|available)\b/.test(text);
+  return hasAdminVerb && hasAdminTarget;
 }
 
 function hasCartCue(message) {
@@ -230,6 +252,33 @@ function findRequestedMenuItem(message, items) {
     .sort((a, b) => b.key.length - a.key.length);
 
   return candidates.length > 0 ? candidates[0].item : null;
+}
+
+function pickRecommendation(message, items) {
+  if (!Array.isArray(items) || items.length === 0) return null;
+  const text = String(message || "").toLowerCase();
+
+  const categoryHints = [
+    { token: "smoothie", includes: "smoothie" },
+    { token: "milk", includes: "milk" },
+    { token: "fruit", includes: "fruit" },
+    { token: "special", includes: "special" },
+  ];
+
+  for (const hint of categoryHints) {
+    if (text.includes(hint.token)) {
+      const candidate = items.find((item) => String(item.category || "").toLowerCase().includes(hint.includes));
+      if (candidate) return candidate;
+    }
+  }
+
+  const flavorToken = Object.keys(TASTE_NOTES).find((token) => text.includes(token));
+  if (flavorToken) {
+    const byFlavor = items.find((item) => normalizeLookup(item.name).includes(flavorToken));
+    if (byFlavor) return byFlavor;
+  }
+
+  return items[Math.floor(Math.random() * items.length)];
 }
 
 function findRequestedCartItem(message, cart, pendingItem) {
@@ -395,7 +444,15 @@ export async function POST(request) {
     const { items, modifiers } = await loadMenuContext();
     const pendingItem = normalizePendingItem(body.pendingItem, items);
 
-    if (hasRemoveCartIntent(message) && (hasCartCue(message) || !pendingItem)) {
+    if (hasDisallowedManagementIntent(message)) {
+      return NextResponse.json({
+        ok: true,
+        reply: "I can help with cart, menu info, and drink customizations only. I cannot change menu records or system settings.",
+      });
+    }
+
+    const removeByReferenceCue = /\b(item\s*\d+|last|latest|most recent|first|that|it|this)\b/i.test(message);
+    if (hasRemoveCartIntent(message) && (hasCartCue(message) || removeByReferenceCue || !pendingItem)) {
       const cartItem = findRequestedCartItem(message, cart, pendingItem);
       if (cartItem) {
         return NextResponse.json({
@@ -409,6 +466,11 @@ export async function POST(request) {
           },
         });
       }
+
+      return NextResponse.json({
+        ok: true,
+        reply: "I could not find that drink in your cart. Tell me the drink name or item number to remove.",
+      });
     }
 
     const tasteTarget = extractTasteTarget(message);
@@ -436,6 +498,31 @@ export async function POST(request) {
       });
     }
 
+    if (hasRandomAddIntent(message) && items.length > 0) {
+      const randomItem = items[Math.floor(Math.random() * items.length)];
+      return NextResponse.json({
+        ok: true,
+        reply: createAssistantActionReplyForAdd(randomItem),
+        action: {
+          type: "ADD_DEFAULT_ITEM",
+          itemId: randomItem.id,
+          itemName: randomItem.name,
+        },
+      });
+    }
+
+    if (pendingItem && hasAddThatIntent(message)) {
+      return NextResponse.json({
+        ok: true,
+        reply: createAssistantActionReplyForAdd(pendingItem),
+        action: {
+          type: "ADD_DEFAULT_ITEM",
+          itemId: pendingItem.id,
+          itemName: pendingItem.name,
+        },
+      });
+    }
+
     if (pendingItem) {
       const parsed = parseModificationRequest(message, modifiers);
       if (parsed.applied.length > 0) {
@@ -458,6 +545,21 @@ export async function POST(request) {
             reply: `I cannot remove the main flavor from ${pendingItem.name}. You can choose a different drink if you want another flavor.`,
           });
         }
+      }
+    }
+
+    if (hasRecommendationIntent(message)) {
+      const recommendation = pickRecommendation(message, items);
+      if (recommendation) {
+        return NextResponse.json({
+          ok: true,
+          reply: `I recommend ${recommendation.name}. It is a great choice. Want me to add it to your cart?`,
+          action: {
+            type: "SET_PENDING_ITEM",
+            itemId: recommendation.id,
+            itemName: recommendation.name,
+          },
+        });
       }
     }
 

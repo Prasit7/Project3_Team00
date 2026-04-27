@@ -17,6 +17,8 @@ const modalSizeLevel = document.getElementById("modal-size-level");
 const modalQuantityMinus = document.getElementById("modal-quantity-minus");
 const modalQuantityPlus = document.getElementById("modal-quantity-plus");
 const modalQuantityValue = document.getElementById("modal-quantity-value");
+const modalTemperatureLabel = document.querySelector("label[for='modal-temperature-level']");
+const modalTemperatureLevel = document.getElementById("modal-temperature-level");
 const modalIceLevel = document.getElementById("modal-ice-level");
 const modalSugarLevel = document.getElementById("modal-sugar-level");
 const modalToppingsList = document.getElementById("modal-toppings-list");
@@ -29,12 +31,22 @@ const SIZE_OPTIONS = [
   { name: "Regular", labelKey: "sizeRegular", priceDelta: 0 },
   { name: "Large", labelKey: "sizeLarge", priceDelta: 0.75 },
 ];
+const TEMPERATURE_OPTIONS = [{ name: "Cold" }, { name: "Hot" }];
+const SUGAR_LEVEL_OPTIONS = [
+  { name: "No Sugar" },
+  { name: "Light Sugar" },
+  { name: "Half Sugar" },
+  { name: "Less Sugar" },
+  { name: "Normal Sugar" },
+  { name: "Extra Sugar" },
+];
 
 let menuItems = [];
 let modifiers = [];
 let activeCategory = "";
 let activeModalItem = null;
 let activeModalQuantity = 1;
+let editingCartIndex = null;
 
 const ITEM_IMAGE_MAP = {
   classicmilktea: "classicmilktea.jpg",
@@ -135,6 +147,9 @@ const ITEM_IMAGE_MAP = {
   pineapplejasminetea: "pineapplejasmine.jpg",
   pineapplejasmine: "pineapplejasmine.jpg",
   pineapplejasminemilktea: "pineapplejasmine.jpg",
+  mangopineapplesmoothie: "pineapplejasmine.jpg",
+  blueberryacaismoothie: "blueberryjasminetea.jpg",
+  strawberrybananasmoothie: "strawberrymilk.jpg",
 };
 
 function formatMoney(value) {
@@ -145,6 +160,16 @@ function normalizeItemKey(name) {
   return String(name || "")
     .toLowerCase()
     .replace(/[^a-z0-9]/g, "");
+}
+
+function isSmoothieCategory(category) {
+  return normalizeItemKey(category).includes("smoothie");
+}
+
+function shouldShowTemperature(itemOrCategory) {
+  const category =
+    typeof itemOrCategory === "string" ? itemOrCategory : itemOrCategory?.category;
+  return !isSmoothieCategory(category);
 }
 
 function getItemImagePath(itemName) {
@@ -221,7 +246,30 @@ function removeCartItemAt(indexToRemove) {
   }
 }
 
+function updateCartItemQuantity(index, delta) {
+  const cart = loadCart();
+  if (index < 0 || index >= cart.length) return;
+
+  const currentQty = Math.max(1, Number(cart[index].quantity || 1));
+  const nextQty = currentQty + delta;
+  if (nextQty <= 0) {
+    removeCartItemAt(index);
+    return;
+  }
+
+  const updated = {
+    ...cart[index],
+    quantity: nextQty,
+  };
+  updated.totalPrice = recalculateCartItemTotal(updated);
+  cart[index] = updated;
+  saveCart(cart);
+  renderCartSummary();
+}
+
 function getModifiersByType(type) {
+  if (type === "Sugar Level") return SUGAR_LEVEL_OPTIONS;
+  if (type === "Temperature") return TEMPERATURE_OPTIONS;
   return modifiers.filter((modifier) => modifier.modifierType === type);
 }
 
@@ -249,6 +297,7 @@ function buildAssistantCartContext() {
     itemId: item.itemId,
     itemName: item.itemName,
     quantity: Number(item.quantity || 1),
+    temperature: item.temperature || "Cold",
     size: item.size,
     ice: item.ice,
     sugar: item.sugar,
@@ -321,16 +370,17 @@ function addDefaultItemFromAssistant(itemId, itemName) {
   const iceOptions = getModifiersByType("Ice Level");
   const sugarOptions = getModifiersByType("Sugar Level");
   const regularIce = iceOptions.find((option) => option.name === "Regular Ice");
-  const regularSugar = sugarOptions.find((option) => option.name === "100% Sugar");
+  const regularSugar = sugarOptions.find((option) => option.name === "Normal Sugar");
 
   const order = {
     itemId: item.id,
     itemName: item.name,
     category: item.category,
     basePrice: Number(item.price || 0),
+    temperature: "Cold",
     size: "Regular",
     ice: regularIce ? regularIce.name : iceOptions[0]?.name || "Regular Ice",
-    sugar: regularSugar ? regularSugar.name : sugarOptions[0]?.name || "100% Sugar",
+    sugar: regularSugar ? regularSugar.name : sugarOptions[0]?.name || "Normal Sugar",
     toppings: [],
     specialInstructions: "",
     quantity: 1,
@@ -381,6 +431,7 @@ function updatePendingCartItemFromAssistant(updates) {
   const current = cart[targetIndex];
   const updated = {
     ...current,
+    temperature: typeof updates.temperature === "string" ? updates.temperature : current.temperature,
     size: typeof updates.size === "string" ? updates.size : current.size,
     ice: typeof updates.ice === "string" ? updates.ice : current.ice,
     sugar: typeof updates.sugar === "string" ? updates.sugar : current.sugar,
@@ -410,6 +461,14 @@ function updatePendingCartItemFromAssistant(updates) {
 
 function handleAssistantAction(action) {
   if (!action || typeof action !== "object") return;
+
+  if (action.type === "SET_PENDING_ITEM") {
+    setAssistantPendingItem({
+      itemId: action.itemId,
+      itemName: action.itemName,
+    });
+    return;
+  }
 
   if (action.type === "ADD_DEFAULT_ITEM") {
     const cartIndex = addDefaultItemFromAssistant(action.itemId, action.itemName);
@@ -520,12 +579,16 @@ function renderCartSummary() {
     .map(
       (item, index) => {
         const itemImagePath = getItemImagePath(item.itemName);
+        const temperatureLine = shouldShowTemperature(item.category)
+          ? `<p>Temperature: ${item.temperature || "Cold"}</p>`
+          : "";
         return `
         <article class="cart-item-row">
           <div class="cart-item-content">
             <p><strong>Item ${index + 1}: ${item.itemName}</strong></p>
             <p>Size: ${formatSizeLabel(item.size)}</p>
             <p>Quantity: ${Number(item.quantity || 1)}</p>
+            ${temperatureLine}
             <p>Ice Level: ${item.ice}</p>
             <p>Sugar Level: ${item.sugar}</p>
             <p>Toppings: ${item.toppings.length ? item.toppings.join(", ") : "None"}</p>
@@ -539,15 +602,40 @@ function renderCartSummary() {
                   : "Image"
               }
             </div>
-            <button
-              type="button"
-              class="cart-item-remove"
-              data-remove-index="${index}"
-              aria-label="Remove from cart: ${item.itemName}"
-              title="Remove from cart"
-            >
-              ×
-            </button>
+            <div class="cart-item-actions">
+              <button
+                type="button"
+                class="cart-item-edit-btn"
+                data-edit-index="${index}"
+                aria-label="Edit ${item.itemName}"
+                title="Edit customizations"
+              >
+                Edit
+              </button>
+              <div class="cart-item-qty-controls" aria-label="Quantity controls for ${item.itemName}">
+                <button
+                  type="button"
+                  class="cart-item-qty-btn"
+                  data-qty-index="${index}"
+                  data-qty-delta="-1"
+                  aria-label="Decrease quantity for ${item.itemName}"
+                  title="Decrease quantity"
+                >
+                  -
+                </button>
+                <span class="cart-item-qty-value" aria-live="polite">${Number(item.quantity || 1)}</span>
+                <button
+                  type="button"
+                  class="cart-item-qty-btn"
+                  data-qty-index="${index}"
+                  data-qty-delta="1"
+                  aria-label="Increase quantity for ${item.itemName}"
+                  title="Increase quantity"
+                >
+                  +
+                </button>
+              </div>
+            </div>
           </div>
         </article>
       `;
@@ -583,9 +671,10 @@ function renderCategories() {
   });
 }
 
-function openCustomizeModal(item) {
+function openCustomizeModal(item, existingOrder = null) {
   activeModalItem = item;
-  activeModalQuantity = 1;
+  editingCartIndex = null;
+  activeModalQuantity = existingOrder?.quantity || 1;
   const itemImagePath = getItemImagePath(item.name);
 
   modalDrinkName.textContent = item.name;
@@ -605,8 +694,18 @@ function openCustomizeModal(item) {
 
   const iceOptions = getModifiersByType("Ice Level");
   const sugarOptions = getModifiersByType("Sugar Level");
+  const temperatureOptions = getModifiersByType("Temperature");
   const toppingOptions = getModifiersByType("Topping");
+  const showTemperature = shouldShowTemperature(item);
 
+  if (modalTemperatureLabel) {
+    modalTemperatureLabel.style.display = showTemperature ? "" : "none";
+  }
+  modalTemperatureLevel.style.display = showTemperature ? "" : "none";
+
+  modalTemperatureLevel.innerHTML = temperatureOptions
+    .map((option) => `<option value="${option.name}">${option.name}</option>`)
+    .join("");
   modalIceLevel.innerHTML = iceOptions
     .map((option) => `<option value="${option.name}">${option.name}</option>`)
     .join("");
@@ -614,13 +713,18 @@ function openCustomizeModal(item) {
     .map((option) => `<option value="${option.name}">${option.name}</option>`)
     .join("");
 
+  if (modalTemperatureLevel.options.length > 0) {
+    const coldOption = [...modalTemperatureLevel.options].find((option) => option.value === "Cold");
+    modalTemperatureLevel.value = coldOption ? coldOption.value : modalTemperatureLevel.options[0].value;
+  }
+
   if (modalIceLevel.options.length > 0) {
     const regularIce = [...modalIceLevel.options].find((option) => option.value === "Regular Ice");
     modalIceLevel.value = regularIce ? regularIce.value : modalIceLevel.options[0].value;
   }
 
   if (modalSugarLevel.options.length > 0) {
-    const regularSugar = [...modalSugarLevel.options].find((option) => option.value === "100% Sugar");
+    const regularSugar = [...modalSugarLevel.options].find((option) => option.value === "Normal Sugar");
     modalSugarLevel.value = regularSugar ? regularSugar.value : modalSugarLevel.options[0].value;
   }
 
@@ -635,7 +739,27 @@ function openCustomizeModal(item) {
     )
     .join("");
 
-  setModalQuantity(1);
+  if (existingOrder) {
+    editingCartIndex = existingOrder.cartIndex;
+    if (showTemperature) {
+      modalTemperatureLevel.value = existingOrder.temperature || modalTemperatureLevel.value;
+    } else {
+      modalTemperatureLevel.value = "Cold";
+    }
+    modalSizeLevel.value = existingOrder.size || modalSizeLevel.value;
+    modalIceLevel.value = existingOrder.ice || modalIceLevel.value;
+    modalSugarLevel.value = existingOrder.sugar || modalSugarLevel.value;
+    modalSpecialInstructions.value = existingOrder.specialInstructions || "";
+    const selectedToppings = new Set(Array.isArray(existingOrder.toppings) ? existingOrder.toppings : []);
+    [...modalToppingsList.querySelectorAll("input[type='checkbox']")].forEach((input) => {
+      input.checked = selectedToppings.has(input.value);
+    });
+    modalAddToOrderButton.textContent = "Save Changes";
+  } else {
+    modalAddToOrderButton.textContent = "Add to Order";
+  }
+
+  setModalQuantity(activeModalQuantity);
 
   modalOverlay.classList.remove("is-hidden");
   document.body.classList.add("modal-open");
@@ -652,6 +776,8 @@ function closeCustomizeModal() {
   modalOverlay.classList.add("is-hidden");
   document.body.classList.remove("modal-open");
   activeModalItem = null;
+  editingCartIndex = null;
+  modalAddToOrderButton.textContent = "Add to Order";
 }
 
 function getCheckedToppings() {
@@ -687,9 +813,12 @@ function addModalOrderToCart() {
     itemName: activeModalItem.name,
     category: activeModalItem.category,
     basePrice: Number(activeModalItem.price || 0),
+    temperature: shouldShowTemperature(activeModalItem)
+      ? modalTemperatureLevel.value || "Cold"
+      : "Cold",
     size: modalSizeLevel.value || "Regular",
     ice: modalIceLevel.value || "Regular Ice",
-    sugar: modalSugarLevel.value || "100% Sugar",
+    sugar: modalSugarLevel.value || "Normal Sugar",
     toppings: getCheckedToppings(),
     specialInstructions: modalSpecialInstructions.value.trim(),
     quantity: activeModalQuantity,
@@ -698,7 +827,11 @@ function addModalOrderToCart() {
   };
 
   const cart = loadCart();
-  cart.push(order);
+  if (Number.isInteger(editingCartIndex) && editingCartIndex >= 0 && editingCartIndex < cart.length) {
+    cart[editingCartIndex] = order;
+  } else {
+    cart.push(order);
+  }
   saveCart(cart);
 
   sessionStorage.setItem(
@@ -711,9 +844,30 @@ function addModalOrderToCart() {
     })
   );
 
-  statusText.textContent = `${order.itemName} added to cart.`;
+  statusText.textContent = Number.isInteger(editingCartIndex) ? `${order.itemName} updated.` : `${order.itemName} added to cart.`;
   renderCartSummary();
   closeCustomizeModal();
+}
+
+function editCartItemAt(index) {
+  const cart = loadCart();
+  if (index < 0 || index >= cart.length) return;
+  const order = cart[index];
+  const menuItem =
+    menuItems.find((entry) => Number(entry.id) === Number(order.itemId)) ||
+    menuItems.find((entry) => normalizeItemKey(entry.name) === normalizeItemKey(order.itemName));
+  if (!menuItem) return;
+
+  openCustomizeModal(menuItem, {
+    cartIndex: index,
+    quantity: order.quantity,
+    temperature: order.temperature,
+    size: order.size,
+    ice: order.ice,
+    sugar: order.sugar,
+    toppings: order.toppings,
+    specialInstructions: order.specialInstructions,
+  });
 }
 
 function renderMenuItems() {
@@ -792,6 +946,7 @@ async function loadMenuItems() {
 }
 
 modalSizeLevel.addEventListener("change", updateModalTotal);
+modalTemperatureLevel.addEventListener("change", updateModalTotal);
 modalIceLevel.addEventListener("change", updateModalTotal);
 modalSugarLevel.addEventListener("change", updateModalTotal);
 modalToppingsList.addEventListener("change", updateModalTotal);
@@ -800,11 +955,22 @@ modalQuantityMinus.addEventListener("click", () => setModalQuantity(activeModalQ
 modalQuantityPlus.addEventListener("click", () => setModalQuantity(activeModalQuantity + 1));
 modalAddToOrderButton.addEventListener("click", addModalOrderToCart);
 selectedItemBox.addEventListener("click", (event) => {
-  const removeButton = event.target.closest("[data-remove-index]");
-  if (!removeButton) return;
-  const index = Number.parseInt(removeButton.getAttribute("data-remove-index"), 10);
-  if (!Number.isNaN(index)) {
-    removeCartItemAt(index);
+  const editButton = event.target.closest("[data-edit-index]");
+  if (editButton) {
+    const index = Number.parseInt(editButton.getAttribute("data-edit-index"), 10);
+    if (!Number.isNaN(index)) {
+      editCartItemAt(index);
+    }
+    return;
+  }
+
+  const quantityButton = event.target.closest("[data-qty-index]");
+  if (quantityButton) {
+    const index = Number.parseInt(quantityButton.getAttribute("data-qty-index"), 10);
+    const delta = Number.parseInt(quantityButton.getAttribute("data-qty-delta"), 10);
+    if (!Number.isNaN(index) && !Number.isNaN(delta)) {
+      updateCartItemQuantity(index, delta);
+    }
   }
 });
 
