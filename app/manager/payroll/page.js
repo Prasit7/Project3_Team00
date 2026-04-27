@@ -14,14 +14,19 @@ export default function PayrollPage() {
       const json = await res.json();
       if (!json.ok) return;
 
-      // Use real hourlyRate from DB, fake 40hrs for everyone since no shift log
-      const payroll = json.data.map((emp) => ({
+      // Temporary mock hours until shift logs are implemented.
+      const payroll = json.data.map((emp) => {
+        const hours = Math.floor(Math.random() * 31) + 10; // 10-40 inclusive
+        const isManager = String(emp.role || "").toLowerCase() === "manager";
+        const rate = isManager ? 25.0 : (emp.hourlyRate ?? 15.0);
+        return {
         name: `${emp.firstName} ${emp.lastName}`,
         role: emp.role,
-        hours: 40,
-        rate: emp.hourlyRate ?? 15.00,
-        total: 40 * (emp.hourlyRate ?? 15.00),
-      }));
+        hours,
+        rate,
+        total: hours * rate,
+      };
+      });
 
       setData(payroll);
       setLoading(false);

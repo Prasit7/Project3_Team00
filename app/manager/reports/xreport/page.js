@@ -18,6 +18,7 @@ export default function XReportPage() {
   const [data, setData] = useState(null);
   const [status, setStatus] = useState({ type: "", text: "" });
   const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
 
   const loadReport = useCallback(async () => {
     setLoading(true);
@@ -49,6 +50,34 @@ export default function XReportPage() {
     return new Date(data.businessDate).toLocaleDateString();
   }, [data]);
 
+  const nextAvailableLabel = useMemo(() => {
+    if (!data?.nextAvailableAt || data?.canGenerate) return "";
+    const date = new Date(data.nextAvailableAt);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleString();
+  }, [data]);
+
+  async function handleGenerateXReport() {
+    setGenerating(true);
+    setStatus({ type: "", text: "" });
+
+    try {
+      const response = await fetch("/api/xreport", { method: "POST" });
+      const payload = await response.json();
+
+      if (!response.ok || payload.error) {
+        throw new Error(payload.error || "Failed to generate X-Report.");
+      }
+
+      await loadReport();
+      setStatus({ type: "ok", text: payload.message || "X-Report generated." });
+    } catch (error) {
+      setStatus({ type: "error", text: error.message || "Failed to generate X-Report." });
+    } finally {
+      setGenerating(false);
+    }
+  }
+
   return (
     <ManagerShell title="X-Report - Sales by Hour (Today)" subtitle={`Business Date: ${businessDateLabel}`}>
       <section className={styles.section}>
@@ -56,9 +85,23 @@ export default function XReportPage() {
           <button className={`${styles.button} ${styles.buttonPrimary}`} type="button" onClick={loadReport}>
             Refresh
           </button>
+          <button
+            className={`${styles.button} ${styles.buttonDanger}`}
+            type="button"
+            onClick={handleGenerateXReport}
+            disabled={loading || generating || data?.canGenerate === false}
+            title={data?.canGenerate === false ? "X-Report generation is locked for 24 hours." : "Generate X-Report"}
+          >
+            {generating ? "Generating..." : "Generate X-Report"}
+          </button>
         </div>
 
         <StatusMessage status={status} />
+        {!loading && data?.canGenerate === false ? (
+          <p className={styles.subtitle} style={{ marginBottom: "10px" }}>
+            X-Report already generated. Next available at {nextAvailableLabel || "later"}.
+          </p>
+        ) : null}
 
         <div className={styles.tableWrap}>
           <table className={styles.table}>
