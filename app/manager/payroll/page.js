@@ -12,13 +12,15 @@ export default function PayrollPage() {
     async function load() {
       const res = await fetch("/api/employees");
       const json = await res.json();
-      if (!json.ok) return;
+      if (!json.ok) {
+        setData([]);
+        setLoading(false);
+        return;
+      }
 
-      // Temporary mock hours until shift logs are implemented.
       const payroll = json.data.map((emp) => {
-        const hours = Math.floor(Math.random() * 31) + 10; // 10-40 inclusive
-        const isManager = String(emp.role || "").toLowerCase() === "manager";
-        const rate = isManager ? 25.0 : (emp.hourlyRate ?? 15.0);
+        const hours = Number(emp.hoursWorkedThisWeek ?? 0);
+        const rate = Number(emp.hourlyRate ?? 15.0);
         return {
         name: `${emp.firstName} ${emp.lastName}`,
         role: emp.role,

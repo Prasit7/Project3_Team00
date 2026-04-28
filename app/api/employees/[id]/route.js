@@ -26,7 +26,7 @@ function buildUpdateQuery(id, payload) {
       UPDATE "Employee"
       SET ${setClause}
       WHERE employee_id = $${entries.length + 1}
-      RETURNING employee_id, first_name, last_name, role, is_active
+      RETURNING employee_id, first_name, last_name, role, is_active, hourly_rate, hours_worked_this_week
     `,
     values: [...values, id],
   };
@@ -37,7 +37,7 @@ export async function GET(_request, context) {
     const id = parsePositiveIntegerId((await context.params).id);
     const result = await getPool().query(
       `
-      SELECT employee_id, first_name, last_name, role, is_active
+      SELECT employee_id, first_name, last_name, role, is_active, hourly_rate, hours_worked_this_week
       FROM "Employee"
       WHERE employee_id = $1
     `,
