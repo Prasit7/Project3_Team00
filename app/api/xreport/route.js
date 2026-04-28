@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { getPool } from "../../../lib/db";
 
 export const runtime = "nodejs";
-const LOCKOUT_HOURS = 24;
 
 function toHourLabel(hour) {
   const normalizedHour = Number(hour);
@@ -24,31 +23,6 @@ async function ensureXReportState(client) {
     VALUES (1, NULL, NULL)
     ON CONFLICT (singleton_id) DO NOTHING;
   `);
-}
-
-function withLockoutInfo(stateRow) {
-  const lastGeneratedAt = stateRow?.last_generated_at ? new Date(stateRow.last_generated_at) : null;
-  if (!lastGeneratedAt || Number.isNaN(lastGeneratedAt.getTime())) {
-    return {
-      lastGeneratedAt: null,
-      nextAvailableAt: null,
-      canGenerate: true,
-      lockoutHours: LOCKOUT_HOURS,
-      retryAfterSeconds: 0,
-    };
-  }
-
-  const nextAvailableAt = new Date(lastGeneratedAt.getTime() + LOCKOUT_HOURS * 60 * 60 * 1000);
-  const msRemaining = Math.max(0, nextAvailableAt.getTime() - Date.now());
-  const retryAfterSeconds = Math.ceil(msRemaining / 1000);
-
-  return {
-    lastGeneratedAt: lastGeneratedAt.toISOString(),
-    nextAvailableAt: nextAvailableAt.toISOString(),
-    canGenerate: retryAfterSeconds === 0,
-    lockoutHours: LOCKOUT_HOURS,
-    retryAfterSeconds,
-  };
 }
 
 export async function GET() {
@@ -111,7 +85,9 @@ export async function GET() {
       rows,
       totalOrders: totals.totalOrders,
       totalSales: Number(totals.totalSales.toFixed(2)),
-      ...withLockoutInfo(stateRow),
+      lastGeneratedAt: stateRow?.last_generated_at || null,
+      nextAvailableAt: null,
+      canGenerate: true,
     });
   } catch (error) {
     console.error("XReport failed:", error.message);
@@ -129,27 +105,14 @@ export async function POST() {
     await client.query("BEGIN");
     await ensureXReportState(client);
 
-    const stateResult = await client.query(
+    await client.query(
       `
-        SELECT cutoff_at, last_generated_at
+        SELECT 1
         FROM xreport_state
         WHERE singleton_id = 1
         FOR UPDATE
       `
     );
-
-    const stateRow = stateResult.rows[0] || {};
-    const lockout = withLockoutInfo(stateRow);
-    if (!lockout.canGenerate) {
-      await client.query("ROLLBACK");
-      return NextResponse.json(
-        {
-          error: "X-Report can only be generated once every 24 hours.",
-          ...lockout,
-        },
-        { status: 429 }
-      );
-    }
 
     const now = new Date().toISOString();
     await client.query(
@@ -169,9 +132,8 @@ export async function POST() {
       message: "X-Report generated. Today's current rows have been cleared.",
       cutoffAt: now,
       lastGeneratedAt: now,
-      nextAvailableAt: new Date(Date.now() + LOCKOUT_HOURS * 60 * 60 * 1000).toISOString(),
-      canGenerate: false,
-      lockoutHours: LOCKOUT_HOURS,
+      nextAvailableAt: null,
+      canGenerate: true,
     });
   } catch (error) {
     await client.query("ROLLBACK");

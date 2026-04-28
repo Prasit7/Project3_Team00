@@ -9,12 +9,6 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
-const X_REPORT_COOLDOWN_KEYS = [
-  "xReportCooldownUntil",
-  "xReportNextAvailableAt",
-  "xReportLastGeneratedAt",
-  "x_report_cooldown_until",
-];
 
 function formatCurrency(value) {
   return currencyFormatter.format(Number(value || 0));
@@ -25,14 +19,6 @@ export default function XReportPage() {
   const [status, setStatus] = useState({ type: "", text: "" });
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
-
-  const clearXReportCooldown = useCallback(() => {
-    if (typeof window === "undefined") return;
-
-    X_REPORT_COOLDOWN_KEYS.forEach((key) => {
-      window.localStorage.removeItem(key);
-    });
-  }, []);
 
   const loadReport = useCallback(async () => {
     setLoading(true);
@@ -55,26 +41,13 @@ export default function XReportPage() {
     }
   }, []);
 
-  const onGenerateXReport = useCallback(() => {
-    clearXReportCooldown();
-    loadReport();
-  }, [clearXReportCooldown, loadReport]);
-
   useEffect(() => {
-    clearXReportCooldown();
     loadReport();
-  }, [clearXReportCooldown, loadReport]);
+  }, [loadReport]);
 
   const businessDateLabel = useMemo(() => {
     if (!data?.businessDate) return "N/A";
     return new Date(data.businessDate).toLocaleDateString();
-  }, [data]);
-
-  const nextAvailableLabel = useMemo(() => {
-    if (!data?.nextAvailableAt || data?.canGenerate) return "";
-    const date = new Date(data.nextAvailableAt);
-    if (Number.isNaN(date.getTime())) return "";
-    return date.toLocaleString();
   }, [data]);
 
   async function handleGenerateXReport() {
@@ -102,26 +75,17 @@ export default function XReportPage() {
     <ManagerShell title="X-Report - Sales by Hour (Today)" subtitle={`Business Date: ${businessDateLabel}`}>
       <section className={styles.section}>
         <div className={styles.actions} style={{ marginBottom: "12px" }}>
-          <button className={`${styles.button} ${styles.buttonPrimary}`} type="button" onClick={onGenerateXReport}>
-            Generate X Report
-          </button>
           <button
-            className={`${styles.button} ${styles.buttonDanger}`}
+            className={`${styles.button} ${styles.buttonPrimary}`}
             type="button"
             onClick={handleGenerateXReport}
-            disabled={loading || generating || data?.canGenerate === false}
-            title={data?.canGenerate === false ? "X-Report generation is locked for 24 hours." : "Generate X-Report"}
+            disabled={loading || generating}
           >
             {generating ? "Generating..." : "Generate X-Report"}
           </button>
         </div>
 
         <StatusMessage status={status} />
-        {!loading && data?.canGenerate === false ? (
-          <p className={styles.subtitle} style={{ marginBottom: "10px" }}>
-            X-Report already generated. Next available at {nextAvailableLabel || "later"}.
-          </p>
-        ) : null}
 
         <div className={styles.tableWrap}>
           <table className={styles.table}>
