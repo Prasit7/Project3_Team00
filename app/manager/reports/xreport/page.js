@@ -9,6 +9,12 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
 });
+const X_REPORT_COOLDOWN_KEYS = [
+  "xReportCooldownUntil",
+  "xReportNextAvailableAt",
+  "xReportLastGeneratedAt",
+  "x_report_cooldown_until",
+];
 
 function formatCurrency(value) {
   return currencyFormatter.format(Number(value || 0));
@@ -19,6 +25,14 @@ export default function XReportPage() {
   const [status, setStatus] = useState({ type: "", text: "" });
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+
+  const clearXReportCooldown = useCallback(() => {
+    if (typeof window === "undefined") return;
+
+    X_REPORT_COOLDOWN_KEYS.forEach((key) => {
+      window.localStorage.removeItem(key);
+    });
+  }, []);
 
   const loadReport = useCallback(async () => {
     setLoading(true);
@@ -41,9 +55,15 @@ export default function XReportPage() {
     }
   }, []);
 
-  useEffect(() => {
+  const onGenerateXReport = useCallback(() => {
+    clearXReportCooldown();
     loadReport();
-  }, [loadReport]);
+  }, [clearXReportCooldown, loadReport]);
+
+  useEffect(() => {
+    clearXReportCooldown();
+    loadReport();
+  }, [clearXReportCooldown, loadReport]);
 
   const businessDateLabel = useMemo(() => {
     if (!data?.businessDate) return "N/A";
@@ -82,8 +102,8 @@ export default function XReportPage() {
     <ManagerShell title="X-Report - Sales by Hour (Today)" subtitle={`Business Date: ${businessDateLabel}`}>
       <section className={styles.section}>
         <div className={styles.actions} style={{ marginBottom: "12px" }}>
-          <button className={`${styles.button} ${styles.buttonPrimary}`} type="button" onClick={loadReport}>
-            Refresh
+          <button className={`${styles.button} ${styles.buttonPrimary}`} type="button" onClick={onGenerateXReport}>
+            Generate X Report
           </button>
           <button
             className={`${styles.button} ${styles.buttonDanger}`}
