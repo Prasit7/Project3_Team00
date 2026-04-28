@@ -370,7 +370,7 @@ export default function CashierShell() {
     }
 
     if (!paymentMethod) {
-      setPaymentError("Select a payment method.");
+      setPaymentError("Please choose a payment type (Cash or Card).");
       return;
     }
 
@@ -721,11 +721,17 @@ export default function CashierShell() {
               type="button"
               className={styles.primaryAction}
               onClick={submitOrder}
-              disabled={isSubmittingOrder || !checkoutReady}
+              disabled={isSubmittingOrder || orderItems.length === 0}
             >
               {isSubmittingOrder ? "Submitting..." : "Submit Order"}
             </button>
-            {!checkoutReady && <p className={styles.checkoutHint}>Complete payment details to submit this order.</p>}
+            {orderItems.length === 0 && <p className={styles.checkoutHint}>Add at least one item to submit this order.</p>}
+            {orderItems.length > 0 && !paymentMethod && (
+              <p className={styles.checkoutHint}>Choose Cash or Card, then submit your order.</p>
+            )}
+            {orderItems.length > 0 && paymentMethod === "cash" && cashReceivedValue < orderTotal && (
+              <p className={styles.checkoutHint}>Enter enough cash received to cover the order total.</p>
+            )}
             {orderNotice && <p className={styles.orderNotice}>{orderNotice}</p>}
           </div>
         </section>

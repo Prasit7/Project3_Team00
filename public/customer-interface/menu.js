@@ -255,6 +255,7 @@ function removeCartItemAt(indexToRemove) {
   if (indexToRemove < 0 || indexToRemove >= cart.length) return;
   const [removedItem] = cart.splice(indexToRemove, 1);
   saveCart(cart);
+  rebaseAssistantPendingItem(cart);
   renderCartSummary();
   if (removedItem) {
     setStatusMessage(`${removedItem.itemName} removed from cart.`);
@@ -279,6 +280,7 @@ function updateCartItemQuantity(index, delta) {
   updated.totalPrice = recalculateCartItemTotal(updated);
   cart[index] = updated;
   saveCart(cart);
+  rebaseAssistantPendingItem(cart);
   renderCartSummary();
 }
 
@@ -420,6 +422,39 @@ function clearAssistantPendingItem() {
   sessionStorage.removeItem(ASSISTANT_PENDING_ITEM_KEY);
 }
 
+function rebaseAssistantPendingItem(cartSnapshot = loadCart()) {
+  const pending = getAssistantPendingItem();
+  if (!pending) return;
+
+  const cart = Array.isArray(cartSnapshot) ? cartSnapshot : [];
+  if (cart.length === 0) {
+    clearAssistantPendingItem();
+    return;
+  }
+
+  const pendingKey = normalizeItemKey(pending.itemName);
+  const isMatch = (entry) => {
+    if (!entry) return false;
+    if (Number(pending.itemId) > 0 && Number(entry.itemId) === Number(pending.itemId)) return true;
+    return pendingKey && normalizeItemKey(entry.itemName) === pendingKey;
+  };
+
+  const indexed = cart.map((entry, index) => ({ entry, index }));
+  const currentIndex = Number.isInteger(pending.cartIndex) ? pending.cartIndex : -1;
+  if (currentIndex >= 0 && currentIndex < cart.length && isMatch(cart[currentIndex])) {
+    setAssistantPendingItem({ ...pending, cartIndex: currentIndex });
+    return;
+  }
+
+  const candidates = indexed.filter((wrapped) => isMatch(wrapped.entry)).map((wrapped) => wrapped.index);
+  if (candidates.length === 0) {
+    clearAssistantPendingItem();
+    return;
+  }
+
+  setAssistantPendingItem({ ...pending, cartIndex: candidates[candidates.length - 1] });
+}
+
 function removeCartItemFromAssistant(action) {
   const cart = loadCart();
   if (!Array.isArray(cart) || cart.length === 0) return false;
@@ -438,18 +473,10 @@ function removeCartItemFromAssistant(action) {
   if (targetIndex === undefined || targetIndex < 0 || targetIndex >= cart.length) return false;
   const [removed] = cart.splice(targetIndex, 1);
   saveCart(cart);
+  rebaseAssistantPendingItem(cart);
   renderCartSummary();
   if (removed) {
     setStatusMessage(`${removed.itemName} removed from cart.`);
-  }
-
-  const pending = getAssistantPendingItem();
-  if (pending) {
-    const removedName = normalizeItemKey(removed?.itemName);
-    const pendingName = normalizeItemKey(pending.itemName);
-    if (removedName && pendingName && removedName === pendingName) {
-      clearAssistantPendingItem();
-    }
   }
 
   return true;
@@ -486,6 +513,7 @@ function addDefaultItemFromAssistant(itemId, itemName) {
   const cart = loadCart();
   cart.push(order);
   saveCart(cart);
+  rebaseAssistantPendingItem(cart);
   renderCartSummary();
   setStatusMessage(`${order.itemName} added to cart.`);
   return cart.length - 1;
@@ -545,12 +573,67 @@ function updatePendingCartItemFromAssistant(updates) {
 
   cart[targetIndex] = updated;
   saveCart(cart);
+  rebaseAssistantPendingItem(cart);
   renderCartSummary();
   setStatusMessage(`${updated.itemName} updated`);
   setAssistantPendingItem({
     ...pending,
     cartIndex: targetIndex,
   });
+  return true;
+}
+
+function updateCartItemFromAssistant(action) {
+  if (!action || typeof action !== "object" || !action.updates || typeof action.updates !== "object") return false;
+  const cart = loadCart();
+  if (!Array.isArray(cart) || cart.length === 0) return false;
+
+  let targetIndex = Number.isInteger(action.cartIndex) ? action.cartIndex : -1;
+  if (targetIndex < 0 || targetIndex >= cart.length) {
+    targetIndex = [...cart]
+      .map((entry, index) => ({ entry, index }))
+      .reverse()
+      .find((wrapped) => {
+        if (Number(action.itemId) > 0 && Number(wrapped.entry.itemId) === Number(action.itemId)) return true;
+        return normalizeItemKey(wrapped.entry.itemName) === normalizeItemKey(action.itemName);
+      })?.index;
+  }
+
+  if (targetIndex === undefined || targetIndex < 0 || targetIndex >= cart.length) return false;
+
+  const current = cart[targetIndex];
+  const updates = action.updates;
+  const updated = {
+    ...current,
+    temperature: typeof updates.temperature === "string" ? updates.temperature : current.temperature,
+    size: typeof updates.size === "string" ? updates.size : current.size,
+    ice: typeof updates.ice === "string" ? updates.ice : current.ice,
+    sugar: typeof updates.sugar === "string" ? updates.sugar : current.sugar,
+    toppings: Array.isArray(updates.toppings) ? updates.toppings : current.toppings,
+  };
+
+  if (Array.isArray(updates.removeToppings) && updates.removeToppings.length > 0) {
+    const removeSet = new Set(updates.removeToppings.map((name) => normalizeItemKey(name)));
+    updated.toppings = (Array.isArray(updated.toppings) ? updated.toppings : []).filter(
+      (name) => !removeSet.has(normalizeItemKey(name))
+    );
+  }
+
+  updated.unitPrice = calculateCartItemUnitTotal(updated);
+  updated.totalPrice = recalculateCartItemTotal(updated);
+  cart[targetIndex] = updated;
+
+  saveCart(cart);
+  rebaseAssistantPendingItem(cart);
+  renderCartSummary();
+  setStatusMessage(`${updated.itemName} updated`);
+
+  setAssistantPendingItem({
+    itemId: updated.itemId,
+    itemName: updated.itemName,
+    cartIndex: targetIndex,
+  });
+
   return true;
 }
 
@@ -596,6 +679,14 @@ function handleAssistantAction(action) {
     const removed = removeCartItemFromAssistant(action);
     if (!removed) {
       appendAssistantMessage("bot", "I could not find that item in the cart to remove.");
+    }
+    return;
+  }
+
+  if (action.type === "UPDATE_CART_ITEM") {
+    const updated = updateCartItemFromAssistant(action);
+    if (!updated) {
+      appendAssistantMessage("bot", "I could not find that item in the cart to update.");
     }
   }
 }
@@ -960,6 +1051,7 @@ function addModalOrderToCart() {
     cart.push(order);
   }
   saveCart(cart);
+  rebaseAssistantPendingItem(cart);
 
   sessionStorage.setItem(
     "customerSelectedMenuItem",
