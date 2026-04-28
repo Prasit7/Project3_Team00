@@ -82,15 +82,12 @@ export default function XReportPage() {
     <ManagerShell title="X-Report - Sales by Hour (Today)" subtitle={`Business Date: ${businessDateLabel}`}>
       <section className={styles.section}>
         <div className={styles.actions} style={{ marginBottom: "12px" }}>
-          <button className={`${styles.button} ${styles.buttonPrimary}`} type="button" onClick={loadReport}>
-            Refresh
-          </button>
           <button
-            className={`${styles.button} ${styles.buttonDanger}`}
+            className={`${styles.button} ${styles.buttonPrimary}`}
             type="button"
             onClick={handleGenerateXReport}
             disabled={loading || generating || data?.canGenerate === false}
-            title={data?.canGenerate === false ? "X-Report generation is locked for 24 hours." : "Generate X-Report"}
+            title={data?.canGenerate === false ? "X-Report generation is limited to once per day." : "Generate X-Report"}
           >
             {generating ? "Generating..." : "Generate X-Report"}
           </button>
@@ -99,7 +96,7 @@ export default function XReportPage() {
         <StatusMessage status={status} />
         {!loading && data?.canGenerate === false ? (
           <p className={styles.subtitle} style={{ marginBottom: "10px" }}>
-            X-Report already generated. Next available at {nextAvailableLabel || "later"}.
+            X-Report already generated today. Next available at {nextAvailableLabel || "tomorrow"}.
           </p>
         ) : null}
 
